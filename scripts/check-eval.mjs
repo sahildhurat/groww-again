@@ -34,7 +34,8 @@ const savedHashes = results.prompt_hashes || {};
 
 for (const file of promptFiles) {
   const filePath = path.join(PROMPTS_DIR, file);
-  const content = fs.readFileSync(filePath, 'utf-8');
+  // Normalize line endings to LF so hash is identical across Windows, Linux and Vercel
+  const content = fs.readFileSync(filePath, 'utf-8').replace(/\r\n/g, '\n');
   const currentHash = crypto.createHash('sha256').update(content).digest('hex');
 
   const savedHash = savedHashes[file];
