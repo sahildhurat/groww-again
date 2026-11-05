@@ -1,0 +1,213 @@
+{
+ "note": "horizon_any [None] means no horizon should be invented. one_line may contain only numbers in allowed_numbers (spelled-out numbers in the transcript count).",
+ "items": [
+  {
+   "id": "p01",
+   "transcript": "I'm starting this for my first bike. I want to buy it by my birthday in 2028, without taking a loan.",
+   "goal_any": [
+    "bike"
+   ],
+   "for_whom_any": [
+    "me",
+    "myself",
+    "self"
+   ],
+   "horizon_any": [
+    "2028"
+   ],
+   "allowed_numbers": [
+    "2028"
+   ]
+  },
+  {
+   "id": "p02",
+   "transcript": "I want to build an emergency fund so I never have to borrow from friends again.",
+   "goal_any": [
+    "emergency"
+   ],
+   "for_whom_any": [
+    "me",
+    "myself",
+    "self"
+   ],
+   "horizon_any": [
+    null
+   ],
+   "allowed_numbers": []
+  },
+  {
+   "id": "p03",
+   "transcript": "This is for my parents. I want to take them on a trip to Kashmir for their 30th anniversary in 2029.",
+   "goal_any": [
+    "trip",
+    "Kashmir"
+   ],
+   "for_whom_any": [
+    "parents"
+   ],
+   "horizon_any": [
+    "2029"
+   ],
+   "allowed_numbers": [
+    "30",
+    "2029"
+   ]
+  },
+  {
+   "id": "p04",
+   "transcript": "Saving for my master's abroad, hopefully by fall 2028.",
+   "goal_any": [
+    "master",
+    "study",
+    "education"
+   ],
+   "for_whom_any": [
+    "me",
+    "myself",
+    "self"
+   ],
+   "horizon_any": [
+    "2028"
+   ],
+   "allowed_numbers": [
+    "2028"
+   ]
+  },
+  {
+   "id": "p05",
+   "transcript": "For my daughter's education. She is two now.",
+   "goal_any": [
+    "education"
+   ],
+   "for_whom_any": [
+    "daughter"
+   ],
+   "horizon_any": [
+    null
+   ],
+   "allowed_numbers": []
+  },
+  {
+   "id": "p06",
+   "transcript": "I just want to start investing early and see my money grow. No specific goal.",
+   "goal_any": [
+    "invest",
+    "grow",
+    "no specific"
+   ],
+   "for_whom_any": [
+    "me",
+    "myself",
+    "self"
+   ],
+   "horizon_any": [
+    null
+   ],
+   "allowed_numbers": []
+  },
+  {
+   "id": "p07",
+   "transcript": "Ye SIP meri shaadi ke liye hai, 2030 tak.",
+   "goal_any": [
+    "shaadi",
+    "wedding",
+    "marriage"
+   ],
+   "for_whom_any": [
+    "me",
+    "myself",
+    "self"
+   ],
+   "horizon_any": [
+    "2030"
+   ],
+   "allowed_numbers": [
+    "2030"
+   ]
+  },
+  {
+   "id": "p08",
+   "transcript": "To buy a house with my wife in about ten years.",
+   "goal_any": [
+    "house",
+    "home"
+   ],
+   "for_whom_any": [
+    "wife"
+   ],
+   "horizon_any": [
+    "ten",
+    "10"
+   ],
+   "allowed_numbers": []
+  },
+  {
+   "id": "p09",
+   "transcript": "My first salary went to my mother; this SIP is my way of saving for her retirement.",
+   "goal_any": [
+    "retirement"
+   ],
+   "for_whom_any": [
+    "mother",
+    "mum",
+    "mom"
+   ],
+   "horizon_any": [
+    null
+   ],
+   "allowed_numbers": []
+  },
+  {
+   "id": "p10",
+   "transcript": "A laptop for freelancing by next Diwali.",
+   "goal_any": [
+    "laptop"
+   ],
+   "for_whom_any": [
+    "me",
+    "myself",
+    "self"
+   ],
+   "horizon_any": [
+    "Diwali"
+   ],
+   "allowed_numbers": []
+  },
+  {
+   "id": "p11",
+   "transcript": "I want to quit my job someday and start a cafe.",
+   "goal_any": [
+    "cafe",
+    "café",
+    "business"
+   ],
+   "for_whom_any": [
+    "me",
+    "myself",
+    "self"
+   ],
+   "horizon_any": [
+    null
+   ],
+   "allowed_numbers": []
+  },
+  {
+   "id": "p12",
+   "transcript": "Car by 2027, then a bigger goal later.",
+   "goal_any": [
+    "car"
+   ],
+   "for_whom_any": [
+    "me",
+    "myself",
+    "self"
+   ],
+   "horizon_any": [
+    "2027"
+   ],
+   "allowed_numbers": [
+    "2027"
+   ]
+  }
+ ]
+}

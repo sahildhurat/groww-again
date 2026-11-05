@@ -1,0 +1,121 @@
+{
+ "note": "Inputs for the month-story route; scored by the gate (numbers, banned phrases, grounding).",
+ "items": [
+  {
+   "id": "ms-2025-12-05",
+   "this": {
+    "due_date": "2025-12-05",
+    "amount": 2000,
+    "nav": 100.0,
+    "units": 20.0
+   },
+   "previous": null,
+   "memory": "First salary from my first job."
+  },
+  {
+   "id": "ms-2026-01-05",
+   "this": {
+    "due_date": "2026-01-05",
+    "amount": 2000,
+    "nav": 102.4,
+    "units": 19.531
+   },
+   "previous": {
+    "due_date": "2025-12-05",
+    "nav": 100.0,
+    "units": 20.0
+   },
+   "memory": "Moved into a flat with two friends."
+  },
+  {
+   "id": "ms-2026-02-05",
+   "this": {
+    "due_date": "2026-02-05",
+    "amount": 2000,
+    "nav": 98.1,
+    "units": 20.387
+   },
+   "previous": {
+    "due_date": "2026-01-05",
+    "nav": 102.4,
+    "units": 19.531
+   },
+   "memory": null
+  },
+  {
+   "id": "ms-2026-03-05",
+   "this": {
+    "due_date": "2026-03-05",
+    "amount": 2000,
+    "nav": 95.3,
+    "units": 20.986
+   },
+   "previous": {
+    "due_date": "2026-02-05",
+    "nav": 98.1,
+    "units": 20.387
+   },
+   "memory": "Markets are down. A colleague asked what I had expected so soon."
+  },
+  {
+   "id": "ms-2026-04-05",
+   "this": {
+    "due_date": "2026-04-05",
+    "amount": 2000,
+    "nav": 99.8,
+    "units": 20.04
+   },
+   "previous": {
+    "due_date": "2026-03-05",
+    "nav": 95.3,
+    "units": 20.986
+   },
+   "memory": "Mum's birthday dinner."
+  },
+  {
+   "id": "ms-2026-06-05",
+   "this": {
+    "due_date": "2026-06-05",
+    "amount": 2000,
+    "nav": 104.2,
+    "units": 19.194
+   },
+   "previous": {
+    "due_date": "2026-04-05",
+    "nav": 99.8,
+    "units": 20.04
+   },
+   "memory": "Started driving lessons."
+  },
+  {
+   "id": "ms-2026-08-05",
+   "this": {
+    "due_date": "2026-08-05",
+    "amount": 2000,
+    "nav": 101.7,
+    "units": 19.666
+   },
+   "previous": {
+    "due_date": "2026-06-05",
+    "nav": 104.2,
+    "units": 19.194
+   },
+   "memory": "Promotion letter came."
+  },
+  {
+   "id": "ms-2026-10-05",
+   "this": {
+    "due_date": "2026-10-05",
+    "amount": 2000,
+    "nav": 106.9,
+    "units": 18.709
+   },
+   "previous": {
+    "due_date": "2026-08-05",
+    "nav": 101.7,
+    "units": 19.666
+   },
+   "memory": "Joined a new company. Salary now goes to a different bank; set up AutoPay on it."
+  }
+ ]
+}

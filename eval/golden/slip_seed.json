@@ -1,0 +1,105 @@
+{
+ "note": "The SPEC-06 demo seed months (the skipped month is excluded: it is a hard-month entry).",
+ "items": [
+  {
+   "id": "seed-2025-12-05",
+   "due_date": "2025-12-05",
+   "status": "paid",
+   "amount": 2000,
+   "nav": 100.0,
+   "units": 20.0,
+   "failure_text": null,
+   "expected_cause": "paid"
+  },
+  {
+   "id": "seed-2026-01-05",
+   "due_date": "2026-01-05",
+   "status": "paid",
+   "amount": 2000,
+   "nav": 102.4,
+   "units": 19.531,
+   "failure_text": null,
+   "expected_cause": "paid"
+  },
+  {
+   "id": "seed-2026-02-05",
+   "due_date": "2026-02-05",
+   "status": "paid",
+   "amount": 2000,
+   "nav": 98.1,
+   "units": 20.387,
+   "failure_text": null,
+   "expected_cause": "paid"
+  },
+  {
+   "id": "seed-2026-03-05",
+   "due_date": "2026-03-05",
+   "status": "paid",
+   "amount": 2000,
+   "nav": 95.3,
+   "units": 20.986,
+   "failure_text": null,
+   "expected_cause": "paid"
+  },
+  {
+   "id": "seed-2026-04-05",
+   "due_date": "2026-04-05",
+   "status": "paid",
+   "amount": 2000,
+   "nav": 99.8,
+   "units": 20.04,
+   "failure_text": null,
+   "expected_cause": "paid"
+  },
+  {
+   "id": "seed-2026-05-05",
+   "due_date": "2026-05-05",
+   "status": "failed",
+   "amount": 2000,
+   "nav": null,
+   "units": null,
+   "failure_text": "NACH debit returned: insufficient funds",
+   "expected_cause": "balance_insufficient"
+  },
+  {
+   "id": "seed-2026-06-05",
+   "due_date": "2026-06-05",
+   "status": "paid",
+   "amount": 2000,
+   "nav": 104.2,
+   "units": 19.194,
+   "failure_text": null,
+   "expected_cause": "paid"
+  },
+  {
+   "id": "seed-2026-08-05",
+   "due_date": "2026-08-05",
+   "status": "paid",
+   "amount": 2000,
+   "nav": 101.7,
+   "units": 19.666,
+   "failure_text": null,
+   "expected_cause": "paid"
+  },
+  {
+   "id": "seed-2026-09-05",
+   "due_date": "2026-09-05",
+   "status": "failed",
+   "amount": 2000,
+   "nav": null,
+   "units": null,
+   "failure_text": "Mandate rejected: account closed/inactive",
+   "expected_cause": "bank_account_issue"
+  },
+  {
+   "id": "seed-2026-10-05",
+   "due_date": "2026-10-05",
+   "status": "paid",
+   "amount": 2000,
+   "nav": 106.9,
+   "units": 18.709,
+   "failure_text": null,
+   "expected_cause": "paid"
+  }
+ ]
+}

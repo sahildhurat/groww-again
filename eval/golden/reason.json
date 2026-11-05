@@ -1,0 +1,200 @@
+{
+ "note": "Distress = serious personal hardship (job loss, medical, death, emergency); recall must be 100%.",
+ "items": [
+  {
+   "id": "s01",
+   "text": "I lost my job last week.",
+   "accepted_categories": [
+    "income_stopped"
+   ],
+   "distress": true
+  },
+  {
+   "id": "s02",
+   "text": "My father is in hospital and I need the money.",
+   "accepted_categories": [
+    "emergency"
+   ],
+   "distress": true
+  },
+  {
+   "id": "s03",
+   "text": "Money is tight this month, rent went up.",
+   "accepted_categories": [
+    "cash_shortage"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s04",
+   "text": "My internship stipend has ended.",
+   "accepted_categories": [
+    "income_stopped"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s05",
+   "text": "I changed jobs and my salary comes to a different bank now.",
+   "accepted_categories": [
+    "bank_changed"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s06",
+   "text": "I moved my salary account to Axis.",
+   "accepted_categories": [
+    "bank_changed"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s07",
+   "text": "I bought the bike already, so I don't need this.",
+   "accepted_categories": [
+    "goal_changed_or_reached"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s08",
+   "text": "I want to save for a house instead now.",
+   "accepted_categories": [
+    "goal_changed_or_reached"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s09",
+   "text": "This fund has been red for months, I want a better one.",
+   "accepted_categories": [
+    "fund_doubt"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s10",
+   "text": "My friend's fund gave better returns.",
+   "accepted_categories": [
+    "fund_doubt"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s11",
+   "text": "Family emergency, need cash.",
+   "accepted_categories": [
+    "emergency"
+   ],
+   "distress": true
+  },
+  {
+   "id": "s12",
+   "text": "Wedding expenses at home this month.",
+   "accepted_categories": [
+    "cash_shortage"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s13",
+   "text": "Credit card bill is too high this month.",
+   "accepted_categories": [
+    "cash_shortage"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s14",
+   "text": "My company has delayed salaries for two months.",
+   "accepted_categories": [
+    "income_stopped",
+    "cash_shortage"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s15",
+   "text": "There was a death in the family and I need to support my mother.",
+   "accepted_categories": [
+    "emergency"
+   ],
+   "distress": true
+  },
+  {
+   "id": "s16",
+   "text": "I had an accident and have medical bills.",
+   "accepted_categories": [
+    "emergency"
+   ],
+   "distress": true
+  },
+  {
+   "id": "s17",
+   "text": "I don't trust the market right now.",
+   "accepted_categories": [
+    "fund_doubt"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s18",
+   "text": "I'm going back to college for a master's.",
+   "accepted_categories": [
+    "income_stopped"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s19",
+   "text": "I'm just not sure about this anymore.",
+   "accepted_categories": [
+    "other",
+    "fund_doubt"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s20",
+   "text": "Taking a break to travel for a few months.",
+   "accepted_categories": [
+    "other",
+    "goal_changed_or_reached"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s21",
+   "text": "Meri job chali gayi, abhi paise nahi hai.",
+   "accepted_categories": [
+    "income_stopped"
+   ],
+   "distress": true
+  },
+  {
+   "id": "s22",
+   "text": "Is mahine paise kam hain.",
+   "accepted_categories": [
+    "cash_shortage"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s23",
+   "text": "Purana bank account band ho gaya, naya account khola hai.",
+   "accepted_categories": [
+    "bank_changed"
+   ],
+   "distress": false
+  },
+  {
+   "id": "s24",
+   "text": "Our baby was born and expenses have gone up.",
+   "accepted_categories": [
+    "cash_shortage"
+   ],
+   "distress": false
+  }
+ ]
+}

@@ -1,0 +1,185 @@
+{
+  "investor_name": "Demo investor",
+  "sip": {
+    "id": "demo-sip-001",
+    "name": "My first bike",
+    "dedication": "For me, by my birthday in 2028",
+    "fund_label": "Nifty 50 Index Fund (demo)",
+    "amount": 2000,
+    "day_of_month": 5,
+    "start_date": "2025-12-05",
+    "status": "active",
+    "current_nav": 108.20,
+    "promise_text": "I'm starting this for my first bike. I want to buy it by my birthday in 2028, without taking a loan.",
+    "promise_one_line": "For my first bike, by my birthday in 2028.",
+    "promise_goal": "first bike",
+    "promise_for_whom": "me",
+    "promise_horizon": "2028",
+    "promise_audio_path": "/audio/demo-promise.mp3",
+    "show_promise_at_cancel": true,
+    "birthday": "03-14",
+    "anniversary": null
+  },
+  "instalments": [
+    {
+      "id": "inst-2025-12-05",
+      "due_date": "2025-12-05",
+      "status": "paid",
+      "amount": 2000,
+      "nav": 100.00,
+      "units": 20.000,
+      "failure_code": null,
+      "failure_text": null,
+      "note": null,
+      "memory": {
+        "kind": "text",
+        "text": "First salary from my first job.",
+        "illustration": "/illustrations/key.svg"
+      }
+    },
+    {
+      "id": "inst-2026-01-05",
+      "due_date": "2026-01-05",
+      "status": "paid",
+      "amount": 2000,
+      "nav": 102.40,
+      "units": 19.531,
+      "failure_code": null,
+      "failure_text": null,
+      "note": null,
+      "memory": {
+        "kind": "text",
+        "text": "Moved into a flat with two friends.",
+        "illustration": null
+      }
+    },
+    {
+      "id": "inst-2026-02-05",
+      "due_date": "2026-02-05",
+      "status": "paid",
+      "amount": 2000,
+      "nav": 98.10,
+      "units": 20.387,
+      "failure_code": null,
+      "failure_text": null,
+      "note": null,
+      "memory": null
+    },
+    {
+      "id": "inst-2026-03-05",
+      "due_date": "2026-03-05",
+      "status": "paid",
+      "amount": 2000,
+      "nav": 95.30,
+      "units": 20.986,
+      "failure_code": null,
+      "failure_text": null,
+      "note": null,
+      "memory": {
+        "kind": "text",
+        "text": "Markets are down. A colleague asked what I had expected so soon.",
+        "illustration": null
+      }
+    },
+    {
+      "id": "inst-2026-04-05",
+      "due_date": "2026-04-05",
+      "status": "paid",
+      "amount": 2000,
+      "nav": 99.80,
+      "units": 20.040,
+      "failure_code": null,
+      "failure_text": null,
+      "note": null,
+      "memory": {
+        "kind": "text",
+        "text": "Mum's birthday dinner.",
+        "illustration": "/illustrations/cake.svg"
+      }
+    },
+    {
+      "id": "inst-2026-05-05",
+      "due_date": "2026-05-05",
+      "status": "failed",
+      "amount": 2000,
+      "nav": null,
+      "units": null,
+      "failure_code": "balance_insufficient",
+      "failure_text": "NACH debit returned: insufficient funds",
+      "note": null,
+      "memory": null
+    },
+    {
+      "id": "inst-2026-06-05",
+      "due_date": "2026-06-05",
+      "status": "paid",
+      "amount": 2000,
+      "nav": 104.20,
+      "units": 19.194,
+      "failure_code": null,
+      "failure_text": null,
+      "note": null,
+      "memory": {
+        "kind": "text",
+        "text": "Started driving lessons.",
+        "illustration": "/illustrations/road.svg"
+      }
+    },
+    {
+      "id": "inst-2026-07-05",
+      "due_date": "2026-07-05",
+      "status": "skipped",
+      "amount": 2000,
+      "nav": null,
+      "units": null,
+      "failure_code": null,
+      "failure_text": null,
+      "note": "Family emergency this month.",
+      "memory": null
+    },
+    {
+      "id": "inst-2026-08-05",
+      "due_date": "2026-08-05",
+      "status": "paid",
+      "amount": 2000,
+      "nav": 101.70,
+      "units": 19.666,
+      "failure_code": null,
+      "failure_text": null,
+      "note": null,
+      "memory": {
+        "kind": "text",
+        "text": "Promotion letter came.",
+        "illustration": null
+      }
+    },
+    {
+      "id": "inst-2026-09-05",
+      "due_date": "2026-09-05",
+      "status": "failed",
+      "amount": 2000,
+      "nav": null,
+      "units": null,
+      "failure_code": "bank_account_issue",
+      "failure_text": "Mandate rejected: account closed/inactive",
+      "note": null,
+      "memory": null
+    },
+    {
+      "id": "inst-2026-10-05",
+      "due_date": "2026-10-05",
+      "status": "paid",
+      "amount": 2000,
+      "nav": 106.90,
+      "units": 18.709,
+      "failure_code": null,
+      "failure_text": null,
+      "note": null,
+      "memory": {
+        "kind": "text",
+        "text": "Joined a new company. Salary now goes to a different bank; set up AutoPay on it.",
+        "illustration": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+# secrets
+.env
+.env.*
+!.env.local.example
+# private data (real-text golden set, help corpus, private terms, spend log)
+private/
+# build and test output
+node_modules/
+.next/
+out/
+coverage/
+playwright-report/
+test-results/
+*.log
+.vercel

@@ -1,0 +1,100 @@
+[
+  {
+    "id": "rule-skip-01",
+    "topic": "skip_rules",
+    "title": "Skipping an instalment",
+    "text": "You can skip one instalment at a time. Skips count toward three missed instalments in a row. A skipped instalment will not be debited, and your SIP will resume from the following month.",
+    "url": "https://groww.in/help/mutual-funds/sip/skip-installment"
+  },
+  {
+    "id": "rule-cancel-01",
+    "topic": "cancel_rules",
+    "title": "Cancelling your SIP",
+    "text": "Cancelling a SIP stops future instalments only. Your accumulated units stay with you in your folio and continue to grow with the fund until you decide to redeem them.",
+    "url": "https://groww.in/help/mutual-funds/sip/cancel-sip"
+  },
+  {
+    "id": "rule-cancel-timing-01",
+    "topic": "cancel_timing",
+    "title": "Cancellation processing time",
+    "text": "Under SEBI regulations, cancellation requests must be processed within 2 working days by the mutual fund company.",
+    "url": "https://groww.in/help/mutual-funds/sip/cancellation-timeline"
+  },
+  {
+    "id": "rule-pause-01",
+    "topic": "pause_terms",
+    "title": "Pausing your SIP",
+    "text": "A pause is offered only where the fund house allows it. Up to 3 months can be paused, requested at least 15 days before the next instalment, subject to the fund house accepting the request.",
+    "url": "https://groww.in/help/mutual-funds/sip/pause-sip"
+  },
+  {
+    "id": "rule-pay-now-01",
+    "topic": "pay_now",
+    "title": "Pay Now for missed instalments",
+    "text": "If an instalment fails due to insufficient balance, you can use Pay Now within 2 working days via NetBanking or UPI to complete the instalment for that month.",
+    "url": "https://groww.in/help/mutual-funds/sip/missed-payment-pay-now"
+  },
+  {
+    "id": "rule-change-bank-01",
+    "topic": "change_bank_autopay",
+    "title": "Changing your bank account for AutoPay",
+    "text": "To change your salary or bank account, set up a new AutoPay mandate on your active bank account and link it to this SIP. The mandate must be authenticated by you with your bank.",
+    "url": "https://groww.in/help/mutual-funds/sip/change-bank-autopay"
+  },
+  {
+    "id": "rule-autopay-reset-01",
+    "topic": "autopay_approve_or_reset",
+    "title": "AutoPay mandate approval or reset",
+    "text": "If an AutoPay mandate is rejected or pending, approve the mandate request in your net banking or UPI app, or reset AutoPay with your bank.",
+    "url": "https://groww.in/help/mutual-funds/autopay/approve-mandate"
+  },
+  {
+    "id": "rule-kyc-01",
+    "topic": "kyc_update",
+    "title": "Updating your KYC status",
+    "text": "If an instalment fails due to KYC status, update your KYC records with the KRA or submit updated identity documents for verification before the next due date.",
+    "url": "https://groww.in/help/mutual-funds/kyc/update-kyc"
+  },
+  {
+    "id": "rule-refund-01",
+    "topic": "refund_timeline",
+    "title": "Refund timeline for debited orders without units",
+    "text": "If money was debited from your bank account but units were not allocated, the full amount will be refunded to your source bank account within 7 working days.",
+    "url": "https://groww.in/help/mutual-funds/orders/refund-timeline"
+  },
+  {
+    "id": "rule-withdraw-01",
+    "topic": "withdrawal_timing",
+    "title": "Withdrawal settlement timeline",
+    "text": "Mutual fund redemption requests are processed by the fund house and proceeds are credited to your verified bank account within 2 to 3 working days.",
+    "url": "https://groww.in/help/mutual-funds/redemption/settlement-timeline"
+  },
+  {
+    "id": "rule-exit-load-01",
+    "topic": "exit_load",
+    "title": "Exit load charges",
+    "text": "Exit load is a fee charged by the mutual fund company if units are redeemed before a specified holding period (typically 1 year for equity funds).",
+    "url": "https://groww.in/help/mutual-funds/redemption/exit-load"
+  },
+  {
+    "id": "rule-elss-01",
+    "topic": "elss_lockin",
+    "title": "ELSS tax saver lock-in period",
+    "text": "ELSS (Equity Linked Savings Scheme) mutual funds have a mandatory statutory lock-in period of 3 years from the date of each instalment.",
+    "url": "https://groww.in/help/mutual-funds/elss/lockin-period"
+  },
+  {
+    "id": "rule-three-miss-01",
+    "topic": "three_miss_rule",
+    "title": "SEBI three missed instalments rule",
+    "text": "Under SEBI and mutual fund operating guidelines, three missed instalments in a row cancel a monthly SIP automatically.",
+    "url": "https://groww.in/help/mutual-funds/sip/three-missed-instalments-cancellation"
+  },
+  {
+    "id": "rule-restart-01",
+    "topic": "restart_new_sip",
+    "title": "Starting a new SIP after cancellation",
+    "text": "A cancelled SIP cannot be resumed or un-cancelled. To continue investing in the fund, you must start a new SIP.",
+    "url": "https://groww.in/help/mutual-funds/sip/restart-cancelled-sip"
+  }
+]

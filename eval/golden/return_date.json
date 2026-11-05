@@ -1,0 +1,183 @@
+{
+ "note": "Today = 2026-11-05. Pass: expected_date exact; or, for vague phrases, needs_confirmation = true and any proposed date inside accepted_range; past or very distant dates must set needs_confirmation.",
+ "items": [
+  {
+   "id": "t01",
+   "text": "On my birthday",
+   "profile": {
+    "birthday": "03-14"
+   },
+   "expected_date": "2027-03-14",
+   "accepted_range": null,
+   "expect_needs_confirmation": false
+  },
+  {
+   "id": "t02",
+   "text": "After my sister's wedding in February",
+   "profile": {},
+   "expected_date": null,
+   "accepted_range": [
+    "2027-02-01",
+    "2027-03-31"
+   ],
+   "expect_needs_confirmation": true
+  },
+  {
+   "id": "t03",
+   "text": "1 April",
+   "profile": {},
+   "expected_date": "2027-04-01",
+   "accepted_range": null,
+   "expect_needs_confirmation": false
+  },
+  {
+   "id": "t04",
+   "text": "The new financial year",
+   "profile": {},
+   "expected_date": "2027-04-01",
+   "accepted_range": null,
+   "expect_needs_confirmation": false
+  },
+  {
+   "id": "t05",
+   "text": "In three months",
+   "profile": {},
+   "expected_date": "2027-02-05",
+   "accepted_range": null,
+   "expect_needs_confirmation": false
+  },
+  {
+   "id": "t06",
+   "text": "15 January 2027",
+   "profile": {},
+   "expected_date": "2027-01-15",
+   "accepted_range": null,
+   "expect_needs_confirmation": false
+  },
+  {
+   "id": "t07",
+   "text": "When I join my new job in July",
+   "profile": {},
+   "expected_date": null,
+   "accepted_range": [
+    "2027-07-01",
+    "2027-07-31"
+   ],
+   "expect_needs_confirmation": true
+  },
+  {
+   "id": "t08",
+   "text": "Our anniversary",
+   "profile": {
+    "anniversary": "06-22"
+   },
+   "expected_date": "2027-06-22",
+   "accepted_range": null,
+   "expect_needs_confirmation": false
+  },
+  {
+   "id": "t09",
+   "text": "After my exams in May",
+   "profile": {},
+   "expected_date": null,
+   "accepted_range": [
+    "2027-05-01",
+    "2027-06-15"
+   ],
+   "expect_needs_confirmation": true
+  },
+  {
+   "id": "t10",
+   "text": "In six weeks",
+   "profile": {},
+   "expected_date": "2026-12-17",
+   "accepted_range": null,
+   "expect_needs_confirmation": false
+  },
+  {
+   "id": "t11",
+   "text": "My birthday next year",
+   "profile": {
+    "birthday": "03-14"
+   },
+   "expected_date": "2027-03-14",
+   "accepted_range": null,
+   "expect_needs_confirmation": false
+  },
+  {
+   "id": "t12",
+   "text": "On 3rd March",
+   "profile": {},
+   "expected_date": "2027-03-03",
+   "accepted_range": null,
+   "expect_needs_confirmation": false
+  },
+  {
+   "id": "t13",
+   "text": "Two months from now",
+   "profile": {},
+   "expected_date": "2027-01-05",
+   "accepted_range": null,
+   "expect_needs_confirmation": false
+  },
+  {
+   "id": "t14",
+   "text": "When my salary is revised in April",
+   "profile": {},
+   "expected_date": null,
+   "accepted_range": [
+    "2027-04-01",
+    "2027-04-30"
+   ],
+   "expect_needs_confirmation": true
+  },
+  {
+   "id": "t15",
+   "text": "Christmas",
+   "profile": {},
+   "expected_date": "2026-12-25",
+   "accepted_range": null,
+   "expect_needs_confirmation": false
+  },
+  {
+   "id": "t16",
+   "text": "New Year's Day",
+   "profile": {},
+   "expected_date": "2027-01-01",
+   "accepted_range": null,
+   "expect_needs_confirmation": false
+  },
+  {
+   "id": "t17",
+   "text": "Republic Day",
+   "profile": {},
+   "expected_date": "2027-01-26",
+   "accepted_range": null,
+   "expect_needs_confirmation": false
+  },
+  {
+   "id": "t18",
+   "text": "Independence Day next year",
+   "profile": {},
+   "expected_date": "2027-08-15",
+   "accepted_range": null,
+   "expect_needs_confirmation": false
+  },
+  {
+   "id": "t19",
+   "text": "Yesterday",
+   "profile": {},
+   "expected_date": null,
+   "accepted_range": null,
+   "expect_needs_confirmation": true
+  },
+  {
+   "id": "t20",
+   "text": "In 3 years",
+   "profile": {},
+   "expected_date": null,
+   "accepted_range": null,
+   "expect_needs_confirmation": true
+  }
+ ]
+}

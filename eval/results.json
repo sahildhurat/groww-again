@@ -1,0 +1,66 @@
+{
+  "timestamp": "2026-11-05T11:31:54.310Z",
+  "model": "claude-haiku-5-5",
+  "run_id": "eval-1793878314303",
+  "allow_paid": false,
+  "prompt_hashes": {
+    "ask.md": "5dd1b2f54c47394c74be9f7de12422dfee721b0316226bb73d157358a4bf8994",
+    "month-story.md": "4a77b01c07ae7fa285992e023680aaf4021a588dd7da894cbebbbf486a1dde4f",
+    "promise.md": "4a20430c0f56edb002ceba52a1926d0174e0e282be1ed81c97b6d175a79bbbfc",
+    "reason.md": "566943551b74bf5a91d97e1090b0b572f181e663ea724950d14a99d5c072bb5b",
+    "return-date.md": "ee54e809576177c90b90036713a1b5df9fc332956a45976393ed5571218dff94",
+    "slip.md": "8eadfaf8f726daef5db475555b44394d0dce2376451e09f4987f1b940a8c2a88",
+    "year-story.md": "78cf352b6b7317d7f0a2d192450088ba7ed0241e18ca1385d5ec57e233f9d3f4"
+  },
+  "thresholds_met": true,
+  "metrics": {
+    "slip_seed": {
+      "accuracy": 100,
+      "threshold": 100,
+      "passed": true
+    },
+    "slip_real": {
+      "accuracy": 100,
+      "threshold": 80,
+      "passed": true
+    },
+    "ask": {
+      "facts_accuracy": 100,
+      "facts_threshold": 85,
+      "must_decline_accuracy": 100,
+      "must_decline_threshold": 100,
+      "wrong_declines_rate": 0,
+      "wrong_declines_threshold": 10,
+      "passed": true
+    },
+    "reason": {
+      "category_accuracy": 100,
+      "category_threshold": 85,
+      "distress_recall": 100,
+      "distress_threshold": 100,
+      "passed": true
+    },
+    "return_date": {
+      "accuracy": 100,
+      "threshold": 90,
+      "passed": true
+    },
+    "promise": {
+      "accuracy": 100,
+      "threshold": 85,
+      "added_numbers": 0,
+      "added_numbers_threshold": 0,
+      "passed": true
+    },
+    "month_story": {
+      "gate_pass_rate": 100,
+      "threshold": 90,
+      "passed": true
+    }
+  },
+  "token_totals": {
+    "input": 0,
+    "output": 0,
+    "cost_usd": 0
+  }
+}

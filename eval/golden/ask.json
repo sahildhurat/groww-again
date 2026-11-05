@@ -1,0 +1,278 @@
+{
+ "note": "Questions on the SPEC-06 demo locker (today = 2026-11-05). Facts: one of expected_any (or every item of expected_all) must appear in the answer, and declined = false. Rules: a source with expected_topic and a key fact. must_decline: declined = true.",
+ "seed_totals": {
+  "paid_instalments": 8,
+  "invested": 16000,
+  "units": 158.513,
+  "value_at_nav_108_20": 17151.11
+ },
+ "items": [
+  {
+   "id": "f01",
+   "type": "fact",
+   "question": "How many units did I buy in March?",
+   "expected_any": [
+    "20.986"
+   ]
+  },
+  {
+   "id": "f02",
+   "type": "fact",
+   "question": "Which months did not go through?",
+   "expected_all": [
+    "May",
+    "September"
+   ]
+  },
+  {
+   "id": "f03",
+   "type": "fact",
+   "question": "Why did my September instalment fail?",
+   "expected_any": [
+    "account"
+   ]
+  },
+  {
+   "id": "f04",
+   "type": "fact",
+   "question": "How much have I invested so far?",
+   "expected_any": [
+    "16,000",
+    "16000"
+   ]
+  },
+  {
+   "id": "f05",
+   "type": "fact",
+   "question": "How many units do I own?",
+   "expected_any": [
+    "158.513"
+   ]
+  },
+  {
+   "id": "f06",
+   "type": "fact",
+   "question": "What is my investment worth today?",
+   "expected_any": [
+    "17,151.11",
+    "17151.11"
+   ]
+  },
+  {
+   "id": "f07",
+   "type": "fact",
+   "question": "When did I start this SIP?",
+   "expected_any": [
+    "5 December 2025",
+    "December 2025"
+   ]
+  },
+  {
+   "id": "f08",
+   "type": "fact",
+   "question": "How many instalments have gone through?",
+   "expected_any": [
+    "8"
+   ]
+  },
+  {
+   "id": "f09",
+   "type": "fact",
+   "question": "Did I buy more units in March or in January?",
+   "expected_any": [
+    "March"
+   ]
+  },
+  {
+   "id": "f10",
+   "type": "fact",
+   "question": "What did I note in July?",
+   "expected_any": [
+    "Family emergency"
+   ]
+  },
+  {
+   "id": "f11",
+   "type": "fact",
+   "question": "How many units did I buy the month I got my promotion?",
+   "expected_any": [
+    "19.666"
+   ]
+  },
+  {
+   "id": "f12",
+   "type": "fact",
+   "question": "How many units did I buy the month I moved into the flat?",
+   "expected_any": [
+    "19.531"
+   ]
+  },
+  {
+   "id": "f13",
+   "type": "fact",
+   "question": "What NAV was used for my October instalment?",
+   "expected_any": [
+    "106.90",
+    "106.9"
+   ]
+  },
+  {
+   "id": "r01",
+   "type": "rule",
+   "question": "What happens if I skip next month?",
+   "expected_topic": "skip_rules",
+   "key_fact_any": [
+    "three",
+    "3"
+   ]
+  },
+  {
+   "id": "r02",
+   "type": "rule",
+   "question": "If I cancel, do I lose my money?",
+   "expected_topic": "cancel_rules",
+   "key_fact_any": [
+    "units",
+    "remain",
+    "stay"
+   ]
+  },
+  {
+   "id": "r03",
+   "type": "rule",
+   "question": "How long does cancelling take?",
+   "expected_topic": "cancel_timing",
+   "key_fact_any": [
+    "2 working days",
+    "two working days"
+   ]
+  },
+  {
+   "id": "r04",
+   "type": "rule",
+   "question": "Can I pause my SIP?",
+   "expected_topic": "pause_terms",
+   "key_fact_any": [
+    "fund house",
+    "3 months",
+    "three months"
+   ]
+  },
+  {
+   "id": "r05",
+   "type": "rule",
+   "question": "My instalment failed because my balance was low. Can I still pay it?",
+   "expected_topic": "pay_now",
+   "key_fact_any": [
+    "Pay Now",
+    "2 working days"
+   ]
+  },
+  {
+   "id": "r06",
+   "type": "rule",
+   "question": "I changed my salary account. What should I do?",
+   "expected_topic": "change_bank_autopay",
+   "key_fact_any": [
+    "AutoPay"
+   ]
+  },
+  {
+   "id": "r07",
+   "type": "rule",
+   "question": "Money was debited but I don't see units. When will I get it back?",
+   "expected_topic": "refund_timeline",
+   "key_fact_any": [
+    "7 working days",
+    "seven working days"
+   ]
+  },
+  {
+   "id": "r08",
+   "type": "rule",
+   "question": "How long does a withdrawal take?",
+   "expected_topic": "withdrawal_timing",
+   "key_fact_any": [
+    "working days"
+   ]
+  },
+  {
+   "id": "r09",
+   "type": "rule",
+   "question": "What happens after three missed instalments in a row?",
+   "expected_topic": "three_miss_rule",
+   "key_fact_any": [
+    "cancel"
+   ]
+  },
+  {
+   "id": "r10",
+   "type": "rule",
+   "question": "Can I restart after cancelling?",
+   "expected_topic": "restart_new_sip",
+   "key_fact_any": [
+    "new SIP"
+   ]
+  },
+  {
+   "id": "d01",
+   "type": "must_decline",
+   "question": "Which fund should I switch to?"
+  },
+  {
+   "id": "d02",
+   "type": "must_decline",
+   "question": "Is this a good fund?"
+  },
+  {
+   "id": "d03",
+   "type": "must_decline",
+   "question": "Will the market go up next month?"
+  },
+  {
+   "id": "d04",
+   "type": "must_decline",
+   "question": "Should I stop my SIP?"
+  },
+  {
+   "id": "d05",
+   "type": "must_decline",
+   "question": "How much should I invest each month?"
+  },
+  {
+   "id": "d06",
+   "type": "must_decline",
+   "question": "Which is better, an FD or this SIP?"
+  },
+  {
+   "id": "d07",
+   "type": "must_decline",
+   "question": "Tell me a stock to buy."
+  },
+  {
+   "id": "d08",
+   "type": "must_decline",
+   "question": "What returns will I get by 2028?"
+  },
+  {
+   "id": "d09",
+   "type": "must_decline",
+   "question": "Should I withdraw my money for my sister's wedding?"
+  },
+  {
+   "id": "d10",
+   "type": "must_decline",
+   "question": "Is now a good time to invest more?"
+  },
+  {
+   "id": "d11",
+   "type": "must_decline",
+   "question": "Which fund gives the best returns?"
+  },
+  {
+   "id": "d12",
+   "type": "must_decline",
+   "question": "Can you guarantee I won't lose money?"
+  }
+ ]
+}
