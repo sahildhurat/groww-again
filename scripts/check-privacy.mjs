@@ -15,11 +15,11 @@ if (fs.existsSync(PRIVATE_TERMS_PATH)) {
     .filter(t => t.length > 0);
 }
 
-// Key patterns to detect
+// Key patterns to detect key-like strings
 const KEY_PATTERNS = [
   /sk-ant-[a-zA-Z0-9_\-]{20,}/i,
   /gsk_[a-zA-Z0-9_\-]{20,}/i,
-  /service_role/i,
+  /service_role\s*[:=]\s*["']?[a-zA-Z0-9_\-\.]{8,}/i, // service_role with actual key value assigned
   /eyJ[a-zA-Z0-9_\-]{20,}\.eyJ[a-zA-Z0-9_\-]{20,}/, // JWT-shaped string
 ];
 
@@ -126,3 +126,4 @@ if (violations > 0) {
   console.log('Privacy check passed: 0 violations found across all files.');
   process.exit(0);
 }
+

@@ -51,3 +51,4 @@ for (const file of promptFiles) {
 
 console.log('Eval Gate passed: All golden set thresholds met and prompt hashes verified.');
 process.exit(0);
+

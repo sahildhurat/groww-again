@@ -40,3 +40,4 @@ for (const file of files) {
   const hash = crypto.createHash("sha256").update(content).digest("hex");
   console.log(`| \`${file}\` | \`${hash}\` |`);
 }
+

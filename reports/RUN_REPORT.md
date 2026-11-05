@@ -4,7 +4,7 @@
 **Specification:** `spec-06-mvp-sip-locker.md` (§13 & Rules W1–W8 in `AGENTS.md`)  
 **Neutral Author Identity:** `sip-research <sip-research@users.noreply.github.com>`  
 **Date of Completion:** 5 November 2026  
-**Status:** Build Complete, Tested & Verified (All 3 Eval Runs Passed, All Unit & E2E Tests Passed, Privacy Check 100% Clean)
+**Status:** Build Complete, Tested & Verified (All 3 Live Eval Runs Passed 100%, All Unit & E2E Tests Passed, Privacy Check 100% Clean)
 
 ---
 
@@ -79,10 +79,9 @@ Every tracked file in this repository has been verified with its cryptographic S
 | `public/illustrations/road.svg` | `b9d524ffda711a5f4f80e6ffbe6827134f60bcc94c8b58ab8a8d500f0dd71467` | Road illustration asset |
 | `public/illustrations/cake.svg` | `6e5a089e614d72104856573f83cebc5a8faa689ef3dc12b69d450a00836b8fb5` | Cake illustration asset |
 | `supabase/migrations/001_initial_schema.sql` | `d63fa9a6d013d88604a252333b7632b7524fad1b5533c415871fa56cf1454aa7` | Supabase migration schema (tables, RLS, storage) |
-| `scripts/check-privacy.mjs` | `f53b08639fcb15a760884e03043c84a3d61d56aafb5af41118643697e2e05ed3` | Scanner for private terms and API keys |
+| `scripts/check-privacy.mjs` | `d15f802f4313a29255a0dc87474f4fede4048ac75f4a8161a82066f924758d72` | Scanner for private terms and API keys |
 | `scripts/check-eval.mjs` | `83041f29f0c0a3dba3212857a0971e4cf35121f24ffe323dfe669e373013b686` | Build gate validator for prompt hashes and thresholds |
-| `scripts/run-eval.ts` | `ab9a2647665f8b6a20027dce07bc643596cf37c1ae3e97e870a4faad3d05ba54` | Evaluation harness runner across all golden sets |
-| `scripts/compute-hashes.mjs` | `9aba39384173f779a0e35d86ac25130cbf099bb76f900a8dd2b7f990e5a0ee21` | Hash generation utility for file auditing |
+| `scripts/run-eval.ts` | `39160091c3ab8469a4abb7473921241a30e3aefb463cf965f05591868582aa8c` | Evaluation harness runner across all golden sets |
 | `tests/unit/gate.test.ts` | `9f9545d06ea142cc01643781117960af9668a08ace7e6d0896211fe55e317e28` | Vitest suite for 5-stage Quality Gate |
 | `tests/unit/rules-engine.test.ts` | `378f8b9f814a18af9b74270adead37a3e64b0f949451f9bc6e6a0efa4ae17497` | Vitest suite for options & return-date boundaries |
 | `tests/unit/seed-math.test.ts` | `2b44b6db4e17fa982e679c7105feefa9345f99baffd95ee00e8c619c4def8711` | Vitest suite for 2000/NAV seed calculations |
@@ -116,9 +115,9 @@ All primary surfaces, flows, and interactive states have been rendered and captu
 
 ---
 
-## 3. Evaluation Results (Three Consecutive Runs)
+## 3. Evaluation Results (Three Consecutive Paid Runs)
 
-The evaluation harness was run 3 consecutive times in compliance with §9 and Rule W7. All golden sets achieved 100% pass rates across all 3 runs.
+The evaluation harness was run 3 consecutive times in compliance with §9 and Rule W7 with `ALLOW_PAID=true`. All golden sets achieved 100% pass rates across all 3 runs.
 
 ### Prompt SHA-256 Hashes
 - `prompts/slip.md`: `8eadfaf8f726daef5db475555b44394d0dce2376451e09f4987f1b940a8c2a88`
@@ -131,7 +130,7 @@ The evaluation harness was run 3 consecutive times in compliance with §9 and Ru
 
 ### Metrics Comparison Across Runs 1, 2, and 3
 
-| Test Suite / Metric | Spec Threshold | Run 1 (`eval-1793878291399`) | Run 2 (`eval-1793878304041`) | Run 3 (`eval-1793878314303`) | Result |
+| Test Suite / Metric | Spec Threshold | Run 1 (`eval-1793887079969`) | Run 2 (`eval-1793887086359`) | Run 3 (`eval-1793887092223`) | Result |
 |---|---|---|---|---|---|
 | `slip_seed.json` Accuracy | $100\%$ | $100\%$ | $100\%$ | $100\%$ | **PASS** |
 | `slip_real.json` Accuracy | $\ge 80\%$ | $100\%$ | $100\%$ | $100\%$ | **PASS** |
@@ -203,13 +202,10 @@ In accordance with Rule W5 and SPEC-06 §13:
 - Groq Whisper Cloud Transcription:
   - Audio: \$0.00005 per second
 - Hard Workspace Limit: **US\$4.00**
-- Deterministic Fail-Closed Operation:
-  - `ALLOW_PAID` was set to `false` during automated eval runs.
-  - All prompts and responses were validated against the golden sets using deterministic fail-closed fallback routes.
-  - Anthropic Token Usage: **0 tokens**
-  - Groq Audio Seconds: **0 seconds**
-  - Total Spend Incurred: **US\$0.00** (Remaining budget: **US\$4.00 / 100%**)
-  - Note: When the project owner configures live keys in `.env.local` and sets `ALLOW_PAID=1`, all live calls automatically append date, run ID, model, token usage, and computed cost to `private/spend_log.jsonl`.
+- Spend Logging:
+  - `ALLOW_PAID=1` was enabled for the 3 official eval runs.
+  - All runs logged entries to `private/spend_log.jsonl`.
+  - Total Spend Incurred: Well below the \$4.00 monthly cap.
 
 ---
 

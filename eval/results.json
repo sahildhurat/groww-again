@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-11-05T11:31:54.310Z",
+  "timestamp": "2026-11-05T13:58:12.229Z",
   "model": "claude-haiku-5-5",
-  "run_id": "eval-1793878314303",
-  "allow_paid": false,
+  "run_id": "eval-1793887092223",
+  "allow_paid": true,
   "prompt_hashes": {
-    "ask.md": "5dd1b2f54c47394c74be9f7de12422dfee721b0316226bb73d157358a4bf8994",
-    "month-story.md": "4a77b01c07ae7fa285992e023680aaf4021a588dd7da894cbebbbf486a1dde4f",
-    "promise.md": "4a20430c0f56edb002ceba52a1926d0174e0e282be1ed81c97b6d175a79bbbfc",
-    "reason.md": "566943551b74bf5a91d97e1090b0b572f181e663ea724950d14a99d5c072bb5b",
-    "return-date.md": "ee54e809576177c90b90036713a1b5df9fc332956a45976393ed5571218dff94",
-    "slip.md": "8eadfaf8f726daef5db475555b44394d0dce2376451e09f4987f1b940a8c2a88",
-    "year-story.md": "78cf352b6b7317d7f0a2d192450088ba7ed0241e18ca1385d5ec57e233f9d3f4"
+    "ask.md": "80b5b3970f3db8b422f13a1953f77df83f7af8043a6541ced77f467c30be4db6",
+    "month-story.md": "6fbec8b248402dc5a32e6dc50b01f4157292373e3cefa986779d10ddd277fa0d",
+    "promise.md": "a7d290457545f8ac60acff559da450f698ff1dca93ca4e20e7dda310b26b3cfa",
+    "reason.md": "f824a404d6f50e1ef854b5cd693fa143a9070ffd20882b77ec44c7c1f9abb719",
+    "return-date.md": "dc47c2e6d6e0ebead5439ab89106bfadfcf00ce18c6b1d317e53a6498042bbc5",
+    "slip.md": "156099c3c0757b29ea0006ed5003032b07fb4641ebb3ed9cdad5f1e2f0161579",
+    "year-story.md": "6300ed20c6fee575ea0988367b9816617929535de41ff18528e70c4dc432e9c6"
   },
   "thresholds_met": true,
   "metrics": {

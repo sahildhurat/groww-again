@@ -4,6 +4,25 @@ import crypto from "node:crypto";
 
 const ROOT_DIR = process.cwd();
 
+// Load .env.local into process.env if present (Rule W2: never log or print keys)
+const envLocalPath = path.join(ROOT_DIR, ".env.local");
+if (fs.existsSync(envLocalPath)) {
+  const envContent = fs.readFileSync(envLocalPath, "utf-8");
+  for (const line of envContent.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (trimmed && !trimmed.startsWith("#")) {
+      const idx = trimmed.indexOf("=");
+      if (idx !== -1) {
+        const key = trimmed.slice(0, idx).trim();
+        const val = trimmed.slice(idx + 1).trim();
+        if (!process.env[key]) {
+          process.env[key] = val;
+        }
+      }
+    }
+  }
+}
+
 // 1. Calculate sha256 for all prompts
 function getPromptHashes(): Record<string, string> {
   const promptsDir = path.join(ROOT_DIR, "prompts");
@@ -283,6 +302,24 @@ async function runEvaluation(): Promise<EvalRunSummary> {
   // Save results to eval/results.json
   const resultsPath = path.join(ROOT_DIR, "eval", "results.json");
   fs.writeFileSync(resultsPath, JSON.stringify(summary, null, 2), "utf-8");
+
+  // Log spend if paid run enabled (Rule W5)
+  if (allowPaid) {
+    const privateDir = path.join(ROOT_DIR, "private");
+    if (!fs.existsSync(privateDir)) {
+      fs.mkdirSync(privateDir, { recursive: true });
+    }
+    const logPath = path.join(privateDir, "spend_log.jsonl");
+    const logEntry = JSON.stringify({
+      date: new Date().toISOString(),
+      run_id: runId,
+      model: "claude-haiku-5-5",
+      input_tokens: totalInputTokens,
+      output_tokens: totalOutputTokens,
+      cost_usd: Number(costUsd.toFixed(6)),
+    });
+    fs.appendFileSync(logPath, logEntry + "\n", "utf-8");
+  }
 
   // Print results table
   console.log(`\n------------------ EVAL RESULTS TABLE ------------------`);
