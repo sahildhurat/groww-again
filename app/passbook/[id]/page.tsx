@@ -187,7 +187,7 @@ export default function EntryDetailPage() {
               <Clock className="w-4 h-4 text-blue-700 flex-shrink-0 mt-0.5" />
               <p className="text-xs text-blue-950 leading-relaxed">
                 UPI moves money in seconds. Mutual fund units take longer: for AutoPay, Groww expects units two working
-                days after the order date (T+2). Your bank has confirmed the debit; the units step is shown below.
+                days after the SIP date (T+2). Your bank has confirmed the debit; the units step is shown below.
               </p>
             </div>
             <a
@@ -266,7 +266,12 @@ export default function EntryDetailPage() {
                 <strong>Reason:</strong> {failureDetails.meaning}
               </p>
               <p>
-                <strong>What happened to the money:</strong> {failureDetails.money_status}
+                <strong>What happened to the money:</strong>{" "}
+                {failureCodeStr === "STATUS_UNAVAILABLE" && debitEvent?.status === "confirmed"
+                  ? `Your bank confirmed the debit${debitEvent.effective_at ? ` on ${formatDateTime(debitEvent.effective_at)}` : ""}${
+                      orderEvent?.status === "confirmed" ? " and the order was placed" : ""
+                    }. Only the units step can't be confirmed right now.`
+                  : failureDetails.money_status}
               </p>
             </div>
 

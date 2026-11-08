@@ -14,6 +14,8 @@ const REASON: Record<string, string> = {
   INSUFFICIENT_BALANCE: "My bank returned it for insufficient balance, so nothing was taken from my account.",
   MANDATE_NOT_APPROVED: "The app says the AutoPay mandate wasn't approved or active, so nothing was taken from my account.",
   ORDER_NOT_ACCEPTED: "The money left my bank but the order wasn't accepted, so it's being refunded to my account.",
+  // used when the refund itself is confirmed (see the refunded case below)
+  ORDER_NOT_ACCEPTED_REFUNDED: "The money left my bank but the order wasn't accepted, so it was refunded to my account",
   STATUS_UNAVAILABLE: "The app can't confirm the latest status right now.",
 };
 
@@ -37,14 +39,20 @@ export function friendMessage(entry: Instalment, friendName?: string, demo = tru
         (debit?.effective_at ? ` on ${formatDateTime(debit.effective_at)}` : "") +
         `${order?.status === "confirmed" ? " and the order was placed" : ""}, but the units aren't confirmed yet` +
         (allot?.as_of ? ` (last checked ${formatDateTime(allot.as_of)})` : "") +
-        ". Groww's help says units usually come two working days after the order date. Have you seen this before?";
+        ". Groww's help says units usually come two working days after the SIP date. Have you seen this before?";
       break;
     case "failed":
       body = `can I ask you something about my SIP? My ${amount} instalment for ${due} didn't go through. ${reason} Have you dealt with this before?`;
       break;
-    case "refunded":
-      body = `can I ask you something about my SIP? My ${amount} instalment for ${due} didn't become units. ${reason} Have you had a refund like this?`;
+    case "refunded": {
+      const refund = entry.events.find((e) => e.type === "refund" && e.status === "confirmed");
+      const why =
+        refund && code === "ORDER_NOT_ACCEPTED"
+          ? `${REASON.ORDER_NOT_ACCEPTED_REFUNDED}${refund.effective_at ? ` on ${formatDate(refund.effective_at)}` : ""}.`
+          : reason;
+      body = `can I ask you something about my SIP? My ${amount} instalment for ${due} didn't become units. ${why} Have you had a refund like this?`;
       break;
+    }
     case "unknown":
       body =
         `can I ask you something about my SIP? The app can't confirm the status of my ${amount} instalment for ${due} right now` +
@@ -59,7 +67,7 @@ export function friendMessage(entry: Instalment, friendName?: string, demo = tru
         `can I ask you something about my SIP? My ${amount} instalment for ${due} went through` +
         (entry.units ? `: ${entry.units.toFixed(3)} units` : "") +
         (allot?.effective_at ? ` on ${formatDate(allot.effective_at)}` : "") +
-        ".";
+        ". Does yours show up like this too?";
   }
   return `${hi}${body}${demo ? `\n\n${DEMO_NOTE}` : ""}`;
 }

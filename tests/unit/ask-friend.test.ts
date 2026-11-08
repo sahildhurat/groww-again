@@ -17,11 +17,12 @@ describe("friendMessage", () => {
     expect(m).toContain("nothing was taken from my account");
   });
 
-  it("refunded month says it is being refunded", () => {
+  it("refunded month says it was refunded, with the refund date", () => {
     const m = friendMessage(entry("running", "inst-2026-09-05"));
     expect(m.startsWith("Hi, ")).toBe(true);
     expect(m).toContain("didn't become units");
-    expect(m).toContain("being refunded");
+    expect(m).toContain("was refunded to my account on 12 Sep 2026");
+    expect(m).not.toContain("being refunded");
   });
 
   it("in-progress month: debited, order placed, units not confirmed, T+2 line", () => {
@@ -29,11 +30,11 @@ describe("friendMessage", () => {
     expect(m).toContain("left my bank");
     expect(m).toContain("the order was placed");
     expect(m).toContain("units aren't confirmed yet");
-    expect(m).toContain("two working days after the order date");
+    expect(m).toContain("two working days after the SIP date");
   });
 
   it("allotted month gives the units; stale month says the status can't be confirmed", () => {
-    expect(friendMessage(entry("running", "inst-2026-10-05"))).toMatch(/went through: \d+\.\d{3} units/);
+    expect(friendMessage(entry("running", "inst-2026-10-05"))).toMatch(/went through: \d+\.\d{3} units on 6 Oct 2026\. Does yours show up like this too\?/);
     expect(friendMessage(entry("stale", "inst-2026-11-05"))).toContain("can't confirm the status");
   });
 

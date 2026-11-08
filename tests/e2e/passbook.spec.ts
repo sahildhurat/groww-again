@@ -208,6 +208,11 @@ test.describe("SPEC-07 End-to-End Suite", () => {
       });
     }
 
+    // The money is not in doubt: the debit and order are confirmed, only the units step is unknown
+    await page.goto("/passbook/inst-2026-11-05");
+    await expect(page.getByText("Your bank confirmed the debit on 5 Nov 2026, 09:12 IST and the order was placed. Only the units step can't be confirmed right now.")).toBeVisible();
+    await expect(page.getByText("Not known yet.")).toHaveCount(0);
+
     // Reset back to running
     await page.goto("/demo-tools");
     await page.getByLabel("running").check();
