@@ -46,7 +46,14 @@ export function answersAnotherEntry(opts: {
     const full = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const m = parseInt(entry.due_date.slice(5, 7), 10) - 1;
     const y = entry.due_date.slice(0, 4);
-    if (answer.includes(formatDate(entry.due_date)) || answer.includes(`${full[m]} ${y}`)) return false;
+    // ...but only when it names no other instalment's date (live, 8 Nov 23:30: an October answer that was really
+    // about 5 Nov 2026 also mentioned October, and slipped through).
+    const namesOther = instalments.some((i) => {
+      if (i.id === entry.id) return false;
+      const mi = parseInt(i.due_date.slice(5, 7), 10) - 1;
+      return answer.includes(formatDate(i.due_date)) || answer.includes(`${full[mi]} ${i.due_date.slice(0, 4)}`);
+    });
+    if (!namesOther && (answer.includes(formatDate(entry.due_date)) || answer.includes(`${full[m]} ${y}`))) return false;
   }
   if (!Array.isArray(factsUsed)) return false;
   const facts = factsUsed.filter((f): f is string => typeof f === "string");

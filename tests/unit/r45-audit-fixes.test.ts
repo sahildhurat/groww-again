@@ -175,6 +175,11 @@ describe("wrong-entry check reads the answer too (live check, 8 Nov)", () => {
       answersAnotherEntry({ entry: oct, instalments: all, factsUsed: ["ev-2026-11-05-debit"], question: "How were my units worked out?", answer: "On 5 Oct 2026 your ₹2,000 bought 18.709 units." })
     ).toBe(false);
   });
+  it("flags an answer that names the entry but is about another month (live, 8 Nov)", () => {
+    expect(
+      answersAnotherEntry({ entry: oct, instalments: all, factsUsed: ["ev-2026-11-05-debit"], question: "How were my units for this instalment worked out?", answer: "Units for the 5 Nov 2026 instalment are not confirmed yet. Your last confirmed instalment was 5 Oct 2026." })
+    ).toBe(true);
+  });
   it("still flags an answer about another month", () => {
     expect(
       answersAnotherEntry({ entry: oct, instalments: all, factsUsed: ["ev-2026-11-05-debit"], question: "How were my units worked out?", answer: "Your 5 Nov 2026 units are not confirmed yet." })
