@@ -21,6 +21,8 @@ export function AskFriend({ entry }: { entry: Instalment }) {
   const [copied, setCopied] = useState(false);
   const [remembered, setRemembered] = useState(false);
   const [canShare, setCanShare] = useState(false);
+  // MVP sessions, 9 Nov: participants deleted the rupee amount by hand before sending, so it's left out by default.
+  const [withAmount, setWithAmount] = useState(false);
 
   useEffect(() => {
     getFriend().then((f) => {
@@ -34,8 +36,8 @@ export function AskFriend({ entry }: { entry: Instalment }) {
   }, []);
 
   useEffect(() => {
-    if (!edited) setText(friendMessage(entry, name));
-  }, [entry, name, edited]);
+    if (!edited) setText(friendMessage(entry, name, true, withAmount));
+  }, [entry, name, edited, withAmount]);
 
   const copy = async () => {
     try {
@@ -114,6 +116,19 @@ export function AskFriend({ entry }: { entry: Instalment }) {
         <p role="status" className="text-[11px] text-emerald-800">
           {name.trim() ? "Saved on this device." : "Name removed from this device."}
         </p>
+      )}
+
+      {/* Once the investor edits the message, the text is theirs: the toggle goes away rather than overwrite it */}
+      {!edited && (
+      <label className="flex items-center gap-2 text-[11px] text-gray-700" data-testid="friend-amount-toggle">
+        <input
+          type="checkbox"
+          checked={withAmount}
+          onChange={(e) => setWithAmount(e.target.checked)}
+          className="w-3.5 h-3.5 accent-purple-700"
+        />
+        <span>Include the amount and units (left out unless you tick this)</span>
+      </label>
       )}
 
       <div>

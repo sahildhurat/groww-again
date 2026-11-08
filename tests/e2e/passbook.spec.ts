@@ -377,6 +377,13 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     const value = await message.inputValue();
     expect(value).not.toMatch(/BNK-|ORD-|REG-|folio|Nifty/i);
 
+    // MVP sessions, 9 Nov: the amount is left out unless the investor ticks the box
+    expect(value).not.toContain("₹");
+    await page.getByTestId("friend-amount-toggle").getByRole("checkbox").check();
+    await expect(message).toHaveValue(/My ₹2,000 instalment for 5 May 2026/);
+    await page.getByTestId("friend-amount-toggle").getByRole("checkbox").uncheck();
+    await expect(message).toHaveValue(/My instalment for 5 May 2026/);
+
     // A first name updates the greeting and stays on the device
     await page.getByLabel(/Their first name/).fill("Demo");
     await expect(message).toHaveValue(/^Hi Demo, /);
@@ -474,6 +481,10 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     // R45: the amount says what happened to it; a pending step has no reference yet; the route is named
     await expect(page.getByTestId("upi-line")).toContainText("paid through Groww AutoPay");
     await expect(page.getByTestId("upi-line")).toContainText("T+5 or T+6");
+    // MVP sessions, 9 Nov: what to do if the units are late, by Groww's own help (page 98), never a predicted date
+    await expect(page.getByTestId("units-late-step")).toContainText("up to 4 working days");
+    await expect(page.getByTestId("units-late-step")).toContainText("more than 6 working days");
+    await expect(page.getByRole("link", { name: /Open Groww help: units not allotted yet/ })).toHaveAttribute("href", /--98$/);
     await expect(page.getByTestId("amount-label")).toHaveText("Amount debited");
     await expect(page.getByText("Not issued yet")).toBeVisible();
     await expect(page.getByText("REG-DEMO-1105")).toHaveCount(0);
@@ -543,6 +554,9 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await page.getByLabel("Name your goal (optional)").fill("My first bike");
     await page.getByLabel("Choose a goal photo").setInputFiles(path.resolve(process.cwd(), "tests/fixtures/photo-with-gps.jpg"));
     await expect(page.getByRole("img", { name: "Your goal photo" })).toBeVisible({ timeout: 10000 });
+    // MVP sessions, 9 Nov: say plainly where the photo lives and that changing it never touches the units
+    await expect(page.getByTestId("goal-photo-storage")).toContainText("isn't uploaded and the AI never sees it");
+    await expect(page.getByTestId("goal-photo-storage")).toContainText("never changes your units");
 
     await page.goto("/passbook/goal");
     const pieces = page.getByTestId("goal-pieces");
@@ -560,9 +574,10 @@ test.describe("SPEC-07 End-to-End Suite", () => {
 
     // Delivery wording under the money trail
     await page.goto("/passbook/inst-2026-09-05");
-    await expect(page.getByTestId("delivery-line").first()).toHaveText("Returned to your bank on 12 Sep 2026: no money lost.");
+    await expect(page.getByTestId("delivery-line").first()).toHaveText("Returned to your bank: the full ₹2,000 came back on 12 Sep 2026.");
 
     await page.goto("/your-data");
+    await expect(page.getByTestId("delete-is-safe")).toContainText("It never changes your SIP, your units");
     await expect(page.getByTestId("delete-section")).toContainText("your goal photo");
     await page.getByRole("button", { name: "Delete my goal photo" }).click();
     await expect(page.getByTestId("delete-section")).toContainText("no goal photo");

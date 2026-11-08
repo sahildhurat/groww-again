@@ -18,8 +18,10 @@ export function deliveryLine(inst: Instalment, paymentRoute?: string): string | 
 
   if (debit?.status === "failed") return "Not picked up: no money left your account.";
   if (order?.status === "failed") {
+    // Interviews, 9 Nov: "no money lost" was read against the red total returns, so the line names the amount and
+    // the bank instead (a transfer fact, not a statement about market value).
     return refund?.status === "confirmed" && refund.effective_at
-      ? `Returned to your bank on ${formatDate(refund.effective_at)}: no money lost.`
+      ? `Returned to your bank: the full ₹${inst.amount.toLocaleString("en-IN")} came back on ${formatDate(refund.effective_at)}.`
       : "Not accepted by the fund: the money is being returned to your bank.";
   }
   if (allot?.status === "confirmed") return `Delivered to your name: ${inst.units ? `${inst.units.toFixed(3)} units` : "units allotted"}.`;

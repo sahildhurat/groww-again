@@ -75,6 +75,11 @@ export default function YourDataPage() {
 
         <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3" data-testid="delete-section">
           <h2 className="text-xs font-bold uppercase tracking-wider text-gray-500">Delete what you added</h2>
+          <p className="text-xs text-gray-700" data-testid="delete-is-safe">
+            Deleting here only removes what you added on this phone. It never changes your SIP, your units or any month&apos;s
+            record. To delete just one month&apos;s memory, go to Every month, tap View your memory under that month, then Delete
+            this memory.
+          </p>
           <p className="text-xs text-gray-700">
             On this device: {hasReason ? "your reason for starting" : "no reason for starting"} ·{" "}
             {hasGoal ? "your goal photo" : "no goal photo"} ·{" "}

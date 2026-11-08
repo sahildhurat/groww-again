@@ -73,7 +73,11 @@ export function GoalPhoto() {
       </div>
       {busy && <p className="text-[11px] text-gray-500">Preparing the photo…</p>}
       {error && <p className="text-[11px] text-amber-800">{error}</p>}
-      <p className="text-[11px] text-gray-500">Stays on this device. Location data is removed and the photo is made smaller.</p>
+      <p className="text-[11px] text-gray-500 leading-relaxed" data-testid="goal-photo-storage">
+        Stays on this phone, in this browser: it isn&apos;t uploaded and the AI never sees it. Location data is removed
+        and the photo is made smaller. Changing or removing it never changes your units, your SIP or how many pieces you
+        have.
+      </p>
     </div>
   );
 }

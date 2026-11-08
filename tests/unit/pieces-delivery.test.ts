@@ -41,7 +41,7 @@ describe("delivery wording", () => {
     );
     expect(deliveryLine(byId("inst-2026-10-05"))).toBe("Delivered to your name: 18.709 units.");
     expect(deliveryLine(byId("inst-2026-05-05"))).toBe("Not picked up: no money left your account.");
-    expect(deliveryLine(byId("inst-2026-09-05"))).toBe("Returned to your bank on 12 Sep 2026: no money lost.");
+    expect(deliveryLine(byId("inst-2026-09-05"))).toBe("Returned to your bank: the full ₹2,000 came back on 12 Sep 2026.");
     expect(deliveryLine(byId("inst-2026-07-05"))).toBeNull();
   });
 

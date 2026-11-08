@@ -21,10 +21,14 @@ const REASON: Record<string, string> = {
 
 export const DEMO_NOTE = "(Sample data from a concept prototype.)";
 
-export function friendMessage(entry: Instalment, friendName?: string, demo = true): string {
+/**
+ * withAmount = false leaves out the rupee amount and the unit count, so the friend sees what happened but not how
+ * much is invested. In the MVP sessions (9 Nov), participants deleted the rupee amount by hand before sending.
+ */
+export function friendMessage(entry: Instalment, friendName?: string, demo = true, withAmount = true): string {
   const hi = friendName?.trim() ? `Hi ${friendName.trim()}, ` : "Hi, ";
   const due = formatDate(entry.due_date);
-  const amount = `₹${entry.amount.toLocaleString("en-IN")}`;
+  const amount = withAmount ? `₹${entry.amount.toLocaleString("en-IN")} ` : "";
   const debit = entry.events.find((e) => e.type === "debit");
   const order = entry.events.find((e) => e.type === "order");
   const allot = entry.events.find((e) => e.type === "allotment");
@@ -35,14 +39,14 @@ export function friendMessage(entry: Instalment, friendName?: string, demo = tru
   switch (instalmentState(entry)) {
     case "in_progress":
       body =
-        `can I ask you something about my SIP? My ${amount} instalment for ${due} left my bank` +
+        `can I ask you something about my SIP? My ${amount}instalment for ${due} left my bank` +
         (debit?.effective_at ? ` on ${formatDateTime(debit.effective_at)}` : "") +
         `${order?.status === "confirmed" ? " and the order was placed" : ""}, but the units aren't confirmed yet` +
         (allot?.as_of ? ` (last checked ${formatDateTime(allot.as_of)})` : "") +
         ". Groww's help says units usually come two working days after the SIP date. Have you seen this before?";
       break;
     case "failed":
-      body = `can I ask you something about my SIP? My ${amount} instalment for ${due} didn't go through. ${reason} Have you dealt with this before?`;
+      body = `can I ask you something about my SIP? My ${amount}instalment for ${due} didn't go through. ${reason} Have you dealt with this before?`;
       break;
     case "refunded": {
       const refund = entry.events.find((e) => e.type === "refund" && e.status === "confirmed");
@@ -50,12 +54,12 @@ export function friendMessage(entry: Instalment, friendName?: string, demo = tru
         refund && code === "ORDER_NOT_ACCEPTED"
           ? `${REASON.ORDER_NOT_ACCEPTED_REFUNDED}${refund.effective_at ? ` on ${formatDate(refund.effective_at)}` : ""}.`
           : reason;
-      body = `can I ask you something about my SIP? My ${amount} instalment for ${due} didn't become units. ${why} Have you had a refund like this?`;
+      body = `can I ask you something about my SIP? My ${amount}instalment for ${due} didn't become units. ${why} Have you had a refund like this?`;
       break;
     }
     case "unknown":
       body =
-        `can I ask you something about my SIP? The app can't confirm the status of my ${amount} instalment for ${due} right now` +
+        `can I ask you something about my SIP? The app can't confirm the status of my ${amount}instalment for ${due} right now` +
         (allot?.as_of ? ` (as of ${formatDateTime(allot.as_of)})` : "") +
         ". How would you check it?";
       break;
@@ -64,8 +68,9 @@ export function friendMessage(entry: Instalment, friendName?: string, demo = tru
       break;
     default:
       body =
-        `can I ask you something about my SIP? My ${amount} instalment for ${due} went through` +
-        (entry.units ? `: ${entry.units.toFixed(3)} units` : "") +
+        `can I ask you something about my SIP? My ${amount}instalment for ${due} went through` +
+        (!withAmount && entry.units ? " and the units are confirmed" : "") +
+        (withAmount && entry.units ? `: ${entry.units.toFixed(3)} units` : "") +
         (allot?.effective_at ? ` on ${formatDate(allot.effective_at)}` : "") +
         ". Does yours show up like this too?";
   }

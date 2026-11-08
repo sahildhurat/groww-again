@@ -47,6 +47,18 @@ describe("friendMessage", () => {
     }
   });
 
+  it("can leave out the amount and units (MVP sessions, 9 Nov)", () => {
+    for (const e of allEntries) {
+      const m = friendMessage(e, "Demo", true, false);
+      expect(m).not.toContain("₹");
+      expect(m).not.toMatch(/\d+\.\d{3} units/);
+      expect(m).not.toMatch(/ {2}/);
+    }
+    expect(friendMessage(entry("running", "inst-2026-05-05"), undefined, true, false)).toContain("My instalment for 5 May 2026 didn't go through");
+    expect(friendMessage(entry("running", "inst-2026-10-05"), undefined, true, false)).toContain("went through and the units are confirmed on 6 Oct 2026");
+    expect(friendMessage(entry("running", "inst-2026-05-05"))).toContain("₹2,000 instalment");
+  });
+
   it("drops the demo note when asked and trims the friend's name", () => {
     const m = friendMessage(entry("running", "inst-2026-05-05"), "  Demo  ", false);
     expect(m.startsWith("Hi Demo, ")).toBe(true);

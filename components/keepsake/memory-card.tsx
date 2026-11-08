@@ -147,7 +147,7 @@ export function MemoryCard({
               className="inline-flex items-center space-x-1 text-xs text-gray-500 underline"
             >
               <Trash2 className="w-3 h-3" />
-              <span>Delete</span>
+              <span>Delete this memory</span>
             </button>
             {onClose && (
               <button type="button" onClick={onClose} className="text-xs text-gray-500 underline">
@@ -204,7 +204,8 @@ export function MemoryCard({
             </div>
             <p className="text-[11px] text-gray-500">
               Only add photos of people who are happy to be in them. Location data is removed and the photo is made
-              smaller.
+              smaller. It stays on this phone and isn&apos;t uploaded; deleting a memory never changes this month&apos;s
+              record or your units.
             </p>
             {busy && <p className="text-[11px] text-gray-500">Preparing the photo…</p>}
           </div>
