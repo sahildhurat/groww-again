@@ -114,7 +114,7 @@ export function suggestedQuestionsFor(
       return [
         `Why did my ${month} instalment fail?`,
         `Can I still pay the missed ${month} instalment?`,
-        aboutNext ? "What happens if I skip next month?" : "Do missed instalments count towards cancellation?",
+        aboutNext ? "What happens if I skip next month?" : "Where is my official record?",
       ];
     case "refunded":
       return [`Where is my ${month} money?`, "How long does a refund take?", "What happened to my order?"];

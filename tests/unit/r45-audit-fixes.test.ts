@@ -7,7 +7,7 @@ import { answersAnotherEntry, questionPointsElsewhere } from "@/lib/entry-focus"
 import { addWorkingDays, payNowWindowClosed, DEMO_NOW_ISO } from "@/lib/demo-now";
 import { resolveSources, suggestedQuestionsFor } from "@/lib/flow";
 import { DECLINE_SOURCES } from "@/lib/decline-text";
-import { checkInternalRefs } from "@/lib/gate";
+import { checkInternalRefs, softenPromptWords } from "@/lib/gate";
 import type { Instalment } from "@/lib/passbook-types";
 
 const running = (seed as any).scenarios.running.instalments as Instalment[];
@@ -150,5 +150,19 @@ describe("suggested questions fit the month (owner, 8 Nov)", () => {
   it("only the latest month of a running SIP can suggest skipping next month", () => {
     expect(suggestedQuestionsFor(byId("inst-2026-10-05"), { isLatest: true, sipActive: true })).toContain(SKIP);
     expect(suggestedQuestionsFor(byId("inst-2026-10-05"), { isLatest: true, sipActive: false })).not.toContain(SKIP);
+  });
+});
+
+describe("prompt words reworded before the gate (live check, 8 Nov)", () => {
+  it("turns 'rule passages' and 'the context' into plain words, keeping the verb right", () => {
+    expect(softenPromptWords("Rule passages say that AutoPay needs balance.")).toBe("Groww's help says that AutoPay needs balance.");
+    expect(softenPromptWords("The rule passage states T+2.")).toBe("Groww's help states T+2.");
+    expect(softenPromptWords("According to the context, units are pending.")).toBe("According to your passbook, units are pending.");
+    expect(softenPromptWords("Under the public summary, units are expected T+2.")).toBe("according to Groww's help, units are expected T+2.");
+  });
+  it("leaves real leaks for the gate to block", () => {
+    const t = softenPromptWords("See rule-pay-now-01 and ev-2026-05-05-debit.");
+    expect(checkInternalRefs(t)).toBe(true);
+    expect(checkInternalRefs(softenPromptWords("Rule passages say Pay Now is open for 2 working days."))).toBe(false);
   });
 });

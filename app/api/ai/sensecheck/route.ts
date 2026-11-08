@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "node:fs";
 import path from "node:path";
 import { z } from "zod";
-import { verifyGate, sanitizeInputText, extractNumbers } from "@/lib/gate";
+import { verifyGate, sanitizeInputText, extractNumbers, softenPromptWords } from "@/lib/gate";
 import { callClaudeHaiku } from "@/lib/anthropic";
 import { DECLINE_TEXT, DECLINE_SOURCES } from "@/lib/decline-text";
 import rulesData from "@/data/rules.json";
@@ -104,6 +104,10 @@ export async function POST(req: NextRequest) {
         "Your official record is your Consolidated Account Statement (CAS), from MF Central, CAMS or KFintech. This passbook is a supplementary view.",
       confirmed_totals: totals,
       value_at_latest_nav: value,
+      // Live check, 8 Nov: the difference and its share, so an answer about a lower value can state them (the number
+      // check only allows numbers that are in the facts).
+      value_minus_put_in: value - totals.amount_put_in,
+      value_change_pct: totals.amount_put_in ? Math.round(((value - totals.amount_put_in) / totals.amount_put_in) * 10000) / 100 : 0,
       last_fully_confirmed_date: lastConfirmed?.due_date ?? null,
       latest_instalment: latest
         ? {
@@ -229,6 +233,10 @@ Provide the Sensecheck JSON response.`;
     const allowedAsOf = allEvents.map((e) => e.as_of);
     const focus = entry ?? latest;
     const openStep = focus?.events.find((e) => e.status === "pending" || e.status === "unknown") ?? null;
+    // Live check, 8 Nov: plain words for the prompt's own words ("rule passages", "the context") before the gate.
+    if (parsedJson && typeof parsedJson.answer === "string" && parsedJson.declined !== true) {
+      parsedJson.answer = softenPromptWords(parsedJson.answer);
+    }
     const answerText = String(parsedJson?.answer ?? "");
     const aboutOpenStep =
       !!openStep &&

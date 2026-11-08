@@ -267,9 +267,25 @@ const INTERNAL_REF_PATTERNS = [
   /(?:^|[\s("'])\/(?:ask|passbook|quality|your-data|demo-tools)\b/i, // "/options" is allowed: it is shown as a link
   /\brule passages?\b/i,
   /\b(?:context json|the context|provided material|passbook context)\b/i,
-  /\b(?:as_of|as_of_display|effective_display|latest_instalment|facts_used|value_at_latest_nav|confirmed_totals|reason_meaning|money_status|demo_now_display|payment_route|official_record|all_instalments)\b/i,
+  /\b(?:as_of|as_of_display|effective_display|latest_instalment|facts_used|value_at_latest_nav|confirmed_totals|reason_meaning|money_status|demo_now_display|payment_route|official_record|all_instalments|value_minus_put_in|value_change_pct)\b/i,
   /\b(?:using the button|the button provided|button in the app)\b/i,
 ];
+
+/**
+ * Live check, 8 Nov 23:15: the evaluated prompt (7 Nov) calls Groww's help pages "rule passages" and the data "the
+ * context", and the model sometimes repeats those words; blocking them sent about a third of live answers to the
+ * fallback. These prompt words are reworded to plain ones before the gate runs; ids, codes, paths and field names
+ * still block.
+ */
+export function softenPromptWords(text: string): string {
+  if (!text) return text;
+  return text
+    .replace(/\b(?:the |a |these |those )?rule passages? (say|says|state|states|show|shows|describe|describes|note|notes)\b/gi, (_m, v: string) => `Groww's help ${v.endsWith("s") ? v : v + "s"}`)
+    .replace(/\b(?:the |a |these |those )?rule passages?\b/gi, "Groww's help")
+    .replace(/\b(?:the provided material|the passbook context|the context json|the context)\b/gi, "your passbook")
+    .replace(/\bunder the public summary\b/gi, "according to Groww's help")
+    .replace(/\bthe public summary\b/gi, "Groww's help");
+}
 
 export function checkInternalRefs(text: string): boolean {
   return INTERNAL_REF_PATTERNS.some((p) => p.test(text));
