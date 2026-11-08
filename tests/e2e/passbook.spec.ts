@@ -28,9 +28,10 @@ test.describe("SPEC-07 End-to-End Suite", () => {
   test("Task 1: November entry shows debited, order placed, units pending with as_of, explainer answers", async ({
     page,
   }) => {
-    // Owner, 9 Nov: every month lives on its own page; November shows units not confirmed yet
+    // Owner, 9 Nov: every month lives on its own page; November's tracker shows the units on the way
     await page.goto("/passbook/months");
-    await expect(page.getByText("Units not confirmed yet").first()).toBeVisible();
+    await expect(page.getByText("Waiting for units").first()).toBeVisible();
+    await expect(page.getByText("On the way").first()).toBeVisible();
 
     await page.goto("/passbook/inst-2026-11-05");
     await expect(page.getByText("Confirmed").first()).toBeVisible();
@@ -134,7 +135,8 @@ test.describe("SPEC-07 End-to-End Suite", () => {
       page.getByText(/Last fully confirmed instalment:.*5 Oct 2026/i)
     ).toBeVisible();
     await expect(page.getByTestId("what-you-own")).toBeVisible();
-    await expect(page.getByTestId("payment-route")).toHaveText("Paid through Groww AutoPay");
+    // Owner, 9 Nov: the payment route shows in the latest month's delivery line (and on each month's page)
+    await expect(page.getByTestId("latest-month").getByTestId("delivery-line")).toContainText("with Groww AutoPay");
     await expect(page.getByText("158.513", { exact: true })).toBeVisible();
     await expect(page.getByText("₹16,000", { exact: true })).toBeVisible();
     // No passbook name on the cover (owner, 8 Nov)
@@ -143,7 +145,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     // Owner, 8 Nov: invested vs current value, with the loss shown plainly (158.513 units x NAV 98.00 = ₹15,534)
     await expect(page.getByTestId("current-value")).toHaveText("₹15,534");
     await expect(page.getByTestId("total-returns")).toContainText("−₹466 (−2.91%)");
-    await expect(page.getByText(/at NAV ₹98.00, 4 Nov 2026/)).toBeVisible();
+    await expect(page.getByText(/At NAV ₹98.00, 4 Nov 2026/)).toBeVisible();
 
     // CAS line
     await expect(
@@ -176,8 +178,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
 
     // No restart button or nudge; one plain link to the Start SIP demo (owner, 9 Nov)
     await expect(page.getByRole("button", { name: /restart/i })).not.toBeVisible();
-    await expect(page.getByTestId("stopped-start-link")).toHaveAttribute("href", "/start");
-    await expect(page.getByTestId("reminder-invite")).toHaveCount(0);
+    await expect(page.locator("a[href='/start']")).toHaveCount(0);
 
     // All previous entries stay visible
     await expect(page.getByText("5 Oct 2026").first()).toBeVisible();
@@ -230,14 +231,11 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await page.getByLabel("Version A (ledger only)").check();
     await page.goto("/passbook");
     await expect(page.getByTestId("personal-layer")).toHaveCount(0);
-    await expect(page.getByTestId("tile-goal")).toContainText("Units by month");
+    await expect(page.getByTestId("tile-goal")).toHaveCount(0);
     await page.goto("/passbook/months");
     await expect(page.getByTestId("add-memory")).toHaveCount(0);
     await page.goto("/passbook/goal");
-    await expect(page.getByTestId("goal-pieces")).toHaveCount(0);
-    await expect(page.getByTestId("units-growth")).toBeVisible();
-    await page.goto("/start");
-    await expect(page.getByTestId("start-reason")).toHaveCount(0);
+    await expect(page).toHaveURL(/\/passbook$/);
     await page.goto("/passbook/inst-2026-10-05");
     await expect(page.getByTestId("memory-card")).toHaveCount(0);
     await page.goto("/passbook/inst-2026-05-05");
@@ -246,20 +244,17 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await page.goto("/demo-tools?ab=1");
     await page.getByLabel("Version B (personal layer)").check();
     await page.goto("/passbook/months");
-    // Owner, 8 Nov: a memory can be added to every month; the reason is asked on the Start SIP screen
+    // Owner, 8 Nov: a memory can be added to every month
     await expect(page.getByTestId("add-memory")).toHaveCount(12);
     await expect(page.getByRole("button", { name: "Write it" })).toHaveCount(0);
-    await page.goto("/start");
-    for (const name of ["A photo", "A voice note", "A line"]) {
-      await expect(page.getByTestId("start-reason").getByRole("button", { name })).toBeVisible();
-    }
     await page.goto("/passbook");
     await expect(page.locator("a[href='/family-file']")).toHaveCount(0);
     await page.goto("/passbook/inst-2026-05-05");
     await expect(page.getByRole("button", { name: /Ask a friend about this/ })).toBeVisible();
 
     const nav = page.locator("nav").last();
-    await expect(nav.getByRole("link")).toHaveCount(3);
+    await expect(nav.getByRole("link")).toHaveCount(4);
+    await expect(nav.getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");
     await expect(nav.getByRole("link", { name: "Passbook" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Ask" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Next steps" })).toBeVisible();
@@ -319,20 +314,29 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     for (const url of pages) {
       await page.goto(url);
       await expect(
-        page.getByText("Concept prototype, not affiliated with Groww. All data is synthetic demo data.").first()
+        page.getByText("Concept prototype, not affiliated with Groww. All data is synthetic demo data. Not investment advice.").first()
       ).toBeVisible();
       expect(await page.locator("a[href*='/locker']").count()).toBe(0);
       expect(await page.locator("a[href='/settings'], a[href='/signin'], a[href='/consent'], a[href='/thread'], a[href='/markers'], a[href='/family-file']").count()).toBe(0);
     }
-    for (const [from, to] of [["/settings", "/your-data"], ["/signin", "/your-data"], ["/consent", "/your-data"], ["/thread", "/passbook"], ["/markers", "/passbook"], ["/family-file", "/passbook"]]) {
+    for (const [from, to] of [["/settings", "/your-data"], ["/signin", "/your-data"], ["/consent", "/your-data"], ["/thread", "/passbook"], ["/markers", "/passbook"], ["/family-file", "/passbook"], ["/start", "/"]]) {
       await page.goto(from);
       await expect(page).toHaveURL(new RegExp(to + "$"));
     }
 
     await page.goto("/passbook/inst-2026-11-05");
-    await expect(page.getByText(/Not investment advice/i).first()).toBeVisible();
+    await expect(page.getByText(/isn't investment advice/i).first()).toBeVisible();
     await page.goto("/options");
-    await expect(page.getByText(/Not investment advice/i).first()).toBeVisible();
+    await expect(page.getByText(/isn't investment advice/i).first()).toBeVisible();
+    await page.goto("/ask");
+    await expect(page.getByTestId("ai-disclosure")).toContainText("isn't investment advice");
+    // Owner, 9 Nov: no demo strip or boilerplate line under the top bar
+    for (const url of ["/passbook", "/passbook/months", "/options", "/ask"]) {
+      await page.goto(url);
+      await expect(page.getByText("Information about your own SIP and the rules only")).toHaveCount(0);
+      await expect(page.getByText("Demo data. What you add stays here.")).toHaveCount(0);
+      await expect(page.locator("footer").getByRole("link", { name: "Your data" })).toHaveAttribute("href", "/your-data");
+    }
 
     await page.goto("/passbook");
     const growwImages = await page
@@ -456,14 +460,21 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     // Owner, 9 Nov: the passbook cover leads with current value; its two views are tiles above the fold
     await page.goto("/passbook");
     await expect(page.getByTestId("current-value")).toHaveText("₹15,534");
-    for (const t of ["tile-months", "tile-goal"]) {
-      const b = await page.getByTestId(t).boundingBox();
-      expect(b && b.y + b.height).toBeLessThan(page.viewportSize()!.height);
+    // Owner, 9 Nov: on a phone, the latest month and both views sit above the bottom bar, no scroll
+    if (page.viewportSize()!.width < 768) {
+      const navTop = (await page.locator("nav").last().boundingBox())!.y;
+      for (const t of ["latest-month", "tile-months"]) {
+        const b = await page.getByTestId(t).boundingBox();
+        expect(b && b.y + b.height).toBeLessThanOrEqual(navTop);
+      }
     }
-    await page.getByTestId("tile-goal").click();
-    await expect(page).toHaveURL(/\/passbook\/goal$/);
-    await expect(page.getByTestId("goal-pieces")).toBeVisible();
-    await expect(page.getByTestId("units-growth")).toHaveCount(0);
+    // Owner, 9 Nov (03:47): Piece by piece removed; the latest month is a delivery tracker in delivery words
+    await expect(page.getByTestId("tile-goal")).toHaveCount(0);
+    await expect(page.getByTestId("latest-month")).toContainText("Tracking your 5 Nov 2026 instalment");
+    await expect(page.getByTestId("latest-month").getByTestId("tracker-stop")).toHaveCount(3);
+    await expect(page.getByTestId("latest-month")).toContainText("Picked up");
+    await expect(page.getByTestId("latest-month")).toContainText("Handed to the fund");
+    await expect(page.getByTestId("latest-month")).toContainText("On the way");
     await page.goto("/passbook");
     await page.getByTestId("tile-months").click();
     await expect(page).toHaveURL(/\/passbook\/months$/);
@@ -474,10 +485,20 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await expect(page.getByTestId("task-card")).toHaveCount(0);
     await expect(page.locator("main").getByRole("link")).toHaveCount(2);
     await expect(page.locator("main").getByRole("link", { name: "Ask Sensecheck a question" })).toHaveAttribute("href", "/ask");
+    await expect(page.locator("a[href='/start']")).toHaveCount(0);
     await page.locator("main").getByRole("link", { name: "Open my passbook" }).click();
     await expect(page).toHaveURL(/\/passbook$/);
-    // With nothing kept yet, one quiet line points to the Start SIP demo
-    await expect(page.getByTestId("reminder-invite").getByRole("link")).toHaveAttribute("href", "/start");
+    // Owner, 9 Nov: the latest month in the delivery format; no Start SIP link on the running passbook
+    await expect(page.getByTestId("latest-month")).toContainText("Tracking your 5 Nov 2026 instalment");
+    await expect(page.getByTestId("latest-month").getByTestId("delivery-line")).toContainText("Not delivered to your name yet");
+    await expect(page.locator("main a[href='/start']")).toHaveCount(0);
+    // Back returns to where you came from: Every month → a month → back lands on Every month
+    await page.getByTestId("tile-months").click();
+    await page.locator("a[href='/passbook/inst-2026-05-05']").click();
+    await expect(page).toHaveURL(/inst-2026-05-05$/);
+    await page.getByLabel("Go back").click();
+    await expect(page).toHaveURL(/\/passbook\/months$/);
+    await page.goto("/passbook");
 
     // Cover's latest line opens that instalment; the UPI line explains the wait
     await page.goto("/passbook");
@@ -510,6 +531,10 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await page.getByRole("link", { name: "How answers are checked" }).last().click();
     await expect(page).toHaveURL(/\/quality$/);
     await expect(page.getByTestId("off-switch")).toContainText("One setting turns the AI off");
+    // Brief, 9 Nov: not investment advice, where AI earns its place, and the golden set's home in the Evidence Log
+    await expect(page.getByTestId("not-advice")).toContainText("Nothing in this app is investment advice.");
+    await expect(page.getByTestId("why-ai")).toContainText("Without AI:");
+    await expect(page.getByTestId("golden-source").getByRole("link", { name: "Evidence Log, section 5" })).toHaveAttribute("href", "https://site-bice-three-88.vercel.app/evidence");
     await expect(page.getByText(/Future Thread one-line tidy/)).toHaveCount(0);
     await expect(page.getByText(/later cut from the product; only Sensecheck is live/)).toBeVisible();
 
@@ -553,32 +578,22 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await page.getByLabel("running").check();
   });
 
-  // Task 15 (final feature): goal photo on Start SIP, piece by piece on the passbook, two-sided pieces, delete in Your data
-  test("Task 15: Piece by piece: goal photo, 8 of 12 pieces, waiting piece, turn a piece over, delete the photo", async ({ page }) => {
-    await page.goto("/demo-tools?ab=1");
-    await page.getByLabel("Version B (personal layer)").check();
-    await page.goto("/start");
-    await page.getByTestId("reminder-photo").click();
-    await page.getByLabel("Name your goal (optional)").fill("My first bike");
-    await page.getByLabel("Choose a goal photo").setInputFiles(path.resolve(process.cwd(), "tests/fixtures/photo-with-gps.jpg"));
-    await expect(page.getByRole("img", { name: "Your goal photo" })).toBeVisible({ timeout: 10000 });
-    // MVP sessions, 9 Nov: say plainly where the photo lives and that changing it never touches the units
-    await expect(page.getByTestId("goal-photo-storage")).toContainText("isn't uploaded and the AI never sees it");
-    await expect(page.getByTestId("goal-photo-storage")).toContainText("never changes your units");
-
+  // Task 15 (owner, 9 Nov 03:47): the delivery tracker carries the passbook; Piece by piece is gone
+  test("Task 15: Delivery tracker on a month: delivery words over banking terms with times; Piece by piece removed", async ({ page }) => {
+    await page.goto("/passbook/inst-2026-11-05");
+    const tracker = page.getByTestId("delivery-tracker");
+    await expect(tracker).toContainText("Delivery tracker");
+    await expect(tracker).toContainText("Bank debit");
+    await expect(tracker).toContainText("Picked up");
+    await expect(tracker).toContainText("5 Nov, 09:12");
+    await expect(tracker).toContainText("Handed to the fund");
+    await expect(tracker).toContainText("On the way");
+    await expect(tracker.getByTestId("delivery-line")).toContainText("Not delivered to your name yet");
+    await page.goto("/passbook/inst-2026-10-05");
+    await expect(page.getByTestId("delivery-tracker")).toContainText("Delivered: 18.709 units");
     await page.goto("/passbook/goal");
-    const pieces = page.getByTestId("goal-pieces");
-    await expect(pieces).toContainText("Piece by piece: My first bike");
-    await expect(page.getByTestId("pieces-count")).toContainText("8 of 12 pieces");
-    await expect(page.getByTestId("piece")).toHaveCount(8);
-    await expect(page.getByTestId("piece-waiting")).toHaveText("Waiting for units");
-    await expect(pieces).toContainText("They don't show what your goal costs or when you could buy it.");
-
-    await page.getByTestId("piece").nth(2).click();
-    await expect(page.getByTestId("piece-back")).toContainText("Piece 3: 5 Feb 2026");
-    await expect(page.getByTestId("piece-back")).toContainText("₹2,000 became 20.387 units");
-    await page.getByTestId("piece-back").getByRole("link", { name: "Open this month" }).click();
-    await expect(page).toHaveURL(/\/passbook\/inst-2026-02-05$/);
+    await expect(page).toHaveURL(/\/passbook$/);
+    expect((await page.request.get("/illustrations/piece-home.svg")).status()).toBe(404);
 
     // Delivery wording under the money trail
     await page.goto("/passbook/inst-2026-09-05");
@@ -586,74 +601,35 @@ test.describe("SPEC-07 End-to-End Suite", () => {
 
     await page.goto("/your-data");
     await expect(page.getByTestId("delete-is-safe")).toContainText("It never changes your SIP, your units");
-    await expect(page.getByTestId("delete-section")).toContainText("your goal photo");
-    await page.getByRole("button", { name: "Delete my goal photo" }).click();
-    await expect(page.getByTestId("delete-section")).toContainText("no goal photo");
-    await page.goto("/passbook/goal");
-    await expect(page.getByTestId("goal-pieces").getByRole("link", { name: "Add your goal photo" })).toBeVisible();
+    await expect(page.getByTestId("delete-section")).not.toContainText("goal photo");
   });
 
-  // Task 14 (final MVP): why I started, written and recorded; folded next to a stop
-  test("Task 14: Why I started can be written or recorded, stays after reload, and folds away when stopped", async ({ page }) => {
+  // Task 14 (owner, 9 Nov: the Start SIP demo and "why I started" were removed): a voice memory on a month
+  test("Task 14: A voice memory on October plays back after a reload and can be deleted; no Start SIP anywhere", async ({ page }) => {
     await fakeMicrophone(page);
     await page.goto("/demo-tools?ab=1");
     await page.getByLabel("Version B (personal layer)").check();
 
-    await page.goto("/start");
-    await expect(page.getByTestId("start-mock-note")).toBeVisible();
-    await expect(page.getByTestId("fund-note")).toHaveText("Sample funds for this demo, in alphabetical order. Not a recommendation.");
-    const reason = page.getByTestId("start-reason");
-    await reason.getByRole("button", { name: "A line" }).click();
-    await reason.getByLabel("Why I'm starting this SIP").fill("To buy my first bike without a loan");
-    await reason.getByRole("button", { name: "Save" }).click();
-    await expect(page.getByTestId("reason-text")).toHaveText(/To buy my first bike without a loan/);
-
-    // Add a voice note as well
-    await reason.getByRole("button", { name: "A voice note" }).click();
-    await reason.getByRole("button", { name: /Record a voice note/ }).click();
-    await expect(reason.getByText(/Recording 0:0/)).toBeVisible();
+    await page.goto("/passbook/inst-2026-10-05");
+    const card = page.getByTestId("memory-card");
+    await card.getByRole("button", { name: "Add a memory to Oct 2026" }).click();
+    await card.getByRole("button", { name: /Record a voice note/ }).click();
+    await expect(card.getByText(/Recording 0:0/)).toBeVisible();
     await page.waitForTimeout(1500);
-    await reason.getByRole("button", { name: "Stop" }).click();
-    await expect(reason.getByRole("button", { name: "Record again" })).toBeVisible();
-    await reason.getByRole("button", { name: "Save" }).click();
-    await expect(reason.getByTestId("voice-player")).toBeVisible();
-
-    // A fund must be chosen; nothing is preselected
-    await expect(page.getByLabel("Fund")).toHaveValue("");
-    await page.getByRole("button", { name: "Start SIP" }).click();
-    await expect(page.getByTestId("start-error")).toHaveText("Choose a fund first.");
-    await page.getByLabel("Fund").selectOption("Flexi Cap Fund (demo)");
-    await page.getByLabel("Monthly amount (₹)").fill("3000");
-    await page.getByLabel("SIP date (monthly)").selectOption("10");
-    await page.getByRole("button", { name: "Start SIP" }).click();
-    await expect(page.getByTestId("start-done")).toContainText("In the real app this starts a ₹3,000 SIP in Flexi Cap Fund (demo) on the 10th of every month");
-    await expect(page.getByTestId("start-done")).toContainText("the passbook keeps showing the sample SIP");
-
-    // The passbook shows it back, read-only, with a link to change it on the start screen
-    await page.goto("/passbook");
-    await expect(page.getByTestId("reason-text")).toHaveText(/To buy my first bike without a loan/);
-    await expect(page.getByTestId("reason-card").getByTestId("voice-player")).toBeVisible();
-    await expect(page.getByTestId("reason-card").getByRole("link", { name: "Change it" })).toHaveAttribute("href", "/start");
+    await card.getByRole("button", { name: "Stop" }).click();
+    await card.getByRole("button", { name: "Save memory" }).click();
+    await expect(card.getByTestId("voice-player")).toBeVisible();
     await page.reload();
-    await expect(page.getByTestId("reason-text")).toHaveText(/To buy my first bike without a loan/);
+    await expect(page.getByTestId("memory-card").getByTestId("voice-player")).toBeVisible();
+    await page.getByTestId("memory-card").getByRole("button", { name: "Delete this memory" }).click();
+    await expect(page.getByTestId("memory-card").getByTestId("voice-player")).toHaveCount(0);
 
-    // Stopped SIP: the reason folds away; the investor can choose to show it
-    await page.goto("/demo-tools?ab=1");
-    await page.getByLabel("stopped").check();
-    await page.goto("/passbook");
-    await expect(page.getByTestId("reason-text")).toHaveCount(0);
-    await expect(page.getByText("Your reason for starting is saved.")).toBeVisible();
-    await page.getByRole("button", { name: "Show", exact: true }).click();
-    await expect(page.getByTestId("reason-text")).toBeVisible();
-
-    // Reset clears it
-    await page.goto("/demo-tools?ab=1");
-    await page.getByRole("button", { name: /Reset demo modifications/i }).click();
-    await expect(page.getByText("Demo state reset!")).toBeVisible();
-    await page.goto("/passbook");
-    await expect(page.getByTestId("reason-card")).toHaveCount(0);
+    for (const url of ["/", "/passbook", "/passbook/months"]) {
+      await page.goto(url);
+      await expect(page.locator("a[href='/start']")).toHaveCount(0);
+      await expect(page.getByText("Why I started")).toHaveCount(0);
+    }
     await page.goto("/start");
-    await expect(page.getByRole("button", { name: "A line" })).toBeVisible();
-    await expect(page.getByTestId("reminder-saved")).toHaveCount(0);
+    await expect(page).toHaveURL(/\/$/);
   });
 });

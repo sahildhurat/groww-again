@@ -64,7 +64,11 @@ const CHECKS: Array<[string, string]> = [
   ["As-of time", "An answer about a step that is pending or can't be confirmed must give that step's as-of time."],
   ["Banned phrases", "No advice, recommendations, predictions, urgency, guilt or guarantees."],
   ["Personal identifiers", "Account numbers, PAN, Aadhaar, IFSC and phone numbers are masked before the AI sees a question and blocked in answers."],
+  ["Right month", "An answer must be about the month you asked about; an answer about a different month is replaced."],
+  ["Plain words", "No internal names, field names or file references; only words you would use."],
 ];
+
+const ENGINE_EVIDENCE_URL = "https://site-bice-three-88.vercel.app/evidence";
 
 export default function QualityPage() {
   const r = getEvalResults();
@@ -79,6 +83,31 @@ export default function QualityPage() {
       <DemoBanner />
 
       <main className="flex-1 p-4 space-y-5">
+        {/* Brief, 9 Nov: not investment advice, said plainly */}
+        <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-2" data-testid="not-advice">
+          <h2 className="text-base font-bold text-gray-900">Not investment advice</h2>
+          <p className="text-xs text-gray-700 leading-relaxed">
+            Sensecheck explains your own SIP and Groww&apos;s rules. It never recommends a fund, an amount, a time to
+            invest or whether to stop. Nothing in this app is investment advice.
+          </p>
+        </section>
+
+        {/* Brief, 9 Nov: where AI earns its place, and what a version without it would miss */}
+        <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-2.5" data-testid="why-ai">
+          <h2 className="text-base font-bold text-gray-900">Why Sensecheck uses AI, and where</h2>
+          <p className="text-xs text-gray-700 leading-relaxed">
+            <strong>Where:</strong> at the moment of doubt, on a month&apos;s page or in Ask. You ask in your own words
+            (&ldquo;I paid on 5 November. Where are my units?&rdquo;), and the answer ties that month&apos;s own steps to
+            Groww&apos;s rule for it, with the source.
+          </p>
+          <p className="text-xs text-gray-700 leading-relaxed">
+            <strong>Without AI:</strong> the passbook still shows every step of every month; that is also the fallback
+            when a check fails. What it can&apos;t do is read a question in your words, find the month and the rule it is
+            about, or handle a mixed question like &ldquo;I lost my job and can&apos;t afford the SIP right now&rdquo;. A
+            fixed help list only answers the questions it was written for.
+          </p>
+        </section>
+
         {/* Gate */}
         <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
           <div className="flex items-center space-x-2">
@@ -123,7 +152,7 @@ export default function QualityPage() {
             and the rest of the app keeps working.
           </p>
           <p className="text-xs text-gray-600 leading-relaxed">
-            The AI never sees your photos, voice notes, your reason for starting or your lines for each month. They stay
+            The AI never sees your photos, voice notes or lines for each month. They stay
             on your device.
           </p>
         </section>
@@ -167,6 +196,14 @@ export default function QualityPage() {
                     : ""}
                 </p>
               )}
+              <p className="text-[11px] text-gray-600" data-testid="golden-source">
+                Each of the 20 questions matches a problem first-year investors describe in our Part 1 research. The golden
+                set, every result and the Part 1 finding behind each question are in the{" "}
+                <a href={ENGINE_EVIDENCE_URL} target="_blank" rel="noreferrer" className="underline text-emerald-800">
+                  Evidence Log, section 5
+                </a>
+                .
+              </p>
               <p className="text-[11px] text-gray-500">
                 Overall: {r.thresholds_met ? "every threshold met" : "thresholds not met"} ·{" "}
                 {r.token_totals?.calls ?? 0} model calls · US${(r.token_totals?.cost_usd ?? 0).toFixed(4)}

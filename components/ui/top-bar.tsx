@@ -3,6 +3,7 @@
 import React from "react";
 import { ArrowLeft, UserCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { cameFromInsideApp } from "./nav-history";
 
 interface TopBarProps {
   title?: string;
@@ -20,10 +21,11 @@ export function TopBar({
   const router = useRouter();
 
   const handleBack = () => {
-    if (backHref) {
-      router.push(backHref);
-    } else {
+    // Back to the page you came from; the page's parent only when you landed here directly
+    if (cameFromInsideApp() || !backHref) {
       router.back();
+    } else {
+      router.push(backHref);
     }
   };
 

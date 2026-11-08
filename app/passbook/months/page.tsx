@@ -15,7 +15,6 @@ export default function MonthsPage() {
     <div className="flex flex-col min-h-screen bg-gray-50">
       <TopBar title="Every month" showBack backHref="/passbook" />
       <DemoBanner />
-      <p className="px-4 pt-3 -mb-1 text-[12px] text-gray-500">Information about your own SIP and the rules only. Not investment advice.</p>
       <main className="flex-1 p-4 space-y-4">
         <MonthList sip={sip} instalments={instalments} version={version} memories={memories} />
       </main>

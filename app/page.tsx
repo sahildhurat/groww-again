@@ -1,7 +1,6 @@
 "use client";
 
-// Owner, 9 Nov 2026: Home is the binding line and two doors only: the passbook and Sensecheck. The task list is gone;
-// the personal layer is shown on the Start SIP demo screen (reached from the passbook).
+// Owner, 9 Nov 2026: Home is the binding line and two doors: the passbook and Sensecheck. No task list, no Start SIP demo.
 import React from "react";
 import Link from "next/link";
 import { TopBar } from "@/components/ui/top-bar";
@@ -22,8 +21,9 @@ export default function HomePage() {
             Your bank&apos;s SMS shows the money leaving. This shows what it became.
           </h1>
           <p className="text-[13px] text-gray-600 leading-relaxed">
-            UPI moves money in seconds; a SIP takes days. The passbook shows every month&apos;s money, from your bank
-            debit to the units in your name. Sensecheck explains any line in plain words. Not investment advice.
+            UPI moves money in seconds; a SIP takes days. Track every instalment like an online order: picked up from your
+            bank, handed to the fund, delivered to your name as units. Sensecheck explains any step in plain words. Not
+            investment advice.
           </p>
           <div className="pt-1 space-y-2">
             <Link
@@ -40,6 +40,7 @@ export default function HomePage() {
               <MessageCircle className="w-4 h-4 mr-1.5 text-emerald-600" />
               <span>Ask Sensecheck a question</span>
             </Link>
+
           </div>
         </section>
       </main>

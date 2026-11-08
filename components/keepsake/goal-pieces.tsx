@@ -1,24 +1,22 @@
 "use client";
 
-// Piece by piece (final feature, version B). The investor's goal photo, built one piece per confirmed instalment for
-// the first year. Each piece is two-sided: tap it to turn it over and see that month's money and units (only facts
+// Piece by piece (final feature, version B). A picture built one piece per confirmed instalment for the first year.
+// Owner, 9 Nov 2026 (03:20): a sample picture of a home (public/illustrations/piece-home.svg, drawn for this prototype);
+// no photo upload. Each piece is two-sided: tap it to turn it over and see that month's money and units (only facts
 // from the passbook) and the month's memory, if there is one. No prompts to finish it, no reward; after a stop the
 // picture simply stays as it is.
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { Mic, Quote } from "lucide-react";
 import type { Instalment, PassbookSip } from "@/lib/passbook-types";
-import { getGoal, type GoalRecord, type MemoryRecord } from "@/lib/keepsake";
+import type { MemoryRecord } from "@/lib/keepsake";
 import { piecesFor, PIECES } from "@/lib/pieces";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { monthKey } from "@/lib/flow";
-import { useKeepsakeTick } from "./use-keepsake";
 
 const COLS = 4;
 const ROWS = 3;
-// Used when no photo was added: a calm abstract picture, so the pieces still read as one image.
-const DEFAULT_ART =
-  "linear-gradient(135deg, #1F7A63 0%, #43A486 30%, #A8D9C8 55%, #EEF3FB 75%, #8EAEE2 100%)";
+const ART = 'url("/illustrations/piece-home.svg")';
 
 export function GoalPieces({
   instalments,
@@ -29,20 +27,10 @@ export function GoalPieces({
   sip: PassbookSip;
   memories: Record<string, MemoryRecord>;
 }) {
-  const tick = useKeepsakeTick();
-  const [goal, setGoal] = useState<GoalRecord | undefined>();
-  const [loaded, setLoaded] = useState(false);
   const [turned, setTurned] = useState<number | null>(null);
   const { slots, filled } = useMemo(() => piecesFor(instalments), [instalments]);
 
-  useEffect(() => {
-    getGoal()
-      .then((g) => setGoal(g))
-      .finally(() => setLoaded(true));
-  }, [tick]);
-
-  if (!loaded) return null;
-  const art = goal?.photo ? `url("${goal.photo}")` : DEFAULT_ART;
+  const art = ART;
   const turnedSlot = turned ? slots.find((s) => s.n === turned) : undefined;
   const turnedInst = turnedSlot && turnedSlot.kind === "filled" ? turnedSlot.inst : undefined;
   const memory = turnedInst ? memories[monthKey(turnedInst.due_date)] : undefined;
@@ -52,7 +40,7 @@ export function GoalPieces({
     <section className="bg-white rounded-3xl border border-gray-200/70 p-4 space-y-3" data-testid="goal-pieces">
       <div>
         <h2 className="text-[15px] font-semibold text-gray-900">
-          Piece by piece{goal?.label ? `: ${goal.label}` : ""}
+          Piece by piece: a home
         </h2>
         <p className="text-[12px] text-gray-500 mt-0.5" data-testid="pieces-count">
           {filled} of {PIECES} pieces in your first year. A piece is added each time a month&apos;s units are confirmed in
@@ -60,7 +48,7 @@ export function GoalPieces({
         </p>
       </div>
 
-      <div className="grid grid-cols-4 gap-1 rounded-2xl overflow-hidden" role="list" aria-label="Your goal, piece by piece">
+      <div className="grid grid-cols-4 gap-1 rounded-2xl overflow-hidden" role="list" aria-label="A home, piece by piece">
         {slots.map((slot) => {
           const col = (slot.n - 1) % COLS;
           const row = Math.floor((slot.n - 1) / COLS);
@@ -151,15 +139,7 @@ export function GoalPieces({
 
       <p className="text-[11px] text-gray-500 leading-relaxed">
         Pieces count confirmed instalments. They don&apos;t show what your goal costs or when you could buy it.
-        {!goal?.photo && (
-          <>
-            {" "}
-            <Link href="/start" className="underline">
-              Add your goal photo
-            </Link>{" "}
-            on the Start SIP screen.
-          </>
-        )}
+        {" "}Sample picture.
       </p>
     </section>
   );

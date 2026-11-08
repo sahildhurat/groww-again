@@ -10,8 +10,7 @@ import { usePassbook } from "@/components/passbook/use-passbook";
 import { confirmedTotals, lastFullyConfirmed, latestInstalment, instalmentState, valueAt } from "@/lib/passbook";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { ChevronRight, ExternalLink, ShieldCheck } from "lucide-react";
-import { ReasonCard } from "@/components/keepsake/reason-card";
-import { ReminderInvite } from "@/components/keepsake/reminder-invite";
+import { MoneyTrail } from "@/components/ui/money-trail";
 
 function ordinal(n: number): string {
   const t = n % 100;
@@ -49,13 +48,10 @@ export default function PassbookPage() {
       <TopBar title="SIP Passbook" showBack backHref="/" />
       <DemoBanner />
 
-      {/* Mandatory Investment Advice Notice (§2.6) */}
-      <p className="px-4 pt-3 -mb-1 text-[12px] text-gray-500">Information about your own SIP and the rules only. Not investment advice.</p>
-
-      <main className="flex-1 p-4 space-y-4">
+      <main className="flex-1 px-4 pt-3 pb-4 space-y-3">
         {/* Cover (A2): the passbook itself */}
         <section
-          className="relative overflow-hidden rounded-[28px] bg-ink text-white p-5 shadow-[0_18px_40px_-24px_rgba(20,33,61,0.9)]"
+          className="relative overflow-hidden rounded-[28px] bg-ink text-white px-5 py-4 shadow-[0_18px_40px_-24px_rgba(20,33,61,0.9)]"
           data-testid="passbook-cover"
         >
           {/* passbook ruling */}
@@ -80,9 +76,9 @@ export default function PassbookPage() {
             </div>
 
             {/* Owner, 9 Nov: current value is the headline figure */}
-            <p className="mt-3 text-[13px] text-white/70" data-testid="what-you-own">Current value</p>
+            <p className="mt-2.5 text-[13px] text-white/70" data-testid="what-you-own">Current value</p>
             <div className="mt-0.5 flex items-baseline justify-between gap-3">
-              <span className="text-[38px] leading-none font-bold tracking-[-0.03em]" data-testid="current-value">
+              <span className="text-[34px] leading-none font-bold tracking-[-0.03em]" data-testid="current-value">
                 ₹{currentValue.toLocaleString("en-IN")}
               </span>
               <span className="text-[14px] font-semibold text-white/90 whitespace-nowrap" data-testid="total-returns">
@@ -91,26 +87,25 @@ export default function PassbookPage() {
               </span>
             </div>
             <p className="mt-1 text-[11px] text-white/55">
-              at NAV ₹{sip.latest_nav.toFixed(2)}, {formatDate(sip.latest_nav_date)}. The value moves with the market; the
-              number of units you own stays the same.
+              At NAV ₹{sip.latest_nav.toFixed(2)}, {formatDate(sip.latest_nav_date)}. Value moves with the market; your
+              units don&apos;t.
             </p>
 
-            <dl className="mt-3 grid grid-cols-2 gap-2.5">
-              <div className="rounded-2xl bg-white/[0.08] px-3 py-2">
+            <dl className="mt-2.5 grid grid-cols-2 gap-2.5">
+              <div className="rounded-2xl bg-white/[0.08] px-3 py-1.5">
                 <dt className="text-[11px] text-white/65">Invested</dt>
                 <dd className="text-[17px] font-bold">₹{totals.amount_put_in.toLocaleString("en-IN")}</dd>
               </div>
-              <div className="rounded-2xl bg-white/[0.08] px-3 py-2">
+              <div className="rounded-2xl bg-white/[0.08] px-3 py-1.5">
                 <dt className="text-[11px] text-white/65">Units in your name</dt>
                 <dd className="text-[17px] font-bold">{totals.units.toFixed(3)}</dd>
               </div>
             </dl>
 
-            <div className="mt-3 pt-2.5 border-t border-white/15 text-[12px] text-white/60 leading-relaxed">
+            <div className="mt-2.5 pt-2 border-t border-white/15 text-[12px] text-white/60 leading-relaxed">
               <p>
                 <span className="text-white font-semibold">{sip.fund_label}</span> · started {formatDate(sip.start_date)}
               </p>
-              {sip.payment_route && <p data-testid="payment-route">Paid through {sip.payment_route}</p>}
               <p>
                 <span>Last fully confirmed instalment: </span>
                 <strong className="font-semibold text-white">{lastConfirmed ? formatDate(lastConfirmed.due_date) : "None"}</strong>
@@ -119,55 +114,46 @@ export default function PassbookPage() {
           </div>
         </section>
 
-        {/* Calm one-liner about the latest instalment; R42: tappable, opens that entry */}
-        {latest && latestState && latestState !== "allotted" && latestState !== "skipped" && (
+        {/* Owner, 9 Nov: the latest month's status in the delivery format; every other month is on Every month.
+            The whole card opens that month (every step, and Sensecheck). */}
+        {latest && latestState && (
           <Link
             href={`/passbook/${latest.id}`}
             data-testid="latest-line"
-            className={`flex items-center justify-between text-[13px] leading-snug rounded-2xl px-4 py-3 border ${
-              latestState === "failed"
-                ? "text-amber-900 bg-amber-50 border-amber-200"
-                : latestState === "unknown"
-                ? "text-gray-800 bg-white border-gray-200"
-                : "text-blue-900 bg-blue-50 border-blue-200"
-            }`}
+            className="block bg-white rounded-[24px] px-4 pt-3 pb-3 border border-gray-200/70 hover:border-gray-300"
           >
-            <span>
-              {latestState === "failed" &&
-                `The latest instalment on ${formatDate(latest.due_date)} was not debited. Nothing was taken from your account.`}
-              {latestState === "refunded" &&
-                `The latest instalment on ${formatDate(latest.due_date)} was refunded to your bank account.`}
-              {latestState === "in_progress" &&
-                `The latest instalment on ${formatDate(latest.due_date)} was debited. Units are not confirmed yet.`}
-              {latestState === "unknown" &&
-                `We can't confirm the latest status right now${
-                  latestAsOf ? ` (as of ${formatDateTime(latestAsOf)})` : ""
-                }. Check your CAS or contact support.`}
-            </span>
-            <ChevronRight className="w-4 h-4 flex-shrink-0 ml-2" />
+            <section data-testid="latest-month" className="space-y-2">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-[14px] font-semibold text-gray-900">
+                  Tracking your {formatDate(latest.due_date)} instalment{" "}
+                  <span className="font-normal text-gray-500">· ₹{latest.amount.toLocaleString("en-IN")}</span>
+                </h2>
+                <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" aria-label="Open this month" />
+              </div>
+              {latest.skipped ? (
+                <p className="text-[13px] text-gray-600">Skipped. No debit was attempted.</p>
+              ) : (
+                <MoneyTrail inst={latest} paymentRoute={sip.payment_route} />
+              )}
+              {latestState === "unknown" && (
+                <p className="text-[12px] text-gray-600">
+                  We can&apos;t confirm the latest status right now{latestAsOf ? ` (as of ${formatDateTime(latestAsOf)})` : ""}.
+                  Check your CAS or contact support.
+                </p>
+              )}
+            </section>
           </Link>
         )}
 
-        {/* Owner, 9 Nov: the two views of the passbook, one tap away, never below a long scroll */}
-        <nav className="grid grid-cols-2 gap-2.5" aria-label="Passbook views">
-          <Link href="/passbook/months" className="rounded-2xl bg-white border border-gray-200/70 p-3.5 hover:border-gray-300" data-testid="tile-months">
+        {/* Owner, 9 Nov (03:47): Piece by piece removed; one door to every month's tracker */}
+        <nav aria-label="Passbook views">
+          <Link href="/passbook/months" className="block rounded-2xl bg-white border border-gray-200/70 px-3.5 py-2.5 hover:border-gray-300" data-testid="tile-months">
             <span className="flex items-center justify-between text-[14px] font-semibold text-gray-900">
               Every month
               <ChevronRight className="w-4 h-4 text-gray-400" aria-hidden />
             </span>
             <span className="block text-[12px] text-gray-500 mt-0.5">
-              {instalments.length} months, from your bank to your units
-            </span>
-          </Link>
-          <Link href="/passbook/goal" className="rounded-2xl bg-white border border-gray-200/70 p-3.5 hover:border-gray-300" data-testid="tile-goal">
-            <span className="flex items-center justify-between text-[14px] font-semibold text-gray-900">
-              {version === "B" ? "Piece by piece" : "Units by month"}
-              <ChevronRight className="w-4 h-4 text-gray-400" aria-hidden />
-            </span>
-            <span className="block text-[12px] text-gray-500 mt-0.5">
-              {version === "B"
-                ? `${Math.min(totals.count, 12)} of 12 pieces of your goal`
-                : `${totals.units.toFixed(3)} units so far`}
+              All {instalments.length} instalments, each tracked from your bank to your units
             </span>
           </Link>
         </nav>
@@ -193,20 +179,10 @@ export default function PassbookPage() {
               >
                 Ask Sensecheck about restarting
               </Link>
-              <Link href="/start" className="text-[13px] font-medium text-emerald-800 underline" data-testid="stopped-start-link">
-                The Start SIP screen (demo)
-              </Link>
             </div>
           </div>
         )}
 
-        {/* Version B: why I started (own words, text or voice) */}
-        {version === "B" && (
-          <div className="p-3.5 bg-violet-50 border border-violet-100 rounded-2xl space-y-2.5 empty:hidden" data-testid="personal-layer">
-            <ReasonCard folded={sip.status !== "active" || latestState === "failed"} editable={false} />
-            <ReminderInvite hidden={sip.status !== "active" || latestState === "failed"} />
-          </div>
-        )}
 
         {/* CAS Notice (A3) */}
         <section className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-2">

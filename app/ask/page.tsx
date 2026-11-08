@@ -170,8 +170,6 @@ function AskContent() {
       />
       <DemoBanner />
 
-      <p className="px-4 pt-3 -mb-1 text-[12px] text-gray-500">Information about your own SIP and the rules only. Not investment advice.</p>
-
       <main className="flex-1 p-4 flex flex-col space-y-3.5">
         {/* Optional Entry Picker */}
         <div className="bg-white p-2.5 rounded-xl border border-gray-100 space-y-1.5 text-xs">
@@ -307,7 +305,7 @@ function AskContent() {
         {/* AI disclosure (final MVP, 8 Nov) */}
         <p className="text-[11px] text-gray-500 text-center" data-testid="ai-disclosure">
           Answers are written by an AI model and checked before you see them. If a check fails, you get a standard
-          answer instead.
+          answer instead. Sensecheck explains your SIP and the rules; it isn&apos;t investment advice.
         </p>
 
         {/* Input Bar */}

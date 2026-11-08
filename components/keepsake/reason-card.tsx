@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { PenLine, Mic, Trash2 } from "lucide-react";
 import { VoicePlayer, VoiceRecorder } from "./voice-recorder";
 import { useKeepsakeTick } from "./use-keepsake";
@@ -99,11 +98,6 @@ export function ReasonCard({
           )}
           {reason?.voice && (
             <VoicePlayer blob={reason.voice} label={`Voice note · ${formatSeconds(reason.voiceSec)}`} />
-          )}
-          {!editable && (
-            <Link href="/start" className="inline-block text-xs font-medium text-purple-800 underline pt-0.5">
-              Change it
-            </Link>
           )}
           {editable && (
           <div className="flex flex-wrap gap-x-4 gap-y-1 pt-0.5">

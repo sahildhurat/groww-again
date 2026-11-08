@@ -3,13 +3,15 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, HelpCircle, SlidersHorizontal } from "lucide-react";
+import { BookOpen, HelpCircle, Home, SlidersHorizontal } from "lucide-react";
 
 export function BottomNav() {
   const pathname = usePathname();
 
-  // Final MVP (8 Nov): three tabs; Life Markers live inside each month now.
+  // Final MVP (8 Nov): Life Markers live inside each month. Link check (9 Nov): Home is a tab, because the Start SIP
+  // demo is reached from Home; before, Home was only behind the passbook's back arrow.
   const navItems = [
+    { label: "Home", href: "/", icon: Home },
     { label: "Passbook", href: "/passbook", icon: BookOpen },
     { label: "Ask", href: "/ask", icon: HelpCircle },
     { label: "Next steps", href: "/options", icon: SlidersHorizontal },

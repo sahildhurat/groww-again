@@ -194,8 +194,6 @@ export default function EntryDetailPage() {
       <TopBar title={`Instalment: ${formatDate(entry.due_date)}`} showBack backHref="/passbook" />
       <DemoBanner />
 
-      <p className="px-4 pt-3 -mb-1 text-[12px] text-gray-500">Information about your own SIP and the rules only. Not investment advice.</p>
-
       <main className="flex-1 p-4 space-y-4">
         {/* Entry Summary: the amount, what it became, and the money's trail */}
         <section className="bg-white rounded-[28px] p-5 border border-gray-200/70 space-y-4">
@@ -215,7 +213,8 @@ export default function EntryDetailPage() {
             ) : null}
           </div>
           {entry.events.length > 0 && (
-            <div className="pt-4 border-t border-gray-100">
+            <div className="pt-4 border-t border-gray-100 space-y-2.5" data-testid="delivery-tracker">
+              <p className="text-[12px] font-semibold text-gray-700">Delivery tracker</p>
               <MoneyTrail inst={entry} paymentRoute={sip.payment_route} />
             </div>
           )}
@@ -227,7 +226,7 @@ export default function EntryDetailPage() {
             <HelpCircle className="w-4 h-4 text-emerald-600" />
             <h2 className="text-xs font-bold uppercase tracking-wider text-gray-900">What does this mean?</h2>
           </div>
-          <p className="text-xs text-gray-600">Ask Sensecheck about this instalment:</p>
+          <p className="text-xs text-gray-600">Ask Sensecheck about this instalment. It explains your SIP and Groww&apos;s rules; it isn&apos;t investment advice.</p>
 
           <div className="space-y-1.5">
             {suggestedQuestions.map((q) => (

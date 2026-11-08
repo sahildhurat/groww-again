@@ -3,6 +3,7 @@ import "@fontsource-variable/onest";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { FrameScrollReset } from "@/components/ui/frame-scroll-reset";
+import { NavHistory } from "@/components/ui/nav-history";
 
 export const metadata: Metadata = {
   title: "SIP Passbook (concept)",
@@ -27,6 +28,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="selection:bg-emerald-100 selection:text-emerald-900">
         <Providers>
+          <NavHistory />
           <div className="stage">
             {/* Desktop only: what this is, beside the phone */}
             <aside className="stage-note" aria-hidden="true">

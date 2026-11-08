@@ -99,7 +99,7 @@ export default function DemoToolsPage() {
               <div>
                 <strong className="block text-gray-900">Version B (+ Personal Layer)</strong>
                 <span className="text-[11px] text-gray-500">
-                  Adds the personal layer: why you started (written or recorded), a memory for any month (a photo, a voice note or a line) and Ask a friend.
+                  Adds the personal layer: a memory for any month (a photo, a voice note or a line), Piece by piece and Ask a friend.
                 </span>
               </div>
             </label>
@@ -210,7 +210,7 @@ export default function DemoToolsPage() {
             </h2>
           </div>
           <p className="text-xs text-gray-600 leading-relaxed">
-            Clears everything added on this device (your reason, goal photo, memories and your friend&apos;s name) and goes back to the running SIP.
+            Clears everything added on this device (memories and your friend&apos;s name) and goes back to the running SIP.
           </p>
           <button
             type="button"

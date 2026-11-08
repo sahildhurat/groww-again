@@ -7,22 +7,18 @@ import { BottomNav } from "@/components/ui/bottom-nav";
 import { FooterNotice } from "@/components/ui/footer-notice";
 import { DemoBanner } from "@/components/ui/demo-banner";
 import { useKeepsakeTick } from "@/components/keepsake/use-keepsake";
-import { clearAll, deleteAllMemories, deleteGoal, deleteReason, getFriend, getGoal, getReason, listMemories, saveFriend } from "@/lib/keepsake";
+import { clearAll, deleteAllMemories, getFriend, listMemories, saveFriend } from "@/lib/keepsake";
 import { Lock, Trash2 } from "lucide-react";
 
 // Final MVP (8 Nov 2026): replaces Settings, Sign in and the consent form. There is no account: what the investor
 // adds stays in this browser, questions to Sensecheck are not stored by this prototype, and everything can be deleted.
 export default function YourDataPage() {
   const tick = useKeepsakeTick();
-  const [hasReason, setHasReason] = useState(false);
-  const [hasGoal, setHasGoal] = useState(false);
   const [memoryCount, setMemoryCount] = useState(0);
   const [hasFriend, setHasFriend] = useState(false);
   const [done, setDone] = useState<string | null>(null);
 
   useEffect(() => {
-    getReason().then((r) => setHasReason(Boolean(r && (r.text || r.voice))));
-    getGoal().then((g) => setHasGoal(Boolean(g?.photo)));
     listMemories().then((l) => setMemoryCount(l.length));
     getFriend().then((f) => setHasFriend(Boolean(f.name)));
   }, [tick]);
@@ -49,8 +45,7 @@ export default function YourDataPage() {
               <strong>No account.</strong> There is no sign-in, and the passbook shows sample data, not your real SIP.
             </li>
             <li>
-              <strong>What you add stays on this device</strong>, in this browser: your reason for starting (text or
-              voice), your goal photo, your memories for each month (photos, voice notes, lines) and the first name
+              <strong>What you add stays on this device</strong>, in this browser: your memories for each month (photos, voice notes, lines) and the first name
               of the friend you ask. Nothing is uploaded.
             </li>
             <li>
@@ -58,7 +53,7 @@ export default function YourDataPage() {
               PAN and phone numbers are masked first. This prototype does not store your questions.
             </li>
             <li>
-              <strong>The AI never sees</strong> your photos, voice notes, reason or lines.
+              <strong>The AI never sees</strong> your photos, voice notes or lines.
             </li>
             <li>
               <strong>Ask a friend:</strong> you send the message from your own WhatsApp or messages app. Groww sends
@@ -81,20 +76,11 @@ export default function YourDataPage() {
             this memory.
           </p>
           <p className="text-xs text-gray-700">
-            On this device: {hasReason ? "your reason for starting" : "no reason for starting"} ·{" "}
-            {hasGoal ? "your goal photo" : "no goal photo"} ·{" "}
+            On this device:{" "}
             {memoryCount === 1 ? "1 memory" : `${memoryCount} memories`} ·{" "}
             {hasFriend ? "your friend's first name" : "no friend's name"}.
           </p>
           <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => run(deleteReason, "Your reason was deleted.")}
-              className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-800"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>Delete my reason</span>
-            </button>
             <button
               type="button"
               onClick={() => run(deleteAllMemories, "Your memories were deleted.")}
@@ -102,14 +88,6 @@ export default function YourDataPage() {
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Delete all memories</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => run(deleteGoal, "Your goal photo was deleted.")}
-              className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-800"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              <span>Delete my goal photo</span>
             </button>
             <button
               type="button"

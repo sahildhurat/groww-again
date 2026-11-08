@@ -132,14 +132,12 @@ export default function OptionsPage() {
       <TopBar title="What can I do next?" showBack backHref="/passbook" />
       <DemoBanner />
 
-      <p className="px-4 pt-3 -mb-1 text-[12px] text-gray-500">Information about your own SIP and the rules only. Not investment advice.</p>
-
       <main className="flex-1 p-4 space-y-4">
         <div className="space-y-1">
           <h1 className="text-sm font-bold text-gray-900">What can I do next?</h1>
           <p className="text-xs text-gray-600">
             These are the changes you can make to this SIP. Open one to read the rule, or ask Sensecheck what it
-            means for you. They are in no particular order.
+            means for you. They are in no particular order, and none is a recommendation: this isn&apos;t investment advice.
           </p>
         </div>
 
