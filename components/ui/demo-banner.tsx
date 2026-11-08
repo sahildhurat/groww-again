@@ -6,14 +6,13 @@ import { useDemo } from "@/lib/demo-context";
 
 // One quiet strip under the top bar: which demo you are looking at, that it is demo data, and where your additions live.
 export function DemoBanner() {
-  const { saveError, clearSaveError, version, scenario } = useDemo();
+  const { saveError, clearSaveError, scenario } = useDemo();
 
   return (
     <>
       <div className="w-full bg-paper border-b border-gray-200/80 px-4 py-1.5 flex items-start justify-between gap-3 text-[12px] leading-snug text-gray-600 no-print">
         <span>
           <span className="font-medium text-gray-800">
-            Version {version} ·{" "}
             {scenario === "stopped" ? "Stopped SIP" : scenario === "stale" ? "Status can't be confirmed" : "Running SIP"}
           </span>
           <span className="text-gray-500"> · Demo data. What you add stays here.</span>

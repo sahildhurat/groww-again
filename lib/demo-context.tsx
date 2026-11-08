@@ -188,8 +188,10 @@ export function DemoProvider({ children }: { children: React.ReactNode }) {
 
   const loadDemoSession = () => {
     try {
+      // Owner, 9 Nov: only version B is shown; version A comes back only through the hidden switch (/demo-tools?ab=1).
       const savedVersion = sessionStorage.getItem(VERSION_KEY);
-      if (savedVersion === "A" || savedVersion === "B") {
+      const abUnlocked = sessionStorage.getItem("sip_passbook_ab_unlocked_v1") === "1";
+      if (abUnlocked && (savedVersion === "A" || savedVersion === "B")) {
         setVersionState(savedVersion);
       }
       const savedScenario = sessionStorage.getItem(SCENARIO_KEY);

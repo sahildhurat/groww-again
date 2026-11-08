@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { TopBar } from "@/components/ui/top-bar";
@@ -46,6 +46,13 @@ function stepStatus(ev: PassbookEvent): string {
   if (ev.status === "pending") return "Not confirmed yet";
   if (ev.status === "failed") return "Failed";
   return "Can't confirm right now";
+}
+
+// Owner, 9 Nov: tapping a question brings its answer into view (smooth unless reduced motion is set).
+function bringIntoView(el: HTMLElement | null) {
+  if (!el) return;
+  const reduce = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
 }
 
 // R45 (Claude, 8 Nov 2026): the amount's label says what happened to it, and a reference appears only once it exists.
@@ -118,9 +125,11 @@ export default function EntryDetailPage() {
   const CANT_ANSWER =
     "Sensecheck can't answer right now. The entry above shows the latest confirmed status.";
 
+  const answerRef = useRef<HTMLDivElement>(null);
   const handleAskQuestion = async (q: string) => {
     setExplainerLoading(true);
     setExplainerAnswer(null);
+    requestAnimationFrame(() => bringIntoView(answerRef.current));
 
     try {
       const res = await fetch("/api/ai/sensecheck", {
@@ -235,6 +244,7 @@ export default function EntryDetailPage() {
             ))}
           </div>
 
+          <div ref={answerRef} className="scroll-mt-24" data-testid="answer-anchor" />
           {explainerLoading && (
             <div className="flex items-center space-x-2 text-xs text-gray-500 p-2">
               <Sparkles className="w-4 h-4 text-emerald-600 animate-spin" />

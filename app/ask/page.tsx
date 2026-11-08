@@ -36,6 +36,13 @@ interface ChatMessage {
   intro?: boolean;
 }
 
+// Owner, 9 Nov: tapping a question brings its answer into view (smooth unless reduced motion is set).
+function bringIntoView(el: HTMLElement | null) {
+  if (!el) return;
+  const reduce = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+}
+
 function AnswerText({ text }: { text: string }) {
   return (
     <p className="text-xs leading-relaxed whitespace-pre-line">
@@ -59,6 +66,7 @@ function AskContent() {
 
   const { scenario } = useDemo();
   const inputRef = useRef<HTMLInputElement>(null);
+  const questionRef = useRef<HTMLDivElement>(null);
 
   const scenarioData = useMemo(() => {
     const scenarios = (passbookSeed as any).scenarios;
@@ -99,6 +107,12 @@ function AskContent() {
         sipActive: scenario !== "stopped",
       })
     : starterQuestionsFor(scenario);
+
+  // Owner, 9 Nov: after a question is sent, bring it (and the answer under it) into view.
+  const lastUserId = [...messages].reverse().find((m) => m.sender === "user")?.id;
+  useEffect(() => {
+    if (lastUserId) requestAnimationFrame(() => bringIntoView(questionRef.current));
+  }, [lastUserId, loading]);
 
   const handleSend = async (queryText: string) => {
     if (!queryText.trim() || loading) return;
@@ -212,7 +226,11 @@ function AskContent() {
             const showOptions =
               msg.sender === "assistant" && !msg.intro && !msg.declined && answerPointsToOptions(msg.intent, msg.text);
             return (
-              <div key={msg.id} className={`flex flex-col ${msg.sender === "user" ? "items-end" : "items-start"}`}>
+              <div
+                key={msg.id}
+                ref={msg.sender === "user" ? questionRef : undefined}
+                className={`flex flex-col scroll-mt-24 ${msg.sender === "user" ? "items-end" : "items-start"}`}
+              >
                 <div
                   className={`max-w-[88%] rounded-2xl p-3.5 space-y-2 ${
                     msg.sender === "user"

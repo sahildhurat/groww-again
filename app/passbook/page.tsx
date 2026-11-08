@@ -1,45 +1,16 @@
 "use client";
 
-import React, { useMemo, useState, useEffect } from "react";
+import React, { useMemo } from "react";
 import Link from "next/link";
 import { TopBar } from "@/components/ui/top-bar";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { FooterNotice } from "@/components/ui/footer-notice";
 import { DemoBanner } from "@/components/ui/demo-banner";
-import { useDemo } from "@/lib/demo-context";
-import passbookSeed from "@/data/passbook-seed.json";
-import {
-  confirmedTotals,
-  lastFullyConfirmed,
-  latestInstalment,
-  instalmentState,
-  valueAt,
-} from "@/lib/passbook";
-import { MemoryCard } from "@/components/keepsake/memory-card";
-import { formatDate, formatDateTime, formatMonthYear } from "@/lib/format";
-import type { Instalment, PassbookSip } from "@/lib/passbook-types";
-import {
-  CheckCircle2,
-  Circle,
-  HelpCircle,
-  XCircle,
-  RotateCcw,
-  MinusCircle,
-  ChevronRight,
-  ExternalLink,
-  ShieldCheck,
-  Camera,
-  Mic,
-  Quote,
-  Plus,
-} from "lucide-react";
-import { monthKey } from "@/lib/flow";
+import { usePassbook } from "@/components/passbook/use-passbook";
+import { confirmedTotals, lastFullyConfirmed, latestInstalment, instalmentState, valueAt } from "@/lib/passbook";
+import { formatDate, formatDateTime } from "@/lib/format";
+import { ChevronRight, ExternalLink, ShieldCheck } from "lucide-react";
 import { ReasonCard } from "@/components/keepsake/reason-card";
-import { MoneyTrail } from "@/components/ui/money-trail";
-import { UnitsGrowth } from "@/components/ui/units-growth";
-import { GoalPieces } from "@/components/keepsake/goal-pieces";
-import { useKeepsakeTick } from "@/components/keepsake/use-keepsake";
-import { listMemories, type MemoryRecord } from "@/lib/keepsake";
 
 function ordinal(n: number): string {
   const t = n % 100;
@@ -47,51 +18,8 @@ function ordinal(n: number): string {
   return `${n}${({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[n % 10] ?? "th"}`;
 }
 
-// Visual pass (8 Nov): one plain status per month, readable at a glance.
-function StatePill({ state, units }: { state: string; units?: number | null }) {
-  const map: Record<string, [string, string]> = {
-    allotted: [units ? `+${units.toFixed(3)} units` : "Units added", "bg-emerald-50 text-emerald-800 border-emerald-200"],
-    in_progress: ["Waiting for units", "bg-blue-50 text-blue-800 border-blue-200"],
-    failed: ["Not debited", "bg-orange-50 text-orange-900 border-orange-200"],
-    refunded: ["Refunded", "bg-gray-100 text-gray-700 border-gray-200"],
-    skipped: ["Skipped", "bg-gray-100 text-gray-700 border-gray-200"],
-    unknown: ["Can't confirm right now", "bg-amber-50 text-amber-900 border-amber-200"],
-  };
-  const [text, cls] = map[state] ?? ["", ""];
-  if (!text) return null;
-  return (
-    <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full border whitespace-nowrap ${cls}`} data-testid="state-pill">
-      {text}
-    </span>
-  );
-}
-
 export default function PassbookPage() {
-  const { version, scenario } = useDemo();
-
-  // Load passbook data for active scenario
-  const scenarioData = useMemo(() => {
-    const scenarios = (passbookSeed as any).scenarios;
-    return (scenarios[scenario] || scenarios.running) as {
-      sip: PassbookSip;
-      instalments: Instalment[];
-    };
-  }, [scenario]);
-
-  const { sip, instalments } = scenarioData;
-
-  // Version B: memories kept on this device, shown as small marks on their months
-  const keepsakeTick = useKeepsakeTick();
-  const [memories, setMemories] = useState<Record<string, MemoryRecord>>({});
-  useEffect(() => {
-    if (version !== "B") {
-      setMemories({});
-      return;
-    }
-    listMemories()
-      .then((list) => setMemories(Object.fromEntries(list.map((m) => [m.month, m]))))
-      .catch(() => setMemories({}));
-  }, [version, keepsakeTick]);
+  const { version, sip, instalments } = usePassbook();
 
   // Derived totals and stats (§4)
   const totals = useMemo(() => confirmedTotals(instalments), [instalments]);
@@ -101,7 +29,6 @@ export default function PassbookPage() {
   const gainPct = totals.amount_put_in > 0 ? (gain / totals.amount_put_in) * 100 : 0;
   const rupees = (n: number) => `₹${Math.abs(n).toLocaleString("en-IN")}`;
   const signed = (n: number, text: string) => (n < 0 ? `−${text}` : n > 0 ? `+${text}` : text);
-  const [openMemory, setOpenMemory] = useState<string | null>(null);
   const lastConfirmed = useMemo(
     () => lastFullyConfirmed(instalments),
     [instalments]
@@ -115,13 +42,6 @@ export default function PassbookPage() {
     latest && latestState === "unknown"
       ? latest.events.find((e) => e.status === "unknown")?.as_of ?? null
       : null;
-
-  // Newest first
-  const sortedInstalments = useMemo(() => {
-    return [...instalments].sort((a, b) =>
-      b.due_date.localeCompare(a.due_date)
-    );
-  }, [instalments]);
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -158,55 +78,41 @@ export default function PassbookPage() {
               </span>
             </div>
 
-            {/* Owner, 8 Nov: what you own first, in bold */}
-            <h2 className="mt-4 text-[13px] text-white/70" data-testid="what-you-own">
-              What you own
-            </h2>
-            <div className="mt-1 flex items-baseline gap-2">
-              <span className="text-[40px] leading-none font-bold tracking-[-0.03em]">{totals.units.toFixed(3)}</span>
-              <span className="text-[15px] font-semibold text-white/80">units</span>
-            </div>
-            <p className="mt-1.5 text-[12px] text-white/60">in your name, from {totals.count} confirmed instalments</p>
-
-            <div className="mt-4 grid grid-cols-2 gap-3" data-testid="value-grid">
-              <div className="rounded-2xl bg-white/[0.08] px-3 py-2.5">
-                <span className="block text-[12px] text-white/65">Invested</span>
-                <span className="block text-[20px] font-bold mt-0.5">₹{totals.amount_put_in.toLocaleString("en-IN")}</span>
-                <span className="block text-[11px] text-white/50 mt-0.5">confirmed instalments</span>
-              </div>
-              <div className="rounded-2xl bg-white/[0.08] px-3 py-2.5">
-                <span className="block text-[12px] text-white/65">Current value</span>
-                <span className="block text-[20px] font-bold mt-0.5" data-testid="current-value">
-                  ₹{currentValue.toLocaleString("en-IN")}
-                </span>
-                <span className="block text-[11px] text-white/50 mt-0.5">
-                  at NAV ₹{sip.latest_nav.toFixed(2)}, {formatDate(sip.latest_nav_date)}
-                </span>
-              </div>
-            </div>
-            <div className="mt-2.5 flex items-baseline justify-between rounded-2xl bg-white/[0.05] px-3 py-2" data-testid="total-returns">
-              <span className="text-[12px] text-white/65">Total returns</span>
-              <span className="text-[15px] font-bold">
+            {/* Owner, 9 Nov: current value is the headline figure */}
+            <p className="mt-3 text-[13px] text-white/70" data-testid="what-you-own">Current value</p>
+            <div className="mt-0.5 flex items-baseline justify-between gap-3">
+              <span className="text-[38px] leading-none font-bold tracking-[-0.03em]" data-testid="current-value">
+                ₹{currentValue.toLocaleString("en-IN")}
+              </span>
+              <span className="text-[14px] font-semibold text-white/90 whitespace-nowrap" data-testid="total-returns">
+                <span className="sr-only">Total returns </span>
                 {signed(gain, rupees(gain))} ({signed(gain, `${Math.abs(gainPct).toFixed(2)}%`)})
               </span>
             </div>
-            <p className="mt-2 text-[12px] text-white/60 leading-relaxed">
-              The value moves with the market. The number of units you own stays the same.
+            <p className="mt-1 text-[11px] text-white/55">
+              at NAV ₹{sip.latest_nav.toFixed(2)}, {formatDate(sip.latest_nav_date)}. The value moves with the market; the
+              number of units you own stays the same.
             </p>
 
-            <div className="mt-4 pt-4 border-t border-white/15">
-              <p className="text-[15px] font-semibold leading-snug">{sip.fund_label}</p>
-              <p className="text-[13px] text-white/60 mt-0.5">Started {formatDate(sip.start_date)}</p>
-              {sip.payment_route && (
-                <p className="text-[13px] text-white/60" data-testid="payment-route">
-                  Paid through {sip.payment_route}
-                </p>
-              )}
-              <p className="mt-2 text-[12px] text-white/60">
+            <dl className="mt-3 grid grid-cols-2 gap-2.5">
+              <div className="rounded-2xl bg-white/[0.08] px-3 py-2">
+                <dt className="text-[11px] text-white/65">Invested</dt>
+                <dd className="text-[17px] font-bold">₹{totals.amount_put_in.toLocaleString("en-IN")}</dd>
+              </div>
+              <div className="rounded-2xl bg-white/[0.08] px-3 py-2">
+                <dt className="text-[11px] text-white/65">Units in your name</dt>
+                <dd className="text-[17px] font-bold">{totals.units.toFixed(3)}</dd>
+              </div>
+            </dl>
+
+            <div className="mt-3 pt-2.5 border-t border-white/15 text-[12px] text-white/60 leading-relaxed">
+              <p>
+                <span className="text-white font-semibold">{sip.fund_label}</span> · started {formatDate(sip.start_date)}
+              </p>
+              {sip.payment_route && <p data-testid="payment-route">Paid through {sip.payment_route}</p>}
+              <p>
                 <span>Last fully confirmed instalment: </span>
-                <strong className="font-semibold text-white">
-                  {lastConfirmed ? formatDate(lastConfirmed.due_date) : "None"}
-                </strong>
+                <strong className="font-semibold text-white">{lastConfirmed ? formatDate(lastConfirmed.due_date) : "None"}</strong>
               </p>
             </div>
           </div>
@@ -241,6 +147,30 @@ export default function PassbookPage() {
           </Link>
         )}
 
+        {/* Owner, 9 Nov: the two views of the passbook, one tap away, never below a long scroll */}
+        <nav className="grid grid-cols-2 gap-2.5" aria-label="Passbook views">
+          <Link href="/passbook/months" className="rounded-2xl bg-white border border-gray-200/70 p-3.5 hover:border-gray-300" data-testid="tile-months">
+            <span className="flex items-center justify-between text-[14px] font-semibold text-gray-900">
+              Every month
+              <ChevronRight className="w-4 h-4 text-gray-400" aria-hidden />
+            </span>
+            <span className="block text-[12px] text-gray-500 mt-0.5">
+              {instalments.length} months, from your bank to your units
+            </span>
+          </Link>
+          <Link href="/passbook/goal" className="rounded-2xl bg-white border border-gray-200/70 p-3.5 hover:border-gray-300" data-testid="tile-goal">
+            <span className="flex items-center justify-between text-[14px] font-semibold text-gray-900">
+              {version === "B" ? "Piece by piece" : "Units by month"}
+              <ChevronRight className="w-4 h-4 text-gray-400" aria-hidden />
+            </span>
+            <span className="block text-[12px] text-gray-500 mt-0.5">
+              {version === "B"
+                ? `${Math.min(totals.count, 12)} of 12 pieces of your goal`
+                : `${totals.units.toFixed(3)} units so far`}
+            </span>
+          </Link>
+        </nav>
+
         {/* Stopped Stamp (C3) - derived from sip.status_changed_at */}
         {sip.status === "stopped" && (
           <div className="p-4 bg-white border border-gray-200 rounded-2xl space-y-1.5">
@@ -266,128 +196,12 @@ export default function PassbookPage() {
           </div>
         )}
 
-        {/* The asset view: version A sees units growing month by month; version B sees their own goal, piece by piece
-            (the A/B question: plain numbers against their own goal) */}
-        {version === "B" ? (
-          <GoalPieces instalments={instalments} sip={sip} memories={memories} />
-        ) : (
-          <UnitsGrowth instalments={instalments} />
-        )}
-
         {/* Version B: why I started (own words, text or voice) */}
         {version === "B" && (
           <div className="p-3.5 bg-violet-50 border border-violet-100 rounded-2xl space-y-2.5 empty:hidden" data-testid="personal-layer">
             <ReasonCard folded={sip.status !== "active" || latestState === "failed"} editable={false} />
           </div>
         )}
-
-        {/* Entries List (A1) */}
-        <section className="space-y-3 pt-1">
-          <div className="flex items-baseline justify-between px-1">
-            <h2 className="text-[15px] font-semibold text-gray-900">
-              Every month ({sortedInstalments.length})
-            </h2>
-            <span className="text-[12px] text-gray-400">Newest first</span>
-          </div>
-
-          <div className="space-y-2.5">
-            {sortedInstalments.map((inst) => {
-              const state = instalmentState(inst);
-              const debit = inst.events.find((e) => e.type === "debit");
-              const allotment = inst.events.find((e) => e.type === "allotment");
-              const refund = inst.events.find((e) => e.type === "refund");
-
-              const monthStr = monthKey(inst.due_date);
-              const memory = version === "B" ? memories[monthStr] : undefined;
-
-              // Source text
-              let sourceText = "";
-              if (state === "allotted" && allotment) {
-                sourceText = `Confirmed by ${allotment.source_label} · ${formatDateTime(allotment.effective_at || allotment.as_of)}`;
-              } else if (state === "in_progress" && debit) {
-                sourceText = `Confirmed by your bank · ${formatDateTime(debit.effective_at)}`;
-              } else if (state === "failed" && debit) {
-                sourceText = `Returned by your bank · ${formatDateTime(debit.effective_at)}`;
-              } else if (state === "refunded" && refund) {
-                sourceText = `Refund confirmed by your bank · ${formatDateTime(refund.effective_at)}`;
-              } else if (state === "unknown" && allotment) {
-                sourceText = `Status as of ${formatDateTime(allotment.as_of)}`;
-              }
-
-              return (
-                <div
-                  key={inst.id}
-                  className="bg-white rounded-3xl border border-gray-200/70 hover:border-gray-300 transition-colors"
-                >
-                  <Link href={`/passbook/${inst.id}`} className="block px-4 pt-3.5 pb-3 group">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-[15px] font-semibold text-gray-900">{formatDate(inst.due_date)}</span>
-                        <span className="text-[13px] text-gray-500">₹{inst.amount.toLocaleString("en-IN")}</span>
-                        <StatePill state={state} units={inst.units} />
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        {memory && (
-                          <span
-                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-violet-800 bg-violet-50 border border-violet-200 rounded-full px-2 py-0.5"
-                            data-testid="memory-indicator"
-                            aria-label={`Your memory for ${formatMonthYear(monthStr)}`}
-                          >
-                            {memory.photo && <Camera className="w-3 h-3" />}
-                            {memory.voice && <Mic className="w-3 h-3" />}
-                            {memory.text && !memory.photo && !memory.voice && <Quote className="w-3 h-3" />}
-                            <span>Memory</span>
-                          </span>
-                        )}
-                        <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-700 transition-colors" />
-                      </div>
-                    </div>
-
-                    <div className="pt-3">
-                      {state === "skipped" ? (
-                        <div className="flex items-center gap-2 text-[13px] text-gray-500 py-1">
-                          <MinusCircle className="w-4 h-4 text-gray-400" />
-                          <span>Skipped by investor. No debit was attempted.</span>
-                        </div>
-                      ) : (
-                        <MoneyTrail inst={inst} paymentRoute={sip.payment_route} />
-                      )}
-
-                      {sourceText && (
-                        <p className="text-[11px] text-gray-500 mt-3 pt-2 border-t border-gray-100">{sourceText}</p>
-                      )}
-                    </div>
-                  </Link>
-                  {/* Owner, 8 Nov: a memory can be attached to any month (version B only, so the A/B test still works) */}
-                  {version === "B" && (
-                    <div className="px-4 pb-3">
-                      {openMemory === monthStr ? (
-                        <MemoryCard
-                          month={monthStr}
-                          monthLabel={formatMonthYear(monthStr)}
-                          invite={false}
-                          autoEdit
-                          embedded
-                          onClose={() => setOpenMemory(null)}
-                        />
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => setOpenMemory(monthStr)}
-                          data-testid="add-memory"
-                          className="inline-flex items-center gap-1 text-[12px] font-medium text-violet-800 hover:underline"
-                        >
-                          {memory ? <Camera className="w-3.5 h-3.5" aria-hidden /> : <Plus className="w-3.5 h-3.5" aria-hidden />}
-                          <span>{memory ? `View your ${formatMonthYear(monthStr)} memory` : `Add a memory to ${formatMonthYear(monthStr)}`}</span>
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </section>
 
         {/* CAS Notice (A3) */}
         <section className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-2">

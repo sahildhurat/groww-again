@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { TopBar } from "@/components/ui/top-bar";
 import { BottomNav } from "@/components/ui/bottom-nav";
@@ -13,6 +13,21 @@ import { RotateCcw, Check, SlidersHorizontal, Layers, PlayCircle } from "lucide-
 export default function DemoToolsPage() {
   const { version, setVersion, scenario, setScenario, resetDemoState } = useDemo();
   const [savedNotice, setSavedNotice] = useState(false);
+  // Owner, 9 Nov: only version B is shown. The A/B switch is hidden; /demo-tools?ab=1 shows it (tests, owner).
+  const [abVisible, setAbVisible] = useState(false);
+  useEffect(() => {
+    try {
+      if (new URLSearchParams(window.location.search).get("ab") === "1") {
+        sessionStorage.setItem("sip_passbook_ab_unlocked_v1", "1");
+        setAbVisible(true);
+      } else if (sessionStorage.getItem("sip_passbook_ab_unlocked_v1") === "1") {
+        setAbVisible(true);
+      } else if (version !== "B") {
+        setVersion("B");
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleReset = async () => {
     resetDemoState();
@@ -27,7 +42,8 @@ export default function DemoToolsPage() {
       <DemoBanner />
 
       <main className="flex-1 p-4 space-y-4">
-        {/* Version Switch */}
+        {/* Version Switch (hidden unless /demo-tools?ab=1) */}
+        {abVisible && (
         <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
           <div className="flex items-center space-x-2 text-emerald-800">
             <Layers className="w-5 h-5 text-emerald-600" />
@@ -89,6 +105,7 @@ export default function DemoToolsPage() {
             </label>
           </div>
         </section>
+        )}
 
         {/* Scenario Switch */}
         <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
@@ -193,7 +210,7 @@ export default function DemoToolsPage() {
             </h2>
           </div>
           <p className="text-xs text-gray-600 leading-relaxed">
-            Clears everything added on this device (your reason, memories and your friend&apos;s name) and goes back to version B with the running SIP.
+            Clears everything added on this device (your reason, goal photo, memories and your friend&apos;s name) and goes back to the running SIP.
           </p>
           <button
             type="button"

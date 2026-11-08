@@ -28,8 +28,8 @@ test.describe("SPEC-07 End-to-End Suite", () => {
   test("Task 1: November entry shows debited, order placed, units pending with as_of, explainer answers", async ({
     page,
   }) => {
-    // Check /passbook shows "Units not confirmed yet"
-    await page.goto("/passbook");
+    // Owner, 9 Nov: every month lives on its own page; November shows units not confirmed yet
+    await page.goto("/passbook/months");
     await expect(page.getByText("Units not confirmed yet").first()).toBeVisible();
 
     await page.goto("/passbook/inst-2026-11-05");
@@ -163,7 +163,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     page,
   }) => {
     // Set scenario to stopped in demo tools
-    await page.goto("/demo-tools");
+    await page.goto("/demo-tools?ab=1");
     await page.getByLabel("stopped").check();
 
     await page.goto("/passbook");
@@ -189,7 +189,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     }
 
     // Reset back to running
-    await page.goto("/demo-tools");
+    await page.goto("/demo-tools?ab=1");
     await page.getByLabel("running").check();
   });
 
@@ -197,14 +197,13 @@ test.describe("SPEC-07 End-to-End Suite", () => {
   test("Task 6: Stale scenario shows can't confirm latest status right now", async ({
     page,
   }) => {
-    await page.goto("/demo-tools");
+    await page.goto("/demo-tools?ab=1");
     await page.getByLabel("stale").check();
 
     await page.goto("/passbook");
-    await expect(
-      page.getByText("Can't confirm right now").first()
-    ).toBeVisible();
     await expect(page.getByText(/as of 5 Nov 2026, 11:40 IST/i).first()).toBeVisible();
+    await page.goto("/passbook/months");
+    await expect(page.getByText("Can't confirm right now").first()).toBeVisible();
 
     if (page.viewportSize()?.width === 390) {
       await page.screenshot({
@@ -219,17 +218,20 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await expect(page.getByText("Not known yet.")).toHaveCount(0);
 
     // Reset back to running
-    await page.goto("/demo-tools");
+    await page.goto("/demo-tools?ab=1");
     await page.getByLabel("running").check();
   });
 
   // Task 7 (final MVP): version A has no personal layer; version B has why I started, memories and Ask a friend
   test("Task 7: Version A hides the personal layer; Version B shows it; nav has three tabs", async ({ page }) => {
-    await page.goto("/demo-tools");
+    await page.goto("/demo-tools?ab=1");
     await page.getByLabel("Version A (ledger only)").check();
     await page.goto("/passbook");
     await expect(page.getByTestId("personal-layer")).toHaveCount(0);
+    await expect(page.getByTestId("tile-goal")).toContainText("Units by month");
+    await page.goto("/passbook/months");
     await expect(page.getByTestId("add-memory")).toHaveCount(0);
+    await page.goto("/passbook/goal");
     await expect(page.getByTestId("goal-pieces")).toHaveCount(0);
     await expect(page.getByTestId("units-growth")).toBeVisible();
     await page.goto("/start");
@@ -239,9 +241,9 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await page.goto("/passbook/inst-2026-05-05");
     await expect(page.getByRole("button", { name: /Ask a friend about this/ })).toHaveCount(0);
 
-    await page.goto("/demo-tools");
+    await page.goto("/demo-tools?ab=1");
     await page.getByLabel("Version B (personal layer)").check();
-    await page.goto("/passbook");
+    await page.goto("/passbook/months");
     // Owner, 8 Nov: a memory can be added to every month; the reason is asked on the Start SIP screen
     await expect(page.getByTestId("add-memory")).toHaveCount(12);
     await expect(page.getByRole("button", { name: "Write it" })).toHaveCount(0);
@@ -264,7 +266,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
   test("Task 8: Add a photo and a line to October, see it on the passbook, then delete it", async ({
     page,
   }) => {
-    await page.goto("/demo-tools");
+    await page.goto("/demo-tools?ab=1");
     await page.getByLabel("Version B (personal layer)").check();
 
     // Allotted month: gentle invitation
@@ -285,8 +287,8 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await expect(may.getByText(/for your future self/)).toHaveCount(0);
     await expect(may.getByRole("button", { name: "Add a memory to May 2026" })).toBeVisible();
 
-    // Passbook row shows the memory mark; survives a reload (stored on the device)
-    await page.goto("/passbook");
+    // The month list shows the memory mark; survives a reload (stored on the device)
+    await page.goto("/passbook/months");
     await expect(page.getByTestId("memory-indicator")).toHaveCount(1);
     await page.reload();
     await expect(page.getByTestId("memory-indicator")).toHaveCount(1);
@@ -304,7 +306,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await expect(page.getByTestId("delete-section")).toContainText("2 memories");
     await page.getByRole("button", { name: "Delete all memories" }).click();
     await expect(page.getByTestId("delete-section")).toContainText("0 memories");
-    await page.goto("/passbook");
+    await page.goto("/passbook/months");
     await expect(page.getByTestId("memory-indicator")).toHaveCount(0);
   });
 
@@ -358,7 +360,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
 
   // Task 11 (final MVP): Ask a friend builds a plain first-person message the investor sends from their own app
   test("Task 11: Ask a friend about the failed May instalment: own words, no references, WhatsApp link, name stays on device", async ({ page }) => {
-    await page.goto("/demo-tools");
+    await page.goto("/demo-tools?ab=1");
     await page.getByLabel("Version B (personal layer)").check();
     await page.goto("/passbook/inst-2026-05-05");
     await page.getByRole("button", { name: "Ask a friend about this" }).click();
@@ -429,10 +431,33 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await page.goto("/passbook/inst-2026-11-05");
     await expect(page.getByTestId("second-message")).toHaveCount(0);
 
-    // Version B (default) shows the goal, piece by piece; the units chart is version A's asset view
+    // Owner, 9 Nov: no version label anywhere a mentor sees; the A/B switch is hidden without ?ab=1
+    await page.goto("/demo-tools");
+    await expect(page.getByText(/Version [AB]/)).toHaveCount(0);
+    await expect(page.getByText("Prototype Version (A / B)")).toHaveCount(0);
+
+    // Owner, 9 Nov: tapping a suggested question scrolls its answer into view
+    await page.goto("/passbook/inst-2026-05-05");
+    await page.getByRole("button", { name: /Why did my May instalment fail\?/ }).click();
+    await page.waitForTimeout(900);
+    const anchor = await page.getByTestId("answer-anchor").boundingBox();
+    expect(anchor && anchor.y).toBeLessThan(page.viewportSize()!.height * 0.6);
+
+    // Owner, 9 Nov: the passbook cover leads with current value; its two views are tiles above the fold
     await page.goto("/passbook");
+    await expect(page.getByTestId("current-value")).toHaveText("₹15,534");
+    for (const t of ["tile-months", "tile-goal"]) {
+      const b = await page.getByTestId(t).boundingBox();
+      expect(b && b.y + b.height).toBeLessThan(page.viewportSize()!.height);
+    }
+    await page.getByTestId("tile-goal").click();
+    await expect(page).toHaveURL(/\/passbook\/goal$/);
     await expect(page.getByTestId("goal-pieces")).toBeVisible();
     await expect(page.getByTestId("units-growth")).toHaveCount(0);
+    await page.goto("/passbook");
+    await page.getByTestId("tile-months").click();
+    await expect(page).toHaveURL(/\/passbook\/months$/);
+    await expect(page.getByText("Every month (12)")).toBeVisible();
 
     // Home task 2 is a scenario that starts on the passbook (owner, 8 Nov)
     await page.goto("/");
@@ -500,26 +525,26 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await expect(page.getByText(/What you add stays on this device/)).toBeVisible();
 
     // Stopped scenario → how restarting works opens the Restart card
-    await page.goto("/demo-tools");
+    await page.goto("/demo-tools?ab=1");
     await page.getByLabel("stopped").check();
     await page.goto("/passbook");
     await page.getByRole("link", { name: "How restarting works" }).click();
     await expect(page).toHaveURL(/\/options#restart-later$/);
     await expect(page.locator("#restart-later").getByText(/You can create a new SIP in the same fund/i)).toBeVisible();
-    await page.goto("/demo-tools");
+    await page.goto("/demo-tools?ab=1");
     await page.getByLabel("running").check();
   });
 
   // Task 15 (final feature): goal photo on Start SIP, piece by piece on the passbook, two-sided pieces, delete in Your data
   test("Task 15: Piece by piece: goal photo, 8 of 12 pieces, waiting piece, turn a piece over, delete the photo", async ({ page }) => {
-    await page.goto("/demo-tools");
+    await page.goto("/demo-tools?ab=1");
     await page.getByLabel("Version B (personal layer)").check();
     await page.goto("/start");
     await page.getByLabel("Name your goal (optional)").fill("My first bike");
     await page.getByLabel("Choose a goal photo").setInputFiles(path.resolve(process.cwd(), "tests/fixtures/photo-with-gps.jpg"));
     await expect(page.getByRole("img", { name: "Your goal photo" })).toBeVisible({ timeout: 10000 });
 
-    await page.goto("/passbook");
+    await page.goto("/passbook/goal");
     const pieces = page.getByTestId("goal-pieces");
     await expect(pieces).toContainText("Piece by piece: My first bike");
     await expect(page.getByTestId("pieces-count")).toContainText("8 of 12 pieces");
@@ -541,14 +566,14 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await expect(page.getByTestId("delete-section")).toContainText("your goal photo");
     await page.getByRole("button", { name: "Delete my goal photo" }).click();
     await expect(page.getByTestId("delete-section")).toContainText("no goal photo");
-    await page.goto("/passbook");
+    await page.goto("/passbook/goal");
     await expect(page.getByTestId("goal-pieces").getByRole("link", { name: "Add your goal photo" })).toBeVisible();
   });
 
   // Task 14 (final MVP): why I started, written and recorded; folded next to a stop
   test("Task 14: Why I started can be written or recorded, stays after reload, and folds away when stopped", async ({ page }) => {
     await fakeMicrophone(page);
-    await page.goto("/demo-tools");
+    await page.goto("/demo-tools?ab=1");
     await page.getByLabel("Version B (personal layer)").check();
 
     await page.goto("/start");
@@ -581,7 +606,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await expect(page.getByTestId("reason-text")).toHaveText(/To buy my first bike without a loan/);
 
     // Stopped SIP: the reason folds away; the investor can choose to show it
-    await page.goto("/demo-tools");
+    await page.goto("/demo-tools?ab=1");
     await page.getByLabel("stopped").check();
     await page.goto("/passbook");
     await expect(page.getByTestId("reason-text")).toHaveCount(0);
@@ -590,7 +615,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await expect(page.getByTestId("reason-text")).toBeVisible();
 
     // Reset clears it
-    await page.goto("/demo-tools");
+    await page.goto("/demo-tools?ab=1");
     await page.getByRole("button", { name: /Reset demo modifications/i }).click();
     await expect(page.getByText("Demo state reset!")).toBeVisible();
     await page.goto("/passbook");
