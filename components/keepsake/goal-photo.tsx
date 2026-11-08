@@ -18,7 +18,8 @@ export function GoalPhoto() {
   useEffect(() => {
     getGoal().then((g) => {
       setGoal(g);
-      setLabel(g?.label ?? "");
+      // Keep what the investor is typing if nothing is saved yet (the panel can open and be typed in at once)
+      setLabel((typed) => g?.label ?? (g ? "" : typed));
     });
   }, [tick]);
 

@@ -174,8 +174,10 @@ test.describe("SPEC-07 End-to-End Suite", () => {
       )
     ).toBeVisible();
 
-    // No restart button or nudge
+    // No restart button or nudge; one plain link to the Start SIP demo (owner, 9 Nov)
     await expect(page.getByRole("button", { name: /restart/i })).not.toBeVisible();
+    await expect(page.getByTestId("stopped-start-link")).toHaveAttribute("href", "/start");
+    await expect(page.getByTestId("reminder-invite")).toHaveCount(0);
 
     // All previous entries stay visible
     await expect(page.getByText("5 Oct 2026").first()).toBeVisible();
@@ -248,8 +250,9 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await expect(page.getByTestId("add-memory")).toHaveCount(12);
     await expect(page.getByRole("button", { name: "Write it" })).toHaveCount(0);
     await page.goto("/start");
-    await expect(page.getByTestId("start-reason").getByRole("button", { name: "Write it" })).toBeVisible();
-    await expect(page.getByTestId("start-reason").getByRole("button", { name: "Record it" })).toBeVisible();
+    for (const name of ["A photo", "A voice note", "A line"]) {
+      await expect(page.getByTestId("start-reason").getByRole("button", { name })).toBeVisible();
+    }
     await page.goto("/passbook");
     await expect(page.locator("a[href='/family-file']")).toHaveCount(0);
     await page.goto("/passbook/inst-2026-05-05");
@@ -466,11 +469,15 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await expect(page).toHaveURL(/\/passbook\/months$/);
     await expect(page.getByText("Every month (12)")).toBeVisible();
 
-    // Home task 2 is a scenario that starts on the passbook (owner, 8 Nov)
+    // Owner, 9 Nov: Home is two doors only, the passbook and Sensecheck; no task list
     await page.goto("/");
-    await expect(page.getByTestId("task-context")).toContainText("Today is 6 Nov 2026");
-    await page.getByRole("link", { name: /Two months that went wrong/i }).click();
+    await expect(page.getByTestId("task-card")).toHaveCount(0);
+    await expect(page.locator("main").getByRole("link")).toHaveCount(2);
+    await expect(page.locator("main").getByRole("link", { name: "Ask Sensecheck a question" })).toHaveAttribute("href", "/ask");
+    await page.locator("main").getByRole("link", { name: "Open my passbook" }).click();
     await expect(page).toHaveURL(/\/passbook$/);
+    // With nothing kept yet, one quiet line points to the Start SIP demo
+    await expect(page.getByTestId("reminder-invite").getByRole("link")).toHaveAttribute("href", "/start");
 
     // Cover's latest line opens that instalment; the UPI line explains the wait
     await page.goto("/passbook");
@@ -551,6 +558,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await page.goto("/demo-tools?ab=1");
     await page.getByLabel("Version B (personal layer)").check();
     await page.goto("/start");
+    await page.getByTestId("reminder-photo").click();
     await page.getByLabel("Name your goal (optional)").fill("My first bike");
     await page.getByLabel("Choose a goal photo").setInputFiles(path.resolve(process.cwd(), "tests/fixtures/photo-with-gps.jpg"));
     await expect(page.getByRole("img", { name: "Your goal photo" })).toBeVisible({ timeout: 10000 });
@@ -593,14 +601,15 @@ test.describe("SPEC-07 End-to-End Suite", () => {
 
     await page.goto("/start");
     await expect(page.getByTestId("start-mock-note")).toBeVisible();
-    const reason = page.getByTestId("reason-card");
-    await reason.getByRole("button", { name: "Write it" }).click();
+    await expect(page.getByTestId("fund-note")).toHaveText("Sample funds for this demo, in alphabetical order. Not a recommendation.");
+    const reason = page.getByTestId("start-reason");
+    await reason.getByRole("button", { name: "A line" }).click();
     await reason.getByLabel("Why I'm starting this SIP").fill("To buy my first bike without a loan");
     await reason.getByRole("button", { name: "Save" }).click();
     await expect(page.getByTestId("reason-text")).toHaveText(/To buy my first bike without a loan/);
 
     // Add a voice note as well
-    await reason.getByRole("button", { name: "Add a voice note" }).click();
+    await reason.getByRole("button", { name: "A voice note" }).click();
     await reason.getByRole("button", { name: /Record a voice note/ }).click();
     await expect(reason.getByText(/Recording 0:0/)).toBeVisible();
     await page.waitForTimeout(1500);
@@ -609,8 +618,16 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await reason.getByRole("button", { name: "Save" }).click();
     await expect(reason.getByTestId("voice-player")).toBeVisible();
 
+    // A fund must be chosen; nothing is preselected
+    await expect(page.getByLabel("Fund")).toHaveValue("");
     await page.getByRole("button", { name: "Start SIP" }).click();
-    await expect(page.getByText(/In the real app this starts the SIP/)).toBeVisible();
+    await expect(page.getByTestId("start-error")).toHaveText("Choose a fund first.");
+    await page.getByLabel("Fund").selectOption("Flexi Cap Fund (demo)");
+    await page.getByLabel("Monthly amount (₹)").fill("3000");
+    await page.getByLabel("SIP date (monthly)").selectOption("10");
+    await page.getByRole("button", { name: "Start SIP" }).click();
+    await expect(page.getByTestId("start-done")).toContainText("In the real app this starts a ₹3,000 SIP in Flexi Cap Fund (demo) on the 10th of every month");
+    await expect(page.getByTestId("start-done")).toContainText("the passbook keeps showing the sample SIP");
 
     // The passbook shows it back, read-only, with a link to change it on the start screen
     await page.goto("/passbook");
@@ -636,6 +653,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await page.goto("/passbook");
     await expect(page.getByTestId("reason-card")).toHaveCount(0);
     await page.goto("/start");
-    await expect(page.getByRole("button", { name: "Write it" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "A line" })).toBeVisible();
+    await expect(page.getByTestId("reminder-saved")).toHaveCount(0);
   });
 });

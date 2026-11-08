@@ -11,6 +11,7 @@ import { confirmedTotals, lastFullyConfirmed, latestInstalment, instalmentState,
 import { formatDate, formatDateTime } from "@/lib/format";
 import { ChevronRight, ExternalLink, ShieldCheck } from "lucide-react";
 import { ReasonCard } from "@/components/keepsake/reason-card";
+import { ReminderInvite } from "@/components/keepsake/reminder-invite";
 
 function ordinal(n: number): string {
   const t = n % 100;
@@ -192,6 +193,9 @@ export default function PassbookPage() {
               >
                 Ask Sensecheck about restarting
               </Link>
+              <Link href="/start" className="text-[13px] font-medium text-emerald-800 underline" data-testid="stopped-start-link">
+                The Start SIP screen (demo)
+              </Link>
             </div>
           </div>
         )}
@@ -200,6 +204,7 @@ export default function PassbookPage() {
         {version === "B" && (
           <div className="p-3.5 bg-violet-50 border border-violet-100 rounded-2xl space-y-2.5 empty:hidden" data-testid="personal-layer">
             <ReasonCard folded={sip.status !== "active" || latestState === "failed"} editable={false} />
+            <ReminderInvite hidden={sip.status !== "active" || latestState === "failed"} />
           </div>
         )}
 

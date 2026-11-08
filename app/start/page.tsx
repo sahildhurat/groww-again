@@ -1,20 +1,21 @@
 "use client";
 
-// Owner, 8 Nov 2026: a mock of Groww's "Start SIP" screen. In version B it carries the optional "Why are you starting
-// this SIP?" (a line or a voice note), asked at the moment the motivation is fresh; the passbook shows it back later.
-// Nothing is created here: it is a demo screen, and the reason stays on this device.
+// Owner, 9 Nov 2026: a demo of Groww's "Start SIP" screen. Pick a sample fund, an amount and a date, and (version B)
+// keep a reminder of why you're starting: a photo, a voice note or a line. The photo becomes the picture the passbook
+// builds piece by piece. Nothing is created here; the passbook keeps showing the sample SIP.
+// Compliance: sample funds only, in alphabetical order, no returns, ratings or "popular" labels, nothing preselected as
+// a pick (no fund advice); no urgency; the reminder is optional and stays on this device.
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { TopBar } from "@/components/ui/top-bar";
 import { FooterNotice } from "@/components/ui/footer-notice";
 import { DemoBanner } from "@/components/ui/demo-banner";
-import { ReasonCard } from "@/components/keepsake/reason-card";
-import { GoalPhoto } from "@/components/keepsake/goal-photo";
+import { StartReminder } from "@/components/keepsake/start-reminder";
 import { useDemo } from "@/lib/demo-context";
+import { SAMPLE_FUNDS } from "@/lib/sample-funds";
 import passbookSeed from "@/data/passbook-seed.json";
-import { formatDate } from "@/lib/format";
 import type { PassbookSip } from "@/lib/passbook-types";
-import { CalendarDays, Repeat, Wallet, Info } from "lucide-react";
+import { Info } from "lucide-react";
 
 function ordinal(n: number): string {
   const t = n % 100;
@@ -25,80 +26,128 @@ function ordinal(n: number): string {
 export default function StartSipPage() {
   const { version } = useDemo();
   const sip = useMemo(() => (passbookSeed as any).scenarios.running.sip as PassbookSip, []);
+  const [fund, setFund] = useState("");
+  const [amount, setAmount] = useState(String(sip.amount));
+  const [day, setDay] = useState(String(sip.day_of_month));
   const [started, setStarted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const rows = [
-    { icon: Wallet, label: "Monthly amount", value: `₹${sip.amount.toLocaleString("en-IN")}` },
-    { icon: CalendarDays, label: "SIP date", value: `${ordinal(sip.day_of_month)} of every month` },
-    { icon: CalendarDays, label: "First instalment", value: formatDate(sip.start_date) },
-    { icon: Repeat, label: "Pay with", value: sip.payment_route ?? "Groww AutoPay" },
-  ];
+  const amt = Number(amount);
+  const start = () => {
+    if (!fund) return setError("Choose a fund first.");
+    if (!Number.isFinite(amt) || amt < 100) return setError("Enter an amount of ₹100 or more.");
+    setError(null);
+    setStarted(true);
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <TopBar title="Start SIP" showBack backHref="/" />
+      <TopBar title="Start SIP" showBack backHref="/passbook" />
       <DemoBanner />
 
       <main className="flex-1 p-4 space-y-4">
         <p className="text-[12px] text-gray-500" data-testid="start-mock-note">
-          This is how the screen looks on the day you set up the SIP. Nothing is created here.
+          A demo of the screen where you set up a SIP. Nothing is created and no money moves.
         </p>
 
         <section className="bg-white rounded-3xl border border-gray-200/70 p-5 space-y-4">
-          <div>
-            <p className="text-[12px] text-gray-500">Monthly SIP</p>
-            <h1 className="text-[17px] font-semibold text-gray-900 leading-snug mt-0.5">{sip.fund_label}</h1>
+          <div className="space-y-1.5">
+            <label htmlFor="fund" className="text-[13px] font-semibold text-gray-900 block">
+              Fund
+            </label>
+            <select
+              id="fund"
+              value={fund}
+              onChange={(e) => { setFund(e.target.value); setStarted(false); setError(null); }}
+              className="w-full text-[13px] p-2.5 rounded-xl border border-gray-200 bg-white"
+            >
+              <option value="">Choose a fund</option>
+              {SAMPLE_FUNDS.map((f) => (
+                <option key={f} value={f}>
+                  {f}
+                </option>
+              ))}
+            </select>
+            <p className="text-[11px] text-gray-500" data-testid="fund-note">
+              Sample funds for this demo, in alphabetical order. Not a recommendation.
+            </p>
           </div>
-          <dl className="divide-y divide-gray-100">
-            {rows.map((r) => (
-              <div key={r.label} className="flex items-center justify-between py-2.5">
-                <dt className="flex items-center gap-2 text-[13px] text-gray-600">
-                  <r.icon className="w-4 h-4 text-gray-400" aria-hidden />
-                  {r.label}
-                </dt>
-                <dd className="text-[13px] font-semibold text-gray-900">{r.value}</dd>
-              </div>
-            ))}
-          </dl>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <label htmlFor="amount" className="text-[13px] font-semibold text-gray-900 block">
+                Monthly amount (₹)
+              </label>
+              <input
+                id="amount"
+                inputMode="numeric"
+                value={amount}
+                onChange={(e) => { setAmount(e.target.value.replace(/[^\d]/g, "").slice(0, 7)); setStarted(false); setError(null); }}
+                className="w-full text-[13px] p-2.5 rounded-xl border border-gray-200"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label htmlFor="sip-day" className="text-[13px] font-semibold text-gray-900 block">
+                SIP date (monthly)
+              </label>
+              <select
+                id="sip-day"
+                value={day}
+                onChange={(e) => { setDay(e.target.value); setStarted(false); }}
+                className="w-full text-[13px] p-2.5 rounded-xl border border-gray-200 bg-white"
+              >
+                {Array.from({ length: 28 }, (_, i) => i + 1).map((d) => (
+                  <option key={d} value={d}>
+                    {ordinal(d)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between py-2.5 border-t border-gray-100 text-[13px]">
+            <span className="text-gray-600">Pay with</span>
+            <span className="font-semibold text-gray-900">Groww AutoPay</span>
+          </div>
           <p className="text-[12px] text-gray-500 leading-relaxed">
-            Your bank debits ₹{sip.amount.toLocaleString("en-IN")} on the SIP date. With Groww AutoPay, units are
-            expected two working days after the SIP date (T+2). You can follow every month in your SIP Passbook.
+            Your bank debits the amount on the SIP date. With Groww AutoPay, units are expected two working days after the
+            SIP date (T+2). Your SIP Passbook shows every month, from the debit to the units in your name.
           </p>
         </section>
 
-        {version === "B" && (
-          <section className="bg-violet-50 border border-violet-100 rounded-3xl p-5 space-y-2" data-testid="start-reason">
-            <h2 className="text-[15px] font-semibold text-gray-900">Why are you starting this SIP?</h2>
-            <ReasonCard
-              folded={false}
-              prompt="Optional. Write a line or record a voice note in your own words. It will be in your passbook for the months when you need it."
-            />
-            <div className="pt-3 mt-1 border-t border-violet-100">
-              <GoalPhoto />
-            </div>
-          </section>
-        )}
+        {version === "B" && <StartReminder />}
+
+        {error && <p className="text-[12px] text-amber-800" role="alert" data-testid="start-error">{error}</p>}
 
         {!started ? (
           <button
             type="button"
-            onClick={() => setStarted(true)}
+            onClick={start}
             className="w-full py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-[14px] font-semibold"
           >
             Start SIP
           </button>
         ) : (
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl space-y-2" role="status">
-            <p className="flex items-start gap-2 text-[13px] text-blue-950">
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-2xl space-y-2" role="status" data-testid="start-done">
+            <p className="flex items-start gap-2 text-[13px] text-blue-950 leading-relaxed">
               <Info className="w-4 h-4 text-blue-700 flex-shrink-0 mt-0.5" aria-hidden />
               <span>
-                In the real app this starts the SIP. In this demo nothing is created
-                {version === "B" ? "; your reason is saved on this device and shown in your passbook." : "."}
+                In the real app this starts a ₹{amt.toLocaleString("en-IN")} SIP in {fund} on the {ordinal(Number(day))} of
+                every month. In this demo nothing is created, and the passbook keeps showing the sample SIP (₹
+                {sip.amount.toLocaleString("en-IN")} in {sip.fund_label}).
+                {version === "B" ? " Your reminder is saved on this phone: it shows on your passbook, and your photo is the picture you build piece by piece." : ""}
               </span>
             </p>
-            <Link href="/passbook" className="inline-block text-[13px] font-semibold text-emerald-800 underline">
-              Open my passbook
-            </Link>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 pl-6">
+              <Link href="/passbook" className="text-[13px] font-semibold text-emerald-800 underline">
+                Open my passbook
+              </Link>
+              {version === "B" && (
+                <Link href="/passbook/goal" className="text-[13px] font-semibold text-emerald-800 underline">
+                  See Piece by piece
+                </Link>
+              )}
+            </div>
           </div>
         )}
       </main>
