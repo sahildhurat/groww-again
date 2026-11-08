@@ -274,6 +274,7 @@ Provide the Sensecheck JSON response.`;
         factsUsed: parsedJson?.facts_used,
         question: sanitizedQuestion,
         declined: parsedJson?.declined === true,
+        answer: answerText,
       })
     ) {
       return NextResponse.json({

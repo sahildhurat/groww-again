@@ -166,3 +166,18 @@ describe("prompt words reworded before the gate (live check, 8 Nov)", () => {
     expect(checkInternalRefs(softenPromptWords("Rule passages say Pay Now is open for 2 working days."))).toBe(false);
   });
 });
+
+describe("wrong-entry check reads the answer too (live check, 8 Nov)", () => {
+  const oct = (seed as any).scenarios.running.instalments.find((i: any) => i.id === "inst-2026-10-05");
+  const all = (seed as any).scenarios.running.instalments;
+  it("keeps an answer that names the entry's own date, even if it cites other months", () => {
+    expect(
+      answersAnotherEntry({ entry: oct, instalments: all, factsUsed: ["ev-2026-11-05-debit"], question: "How were my units worked out?", answer: "On 5 Oct 2026 your ₹2,000 bought 18.709 units." })
+    ).toBe(false);
+  });
+  it("still flags an answer about another month", () => {
+    expect(
+      answersAnotherEntry({ entry: oct, instalments: all, factsUsed: ["ev-2026-11-05-debit"], question: "How were my units worked out?", answer: "Your 5 Nov 2026 units are not confirmed yet." })
+    ).toBe(true);
+  });
+});

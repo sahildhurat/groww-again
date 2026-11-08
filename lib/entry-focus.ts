@@ -4,6 +4,7 @@
 // latest / next / previous instalment, or the whole history), the route replaces the answer with the fallback
 // (gate code "wrong_entry"). Rule passages and computed facts never decide it either way.
 import type { Instalment } from "@/lib/passbook-types";
+import { formatDate } from "@/lib/format";
 
 const MONTHS: Array<[RegExp, number]> = [
   [/\bjan(?:uary)?\b/i, 1],
@@ -36,9 +37,17 @@ export function answersAnotherEntry(opts: {
   factsUsed: unknown;
   question: string;
   declined?: boolean;
+  /** Live check, 8 Nov: an answer that names the entry's own date or month is about the entry, whatever it cites. */
+  answer?: string;
 }): boolean {
-  const { entry, instalments, factsUsed, question, declined } = opts;
+  const { entry, instalments, factsUsed, question, declined, answer } = opts;
   if (!entry || declined) return false;
+  if (answer) {
+    const full = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    const m = parseInt(entry.due_date.slice(5, 7), 10) - 1;
+    const y = entry.due_date.slice(0, 4);
+    if (answer.includes(formatDate(entry.due_date)) || answer.includes(`${full[m]} ${y}`)) return false;
+  }
   if (!Array.isArray(factsUsed)) return false;
   const facts = factsUsed.filter((f): f is string => typeof f === "string");
 
