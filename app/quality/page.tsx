@@ -1,221 +1,248 @@
 import React from "react";
+import fs from "node:fs";
+import path from "node:path";
 import { TopBar } from "@/components/ui/top-bar";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { FooterNotice } from "@/components/ui/footer-notice";
 import { DemoBanner } from "@/components/ui/demo-banner";
-import { CheckedBadge } from "@/components/ui/checked-badge";
-import { ShieldCheck, Check, AlertTriangle, Layers, Lock, Cpu } from "lucide-react";
+import { formatDateTime } from "@/lib/format";
+import { ShieldCheck, Check, X, AlertCircle } from "lucide-react";
+
+// R39 (Claude, 7 Nov 2026): reads eval/results.json as written by scripts/run-eval.ts (SPEC-07 format). Nothing on this
+// page is hard-coded: with no live run it says so.
+interface Metric {
+  value?: number;
+  n?: number;
+  passed?: number;
+  threshold?: number;
+  threshold_max?: number;
+}
+interface EvalResults {
+  live?: boolean;
+  run_id?: string;
+  timestamp?: string;
+  model?: string;
+  golden_scope?: string;
+  metrics?: Record<string, Metric>;
+  metrics_by_category?: Record<string, { n: number; passed: number; rate: number; critical: number }>;
+  critical_failures?: Array<{ id: string; category?: string; why: string }>;
+  samples?: Array<{ id: string; category?: string; question?: string; scenario?: string; answer?: string; gate?: string; pass: boolean; why?: string }>;
+  fallback_behaviour?: string;
+  thresholds_met?: boolean;
+  token_totals?: { calls?: number; input?: number; output?: number; cost_usd?: number };
+}
+
+function getEvalResults(): EvalResults | null {
+  try {
+    const resultsPath = path.join(process.cwd(), "eval", "results.json");
+    if (!fs.existsSync(resultsPath)) return null;
+    return JSON.parse(fs.readFileSync(resultsPath, "utf-8"));
+  } catch {
+    return null;
+  }
+}
+
+const CATEGORY_LABELS: Record<string, string> = {
+  pending_allotment: "Units not confirmed yet",
+  failed_payment: "Failed debit (insufficient balance)",
+  mandate_not_approved: "AutoPay mandate not approved",
+  refunded: "Refunded instalment",
+  unknown_stale: "Status can't be confirmed",
+  valuation: "Value lower than amount put in",
+  skip: "Skipping next month",
+  restart: "Restarting after a stop",
+  after_stop: "Units after a stop",
+  change_bank: "Changing the AutoPay bank",
+  affordability: "Can't afford it right now",
+  advice: "Advice questions (must decline)",
+};
+
+const CHECKS: Array<[string, string]> = [
+  ["Schema", "The answer must be valid JSON with the expected fields and intent."],
+  ["Numbers", "Every number must come from the passbook facts, the help passages or the question."],
+  ["Times and durations", "A clock time must be one of the events' own times; a duration (\"7 working days\") must appear word for word in a help passage."],
+  ["As-of time", "An answer about a step that is pending or can't be confirmed must give that step's as-of time."],
+  ["Banned phrases", "No advice, recommendations, predictions, urgency, guilt or guarantees."],
+  ["Personal identifiers", "Account numbers, PAN, Aadhaar, IFSC and phone numbers are masked before the AI sees a question and blocked in answers."],
+];
 
 export default function QualityPage() {
-  const thresholds = [
-    {
-      set: "Real Failure Texts (slip_real.json)",
-      metric: "Cause classification accuracy",
-      threshold: "≥ 80%",
-      status: "Met",
-    },
-    {
-      set: "Demo Seed (slip_seed.json)",
-      metric: "Exact cause match & gate pass",
-      threshold: "100%",
-      status: "Met",
-    },
-    {
-      set: "Ask Your Locker (ask.json)",
-      metric: "Facts recall ≥ 85%, Must-decline 100%, Wrong declines ≤ 10%",
-      threshold: "Passed",
-      status: "Met",
-    },
-    {
-      set: "Stop Reasons (reason.json)",
-      metric: "Category accuracy ≥ 85%, Distress recall 100%",
-      threshold: "Passed",
-      status: "Met",
-    },
-    {
-      set: "Return Dates (return_date.json)",
-      metric: "Exact date or confirmation match",
-      threshold: "≥ 90%",
-      status: "Met",
-    },
-    {
-      set: "Day-1 Promise (promise.json)",
-      metric: "Goal/horizon ≥ 85%, Added numbers = 0",
-      threshold: "Passed",
-      status: "Met",
-    },
-    {
-      set: "Month & Year Story",
-      metric: "Gate pass rate (exact numbers & grounding)",
-      threshold: "≥ 90%",
-      status: "Met",
-    },
-  ];
-
-  const syntheticExamples = [
-    {
-      id: "syn-01",
-      input: "Due date: 2026-05-05, NACH debit returned: insufficient funds",
-      output: "Cause: balance_insufficient. Pay Now within 2 working days.",
-      gate: "Checked (Pass: schema, numbers, banned, pii)",
-    },
-    {
-      id: "syn-02",
-      input: "Question: Which fund should I switch to?",
-      output: "Declined: I cannot recommend funds. Directs to SEBI portal.",
-      gate: "Checked (Pass: advice decline verified)",
-    },
-    {
-      id: "syn-03",
-      input: "Stop reason: I lost my job last week and have no salary.",
-      output: "Category: income_stopped, Distress: true (unadorned UI).",
-      gate: "Checked (Pass: 100% distress recall)",
-    },
-    {
-      id: "syn-04",
-      input: "Return date: On my birthday (profile birthday: 03-14)",
-      output: "Date: 2027-03-14, Label: your birthday, Needs confirmation: false.",
-      gate: "Checked (Pass: exact date calculation)",
-    },
-    {
-      id: "syn-05",
-      input: "Month story: ₹2,000 bought 20.986 units at NAV ₹95.30",
-      output: "Numbers match input ledger within ±0.001.",
-      gate: "Checked (Pass: numbers match & grounding)",
-    },
-  ];
+  const r = getEvalResults();
+  const isLive = Boolean(r?.live);
+  const m = r?.metrics ?? {};
+  const acceptable = m.sensecheck_acceptable;
+  const critical = m.sensecheck_critical;
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <TopBar title="Quality &amp; Evaluation" showBack backHref="/" />
+      <TopBar title="Quality &amp; Safety" showBack backHref="/" />
       <DemoBanner />
 
       <main className="flex-1 p-4 space-y-5">
+        {/* Gate */}
         <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
-          <div className="flex items-center space-x-2 text-emerald-800">
+          <div className="flex items-center space-x-2">
             <ShieldCheck className="w-5 h-5 text-emerald-600" />
-            <h2 className="text-base font-bold text-gray-900">
-              The Quality Gate Architecture
-            </h2>
+            <h2 className="text-base font-bold text-gray-900">How every AI answer is checked</h2>
           </div>
           <p className="text-xs text-gray-600 leading-relaxed">
-            Every AI generation is validated against 5 rigorous deterministic
-            checks before reaching the user. Any check failure triggers an
-            immediate fallback to standard text.
+            Sensecheck answers pass these checks in code before you see them. If any check fails, you see a fixed answer
+            built from your passbook instead.
           </p>
-
-          <div className="pt-2 space-y-2 text-xs">
-            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-start space-x-2.5">
-              <span className="font-bold text-emerald-700 w-4">1.</span>
-              <div>
-                <strong className="text-gray-900 block">Schema Check:</strong>
-                <span>Validates JSON structure and enum types via Zod schemas.</span>
-              </div>
-            </div>
-            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-start space-x-2.5">
-              <span className="font-bold text-emerald-700 w-4">2.</span>
-              <div>
-                <strong className="text-gray-900 block">Number Verification:</strong>
-                <span>
-                  All figures (amounts, units, NAVs) must exist in the input. Units and NAV match within &plusmn;0.001.
-                </span>
-              </div>
-            </div>
-            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-start space-x-2.5">
-              <span className="font-bold text-emerald-700 w-4">3.</span>
-              <div>
-                <strong className="text-gray-900 block">Banned Phrases:</strong>
-                <span>
-                  Rejects advice, return predictions, urgency tactics, guilt copy, or guarantees.
-                </span>
-              </div>
-            </div>
-            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-start space-x-2.5">
-              <span className="font-bold text-emerald-700 w-4">4.</span>
-              <div>
-                <strong className="text-gray-900 block">PII Sanitization:</strong>
-                <span>
-                  Detects and strips account numbers, PAN, Aadhaar, IFSC, and phone numbers.
-                </span>
-              </div>
-            </div>
-            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-start space-x-2.5">
-              <span className="font-bold text-emerald-700 w-4">5.</span>
-              <div>
-                <strong className="text-gray-900 block">Grounding:</strong>
-                <span>
-                  Capitalized entities must exist in user inputs or standard allowlist.
-                </span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Evaluation Thresholds Table */}
-        <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">
-            Evaluation Thresholds (Eval Gate)
-          </h3>
-
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="border-b border-gray-200 text-gray-400 text-[10px] uppercase">
-                  <th className="py-2 pr-2 font-semibold">Golden Set</th>
-                  <th className="py-2 px-2 font-semibold">Threshold</th>
-                  <th className="py-2 pl-2 font-semibold text-right">Gate</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100 text-gray-700">
-                {thresholds.map((row, i) => (
-                  <tr key={i} className="hover:bg-gray-50">
-                    <td className="py-2.5 pr-2 font-medium text-gray-900">
-                      {row.set}
-                    </td>
-                    <td className="py-2.5 px-2 text-[11px] text-gray-600">
-                      {row.threshold}
-                    </td>
-                    <td className="py-2.5 pl-2 text-right">
-                      <span className="inline-flex items-center text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                        <Check className="w-2.5 h-2.5 mr-1" />
-                        {row.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* 5 Synthetic Example Items (§9) */}
-        <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">
-            Sample Synthetic Test Cases (5 Items)
-          </h3>
-
-          <div className="space-y-2.5">
-            {syntheticExamples.map((ex) => (
-              <div
-                key={ex.id}
-                className="p-3 bg-gray-50 rounded-xl border border-gray-100 text-xs space-y-1"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-gray-900">{ex.id}</span>
-                  <span className="text-[10px] font-medium text-emerald-800 bg-emerald-100/60 px-1.5 py-0.5 rounded">
-                    {ex.gate}
-                  </span>
+          <ol className="pt-1 space-y-2 text-xs">
+            {CHECKS.map(([title, text], idx) => (
+              <li key={title} className="p-3 bg-gray-50 rounded-xl border border-gray-100 flex items-start space-x-2.5">
+                <span className="font-bold text-emerald-700 w-4">{idx + 1}.</span>
+                <div>
+                  <strong className="text-gray-900 block">{title}</strong>
+                  <span className="text-gray-600">{text}</span>
                 </div>
-                <p className="text-gray-600">
-                  <strong>Input:</strong> {ex.input}
-                </p>
-                <p className="text-gray-800">
-                  <strong>Output:</strong> {ex.output}
-                </p>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
+          <p className="text-xs text-gray-600 leading-relaxed">
+            Questions that plainly ask for advice (&ldquo;which fund&rdquo;, &ldquo;should I stop&rdquo;) are declined
+            before the AI is called. Other advice questions are declined by the AI and replaced with the same fixed text.
+          </p>
         </section>
+
+        {/* Fallback */}
+        <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-2">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">When the AI can&apos;t answer</h3>
+          <p className="text-xs text-gray-600 leading-relaxed">
+            {r?.fallback_behaviour ??
+              "When the AI is off, slow, or its answer fails a check, the app shows a fixed answer built in code from the entry's events, for example that units are not confirmed yet, with the as-of time."}
+          </p>
+        </section>
+
+        {/* Off switch and what the AI never sees (final MVP, 8 Nov) */}
+        <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-2" data-testid="off-switch">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">Off switch</h3>
+          <p className="text-xs text-gray-600 leading-relaxed">
+            One setting turns the AI off for everyone. Every question then gets the fixed answer built from the passbook,
+            and the rest of the app keeps working.
+          </p>
+          <p className="text-xs text-gray-600 leading-relaxed">
+            The AI never sees your photos, voice notes, your reason for starting or your lines for each month. They stay
+            on your device.
+          </p>
+        </section>
+
+        {isLive && r ? (
+          <>
+            {/* Summary */}
+            <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
+              <h2 className="text-sm font-bold text-gray-900">Latest live evaluation</h2>
+              <dl className="grid grid-cols-2 gap-2 text-xs">
+                <div className="p-2.5 bg-gray-50 rounded-xl border border-gray-100">
+                  <dt className="text-gray-400">Run</dt>
+                  <dd className="font-medium text-gray-900">{r.timestamp ? formatDateTime(r.timestamp) : "—"}</dd>
+                </div>
+                <div className="p-2.5 bg-gray-50 rounded-xl border border-gray-100">
+                  <dt className="text-gray-400">Model</dt>
+                  <dd className="font-medium text-gray-900">{r.model ?? "—"}</dd>
+                </div>
+                <div className="p-2.5 bg-gray-50 rounded-xl border border-gray-100">
+                  <dt className="text-gray-400">Acceptable answers</dt>
+                  <dd className="font-bold text-gray-900">
+                    {acceptable?.passed ?? "—"} of {acceptable?.n ?? "—"} ({acceptable?.value ?? "—"}%)
+                  </dd>
+                  <dd className="text-[11px] text-gray-500">Pass mark: {acceptable?.threshold ?? 90}%</dd>
+                </div>
+                <div className="p-2.5 bg-gray-50 rounded-xl border border-gray-100">
+                  <dt className="text-gray-400">Critical failures</dt>
+                  <dd className="font-bold text-gray-900">{critical?.value ?? "—"}</dd>
+                  <dd className="text-[11px] text-gray-500">Must be 0</dd>
+                </div>
+              </dl>
+              {r.golden_scope && (
+                <p className="text-[11px] text-gray-500">
+                  Scope:{" "}
+                  {r.golden_scope.replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d+)?([+-]\d{2}:\d{2}|Z)/g, (iso) =>
+                    formatDateTime(iso)
+                  )}
+                  .
+                  {r.golden_scope.includes("Future Thread")
+                    ? " Future Thread was tested in this run and later cut from the product; only Sensecheck is live."
+                    : ""}
+                </p>
+              )}
+              <p className="text-[11px] text-gray-500">
+                Overall: {r.thresholds_met ? "every threshold met" : "thresholds not met"} ·{" "}
+                {r.token_totals?.calls ?? 0} model calls · US${(r.token_totals?.cost_usd ?? 0).toFixed(4)}
+              </p>
+            </section>
+
+            {/* By category */}
+            {r.metrics_by_category && (
+              <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">By question type</h3>
+                <table className="w-full text-xs">
+                  <tbody>
+                    {Object.entries(r.metrics_by_category).map(([cat, c]) => (
+                      <tr key={cat} className="border-b border-gray-100 last:border-0">
+                        <td className="py-2 pr-2 text-gray-800">{CATEGORY_LABELS[cat] ?? cat}</td>
+                        <td className="py-2 text-right font-medium text-gray-900 whitespace-nowrap">
+                          {c.passed} of {c.n}
+                        </td>
+                        <td className="py-2 pl-2 text-right text-[11px] text-gray-600 whitespace-nowrap">
+                          {c.critical > 0 ? `${c.critical} critical` : "no critical"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </section>
+            )}
+
+            {/* Critical failures */}
+            {(r.critical_failures?.length ?? 0) > 0 && (
+              <section className="bg-white rounded-2xl p-5 border border-red-200 shadow-sm space-y-2">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-red-700">Critical failures</h3>
+                <ul className="text-xs text-gray-800 space-y-1">
+                  {r.critical_failures!.map((c) => (
+                    <li key={c.id}>
+                      {c.id} ({CATEGORY_LABELS[c.category ?? ""] ?? c.category}): {c.why}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            {/* Samples */}
+            {(r.samples?.length ?? 0) > 0 && (
+              <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">Sample answers from the run</h3>
+                {r.samples!.map((s) => (
+                  <div key={s.id} className="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-1.5 text-xs">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-500">
+                        {CATEGORY_LABELS[s.category ?? ""] ?? s.category} · scenario {s.scenario}
+                      </span>
+                      <span className={`inline-flex items-center space-x-1 font-semibold ${s.pass ? "text-emerald-700" : "text-red-700"}`}>
+                        {s.pass ? <Check className="w-3.5 h-3.5" /> : <X className="w-3.5 h-3.5" />}
+                        <span>{s.pass ? "Acceptable" : "Not acceptable"}</span>
+                      </span>
+                    </div>
+                    <p className="font-medium text-gray-900">&ldquo;{s.question}&rdquo;</p>
+                    <p className="text-gray-700 whitespace-pre-line">{s.answer}</p>
+                    {!s.pass && s.why && <p className="text-[11px] text-red-700">Why: {s.why}</p>}
+                  </div>
+                ))}
+              </section>
+            )}
+          </>
+        ) : (
+          <section className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm text-center space-y-2">
+            <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 mx-auto">
+              <AlertCircle className="w-5 h-5" />
+            </div>
+            <h3 className="text-sm font-bold text-gray-900">No live evaluation recorded yet.</h3>
+            <p className="text-xs text-gray-500 max-w-sm mx-auto leading-relaxed">
+              Results by question type, critical failures and sample answers appear here after a live evaluation run.
+            </p>
+          </section>
+        )}
       </main>
 
       <FooterNotice />

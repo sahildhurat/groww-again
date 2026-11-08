@@ -12,6 +12,7 @@
 This implementation plan details the step-by-step build of "The SIP locker" concept prototype. The execution strictly adheres to the **Build Order in §2 of SPEC-06**, fails closed when AI is disabled or fails, enforces the Quality Gate on all AI text, complies with all Indian financial and privacy regulations (SEBI, AMC, BSE/NPCI, CCPA, DPDP), and adheres to the strict privacy rules (no personal names, no secrets, no raw private data).
 
 ### Core Architectural Principles
+
 1. **Deterministic by Default, AI-Enhanced:** Core navigation, financial math, option filtering, and return-date bounds are 100% deterministic TypeScript logic. AI is applied strictly where nuance and language synthesis earn their place (The Break Assistant).
 2. **Quality-Gated AI:** No AI response reaches the user without passing `lib/gate.ts` (schema, exact numbers ±0.001, banned terms, PII sanitization/rejection, and input grounding). Gate failures silently fall back to deterministic templates and log gate failure codes.
 3. **Fail-Closed Safety:** If `MVP_LIVE_ENABLED !== 'true'`, rate limit is exceeded (>40/hr/IP), or the call times out (>20s), the system serves deterministic templates labeled "Standard text".
@@ -140,12 +141,14 @@ This implementation plan details the step-by-step build of "The SIP locker" conc
 ## 3. Phase-by-Phase Implementation Plan
 
 ### Phase 1: Project Scaffolding & Core Shell (Order 1 in §2)
+
 *Goal: Working mobile-first Next.js 14 app with Groww visual styling, demo seed data, "Try a task" panel, and the complete Locker view.*
 
 1. **Initialize Next.js Application:**
    - Next.js 14 App Router, TypeScript, Tailwind CSS, `lucide-react`, `zod`, `clsx`, `tailwind-merge`.
    - Configure viewport: mobile-first constraint (`max-w-[430px]` centered on larger screens, default $390 \times 844$).
 2. **Environment Template (`.env.local.example`):**
+
    ```bash
    NEXT_PUBLIC_SUPABASE_URL=
    NEXT_PUBLIC_SUPABASE_ANON_KEY=
@@ -155,6 +158,7 @@ This implementation plan details the step-by-step build of "The SIP locker" conc
    MVP_LIVE_ENABLED=false
    ALLOW_PAID=0
    ```
+
 3. **Demo Seed Implementation (`data/demo-seed.json` & `lib/seed.ts`):**
    - Populate the 11-month demo seed (Dec 2025 to Oct 2026).
    - Ensure all figures are computed via formula: $\text{units} = \text{round}(2000 / \text{NAV}, 3)$, value at ₹108.20 = ₹17,151.11.
@@ -191,6 +195,7 @@ This implementation plan details the step-by-step build of "The SIP locker" conc
 ---
 
 ### Phase 2: AI Infrastructure, Quality Gate & Core Routes (Order 2 in §2)
+
 *Goal: Implement server-side AI execution, the 5-stage Quality Gate, deterministic fallbacks, `rules.json`, and the slip & month-story routes.*
 
 1. **Build `data/rules.json` Excerpts:**
@@ -225,6 +230,7 @@ This implementation plan details the step-by-step build of "The SIP locker" conc
 ---
 
 ### Phase 3: Memories Feature (F1) (Order 3 in §2)
+
 *Goal: Add photo, voice note, and text memory capability to any instalment.*
 
 1. **Client-side Image Processing (`lib/image-utils.ts`):**
@@ -250,6 +256,7 @@ This implementation plan details the step-by-step build of "The SIP locker" conc
 ---
 
 ### Phase 4: Day-1 Promise Feature (F3) & Transcription (Order 4 in §2)
+
 *Goal: Capture the Day-1 promise via voice or text, transcribe opt-in, extract structured goals, and store the cancel-screen opt-in.*
 
 1. **Promise Recording Interface:**
@@ -276,6 +283,7 @@ This implementation plan details the step-by-step build of "The SIP locker" conc
 ---
 
 ### Phase 5: Stop Flow & Break Assistant (F6, F3, Failed Month Fix) (Order 5 in §2)
+
 *Goal: The central Break Flow surface—proactive failure resolution, reason analysis, distress adaptation, deterministic options, and committed return date.*
 
 1. **Break Flow Entry Points (`app/break/page.tsx`):**
@@ -320,6 +328,7 @@ This implementation plan details the step-by-step build of "The SIP locker" conc
 ---
 
 ### Phase 6: Ask Your Locker (F5) (Order 6 in §2)
+
 *Goal: Grounded Q&A answering factual questions about the user's locker and rules, with strict decline enforcement.*
 
 1. **Ask Your Locker Surface (`app/ask/page.tsx`):**
@@ -345,6 +354,7 @@ This implementation plan details the step-by-step build of "The SIP locker" conc
 ---
 
 ### Phase 7: Certificate of Holding (F4) & First-Year Story (F8) (Order 7 in §2)
+
 *Goal: Keepsake documents celebrating investor progress without performance figures.*
 
 1. **Printable Certificate of Holding (`app/certificate/page.tsx`):**
@@ -365,6 +375,7 @@ This implementation plan details the step-by-step build of "The SIP locker" conc
 ---
 
 ### Phase 8: Sign-in Mode, Supabase & Privacy Controls (Order 8 in §2)
+
 *Goal: Cross-device persistence for testers, DPDP consent, data export, and full deletion.*
 
 1. **DPDP Consent Screen (`app/consent/page.tsx`):**
@@ -391,6 +402,7 @@ This implementation plan details the step-by-step build of "The SIP locker" conc
 ---
 
 ### Phase 9: Quality Pages, Eval Harness, Testing & Deploy (Order 9 in §2)
+
 *Goal: Transparent documentation, complete test suite, privacy validation, and production readiness.*
 
 1. **Educational & Quality Pages:**
@@ -435,7 +447,7 @@ This implementation plan details the step-by-step build of "The SIP locker" conc
 ## 4. Verification Checkpoints & Acceptance Criteria
 
 | Checkpoint | Verification Method | Success Criteria |
-|---|---|---|
+| --- | --- | --- |
 | **Privacy & Secrets (W2, W3, W4)** | `npm run check:privacy` | 0 matched private terms, 0 exposed keys, git status clean of `private/` or `.env*` |
 | **Demo Mathematical Accuracy (W8)** | `npm run test tests/unit/seed-math.test.ts` | All units equal $\text{round}(2000/\text{NAV}, 3)$; total units = 158.513; no hardcoded untracked numbers |
 | **Quality Gate Verification** | `npm run test tests/unit/gate.test.ts` | 100% of seeded bad inputs (hallucinated numbers, banned phrases, PII, ungrounded terms) caught and rejected |

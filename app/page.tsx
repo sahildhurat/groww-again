@@ -6,85 +6,97 @@ import { TopBar } from "@/components/ui/top-bar";
 import { BottomNav } from "@/components/ui/bottom-nav";
 import { FooterNotice } from "@/components/ui/footer-notice";
 import { DemoBanner } from "@/components/ui/demo-banner";
+import { ChevronRight, ArrowRight, Clock, AlertTriangle, SlidersHorizontal, Camera, MessageCircle } from "lucide-react";
 import { useDemo } from "@/lib/demo-context";
-import { calculateLockerSummary } from "@/lib/seed";
-import {
-  ChevronRight,
-  AlertTriangle,
-  ArrowRight,
-  CheckCircle2,
-  Calendar,
-  Sparkles,
-  HelpCircle,
-  Award,
-} from "lucide-react";
 
 export default function HomePage() {
-  const { sip, instalments } = useDemo();
-  const summary = calculateLockerSummary(instalments, sip.current_nav);
-
+  const { version } = useDemo();
   const tasks = [
     {
       num: 1,
-      title: "Your September instalment did not go through. Find out why and what to do.",
-      href: "/locker#inst-2026-09-05",
-      badge: "Failed slot",
+      title: "The November instalment was debited but units are not visible yet. Find out why.",
+      href: "/passbook/inst-2026-11-05",
+      badge: "Task 1",
+      icon: Clock,
+      color: "text-blue-600 bg-blue-50 border-blue-200",
+    },
+    {
+      num: 2,
+      title: "The May instalment failed and September was refunded. See what happened to the money.",
+      href: "/passbook/inst-2026-05-05",
+      badge: "Task 2",
       icon: AlertTriangle,
       color: "text-amber-600 bg-amber-50 border-amber-200",
     },
     {
-      num: 2,
-      title: "You need to stop for a while. Tell the locker why and set a date to return.",
-      href: "/break",
-      badge: "Break flow",
-      icon: Calendar,
-      color: "text-blue-600 bg-blue-50 border-blue-200",
-    },
-    {
       num: 3,
-      title: "Add a memory to this month and read what your money did.",
-      href: "/locker#inst-2026-10-05",
-      badge: "Memory",
-      icon: Sparkles,
-      color: "text-purple-600 bg-purple-50 border-purple-200",
-    },
-    {
-      num: 4,
-      title: "Ask how many units you bought in the month you moved into the flat.",
-      href: "/ask?q=How%20many%20units%20did%20I%20buy%20in%20the%20month%20I%20moved%20into%20the%20flat%3F",
-      badge: "Ask",
-      icon: HelpCircle,
+      title: "Your situation changed. See what you can do next.",
+      href: "/options",
+      badge: "Task 3",
+      icon: SlidersHorizontal,
       color: "text-emerald-600 bg-emerald-50 border-emerald-200",
     },
-    {
-      num: 5,
-      title: "Print your certificate.",
-      href: "/certificate",
-      badge: "Certificate",
-      icon: Award,
-      color: "text-amber-700 bg-amber-50 border-amber-200",
-    },
+    ...(version === "B"
+      ? [
+          {
+            num: 4,
+            title: "Version B: keep a photo or voice note for October, then ask a friend about the failed May instalment.",
+            href: "/passbook/inst-2026-10-05",
+            badge: "Task 4",
+            icon: Camera,
+            color: "text-purple-600 bg-purple-50 border-purple-200",
+          },
+        ]
+      : []),
   ];
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
-      <TopBar title="SIP locker (concept)" />
+      <TopBar title="SIP Passbook (concept)" />
       <DemoBanner />
 
       <main className="flex-1 p-4 space-y-5">
+        {/* Intro per SPEC-07 §5 */}
+        <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
+          <h1 className="text-base font-bold text-gray-900">
+            Your bank&apos;s SMS shows the money leaving. This shows what it became.
+          </h1>
+          <p className="text-xs text-gray-600 leading-relaxed">
+            UPI moves money in seconds; a SIP takes days and shows nothing in between. This passbook shows every
+            month&apos;s money, from your bank debit to the units in your name, with sources and times.
+          </p>
+          <p className="text-xs text-gray-600 leading-relaxed">
+            Sensecheck explains any line in plain words, using only your passbook and Groww&apos;s help pages. Not
+            investment advice.
+          </p>
+          <div className="pt-2">
+            <Link
+              href="/passbook"
+              className="inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition-colors shadow-sm"
+            >
+              <span>Open my passbook</span>
+              <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+            </Link>
+            <Link
+              href="/ask"
+              className="mt-2 inline-flex items-center justify-center w-full py-2.5 px-4 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-800 font-semibold text-xs transition-colors"
+            >
+              <MessageCircle className="w-3.5 h-3.5 mr-1.5 text-emerald-600" />
+              <span>Ask Sensecheck a question</span>
+            </Link>
+          </div>
+        </section>
+
         {/* Try a Task Panel */}
         <section className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-3">
           <div className="flex items-center justify-between border-b border-gray-100 pb-2">
             <div>
-              <h2 className="text-xs font-semibold uppercase tracking-wider text-emerald-700">
-                Mentor &amp; Tester Guide
-              </h2>
-              <p className="text-sm font-semibold text-gray-900 mt-0.5">
+              <h2 className="text-sm font-semibold text-gray-900">
                 Try a task
-              </p>
+              </h2>
             </div>
             <span className="text-[11px] bg-emerald-50 text-emerald-700 font-medium px-2 py-0.5 rounded-full border border-emerald-200">
-              5 tasks
+              {tasks.length} tasks
             </span>
           </div>
 
@@ -111,96 +123,6 @@ export default function HomePage() {
                 </Link>
               );
             })}
-          </div>
-        </section>
-
-        {/* My SIPs Section */}
-        <section className="space-y-2.5">
-          <div className="flex items-center justify-between px-1">
-            <h2 className="text-sm font-semibold text-gray-900">My SIPs</h2>
-            <span className="text-xs text-gray-500 font-medium">1 active</span>
-          </div>
-
-          <Link
-            href="/locker"
-            className="block bg-white rounded-2xl p-4 border border-gray-100 shadow-sm hover:border-emerald-500/30 transition-all group"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <span className="inline-block text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200 mb-1.5">
-                  Monthly &bull; ₹{sip.amount.toLocaleString("en-IN")} on 5th
-                </span>
-                <h3 className="text-base font-bold text-gray-900 group-hover:text-emerald-700">
-                  {sip.name}
-                </h3>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  {sip.fund_label}
-                </p>
-              </div>
-
-              <div className="text-right">
-                <p className="text-[11px] text-gray-400">Total units</p>
-                <p className="text-base font-bold text-gray-900">
-                  {summary.totalUnits.toFixed(3)}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
-              <div>
-                <span className="text-gray-400">Invested: </span>
-                <span className="font-semibold text-gray-800">
-                  ₹{summary.totalInvested.toLocaleString("en-IN")}
-                </span>
-                <span className="mx-1.5 text-gray-300">|</span>
-                <span className="text-gray-400">Value (illustrative): </span>
-                <span className="font-semibold text-gray-800">
-                  ₹{summary.currentValue.toLocaleString("en-IN")}
-                </span>
-              </div>
-              <span className="text-emerald-600 font-medium inline-flex items-center group-hover:translate-x-0.5 transition-transform">
-                Open locker
-                <ArrowRight className="w-3.5 h-3.5 ml-1" />
-              </span>
-            </div>
-
-            {/* Dedication Banner */}
-            <div className="mt-2.5 bg-gray-50 rounded-xl px-3 py-2 text-xs text-gray-600 border border-gray-100 italic flex items-center space-x-1.5">
-              <span>Dedication: &ldquo;{sip.dedication}&rdquo;</span>
-            </div>
-          </Link>
-        </section>
-
-        {/* Quick Highlights / Locker Overview */}
-        <section className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-3">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-            Locker Status
-          </h2>
-          <div className="grid grid-cols-3 gap-2 text-center">
-            <div className="bg-emerald-50/60 rounded-xl p-2.5 border border-emerald-100">
-              <p className="text-lg font-bold text-emerald-700">
-                {summary.paidCount}
-              </p>
-              <p className="text-[11px] text-emerald-800 font-medium">
-                Paid slips
-              </p>
-            </div>
-            <div className="bg-amber-50/60 rounded-xl p-2.5 border border-amber-100">
-              <p className="text-lg font-bold text-amber-700">
-                {summary.failedCount}
-              </p>
-              <p className="text-[11px] text-amber-800 font-medium">
-                Empty slots
-              </p>
-            </div>
-            <div className="bg-gray-50 rounded-xl p-2.5 border border-gray-200">
-              <p className="text-lg font-bold text-gray-700">
-                {summary.skippedCount}
-              </p>
-              <p className="text-[11px] text-gray-600 font-medium">
-                Hard months
-              </p>
-            </div>
           </div>
         </section>
       </main>

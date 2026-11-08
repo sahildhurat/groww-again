@@ -1,0 +1,1399 @@
+{
+  "scenarios": {
+    "running": {
+      "sip": {
+        "id": "sip-demo-01",
+        "name": "My first bike",
+        "fund_label": "Nifty 50 Index Fund (demo)",
+        "amount": 2000,
+        "day_of_month": 5,
+        "start_date": "2025-12-05",
+        "status": "active",
+        "status_changed_at": null,
+        "latest_nav": 98.00,
+        "latest_nav_date": "2026-11-04",
+        "dedication": null
+      },
+      "instalments": [
+        {
+          "id": "inst-2025-12-05",
+          "due_date": "2025-12-05",
+          "amount": 2000,
+          "nav": 100.00,
+          "units": 20.000,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2025-12-05-debit",
+              "instalment_id": "inst-2025-12-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-1205",
+              "effective_at": "2025-12-05T09:00:00+05:30",
+              "as_of": "2025-12-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2025-12-05-order",
+              "instalment_id": "inst-2025-12-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-1205",
+              "effective_at": "2025-12-05T11:00:00+05:30",
+              "as_of": "2025-12-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2025-12-05-allotment",
+              "instalment_id": "inst-2025-12-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-1206",
+              "effective_at": "2025-12-06T14:00:00+05:30",
+              "as_of": "2025-12-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-01-05",
+          "due_date": "2026-01-05",
+          "amount": 2000,
+          "nav": 102.40,
+          "units": 19.531,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-01-05-debit",
+              "instalment_id": "inst-2026-01-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0105",
+              "effective_at": "2026-01-05T09:00:00+05:30",
+              "as_of": "2026-01-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-01-05-order",
+              "instalment_id": "inst-2026-01-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0105",
+              "effective_at": "2026-01-05T11:00:00+05:30",
+              "as_of": "2026-01-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-01-05-allotment",
+              "instalment_id": "inst-2026-01-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0106",
+              "effective_at": "2026-01-06T14:00:00+05:30",
+              "as_of": "2026-01-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-02-05",
+          "due_date": "2026-02-05",
+          "amount": 2000,
+          "nav": 98.10,
+          "units": 20.387,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-02-05-debit",
+              "instalment_id": "inst-2026-02-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0205",
+              "effective_at": "2026-02-05T09:00:00+05:30",
+              "as_of": "2026-02-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-02-05-order",
+              "instalment_id": "inst-2026-02-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0205",
+              "effective_at": "2026-02-05T11:00:00+05:30",
+              "as_of": "2026-02-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-02-05-allotment",
+              "instalment_id": "inst-2026-02-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0206",
+              "effective_at": "2026-02-06T14:00:00+05:30",
+              "as_of": "2026-02-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-03-05",
+          "due_date": "2026-03-05",
+          "amount": 2000,
+          "nav": 95.30,
+          "units": 20.986,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-03-05-debit",
+              "instalment_id": "inst-2026-03-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0305",
+              "effective_at": "2026-03-05T09:00:00+05:30",
+              "as_of": "2026-03-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-03-05-order",
+              "instalment_id": "inst-2026-03-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0305",
+              "effective_at": "2026-03-05T11:00:00+05:30",
+              "as_of": "2026-03-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-03-05-allotment",
+              "instalment_id": "inst-2026-03-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0306",
+              "effective_at": "2026-03-06T14:00:00+05:30",
+              "as_of": "2026-03-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-04-05",
+          "due_date": "2026-04-05",
+          "amount": 2000,
+          "nav": 99.80,
+          "units": 20.040,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-04-05-debit",
+              "instalment_id": "inst-2026-04-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0405",
+              "effective_at": "2026-04-05T09:00:00+05:30",
+              "as_of": "2026-04-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-04-05-order",
+              "instalment_id": "inst-2026-04-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0405",
+              "effective_at": "2026-04-05T11:00:00+05:30",
+              "as_of": "2026-04-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-04-05-allotment",
+              "instalment_id": "inst-2026-04-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0406",
+              "effective_at": "2026-04-06T14:00:00+05:30",
+              "as_of": "2026-04-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-05-05",
+          "due_date": "2026-05-05",
+          "amount": 2000,
+          "nav": null,
+          "units": null,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-05-05-debit",
+              "instalment_id": "inst-2026-05-05",
+              "type": "debit",
+              "status": "failed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0505",
+              "effective_at": "2026-05-05T09:12:00+05:30",
+              "as_of": "2026-05-05T10:00:00+05:30",
+              "reason_code": "INSUFFICIENT_BALANCE"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-06-05",
+          "due_date": "2026-06-05",
+          "amount": 2000,
+          "nav": 104.20,
+          "units": 19.194,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-06-05-debit",
+              "instalment_id": "inst-2026-06-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0605",
+              "effective_at": "2026-06-05T09:00:00+05:30",
+              "as_of": "2026-06-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-06-05-order",
+              "instalment_id": "inst-2026-06-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0605",
+              "effective_at": "2026-06-05T11:00:00+05:30",
+              "as_of": "2026-06-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-06-05-allotment",
+              "instalment_id": "inst-2026-06-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0606",
+              "effective_at": "2026-06-06T14:00:00+05:30",
+              "as_of": "2026-06-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-07-05",
+          "due_date": "2026-07-05",
+          "amount": 2000,
+          "nav": null,
+          "units": null,
+          "skipped": true,
+          "events": []
+        },
+        {
+          "id": "inst-2026-08-05",
+          "due_date": "2026-08-05",
+          "amount": 2000,
+          "nav": 101.70,
+          "units": 19.666,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-08-05-debit",
+              "instalment_id": "inst-2026-08-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0805",
+              "effective_at": "2026-08-05T09:00:00+05:30",
+              "as_of": "2026-08-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-08-05-order",
+              "instalment_id": "inst-2026-08-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0805",
+              "effective_at": "2026-08-05T11:00:00+05:30",
+              "as_of": "2026-08-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-08-05-allotment",
+              "instalment_id": "inst-2026-08-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0806",
+              "effective_at": "2026-08-06T14:00:00+05:30",
+              "as_of": "2026-08-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-09-05",
+          "due_date": "2026-09-05",
+          "amount": 2000,
+          "nav": null,
+          "units": null,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-09-05-debit",
+              "instalment_id": "inst-2026-09-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0905",
+              "effective_at": "2026-09-05T09:00:00+05:30",
+              "as_of": "2026-09-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-09-05-order",
+              "instalment_id": "inst-2026-09-05",
+              "type": "order",
+              "status": "failed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0905",
+              "effective_at": "2026-09-05T11:00:00+05:30",
+              "as_of": "2026-09-05T12:00:00+05:30",
+              "reason_code": "ORDER_NOT_ACCEPTED"
+            },
+            {
+              "id": "ev-2026-09-05-refund",
+              "instalment_id": "inst-2026-09-05",
+              "type": "refund",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0912",
+              "effective_at": "2026-09-12T14:00:00+05:30",
+              "as_of": "2026-09-12T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-10-05",
+          "due_date": "2026-10-05",
+          "amount": 2000,
+          "nav": 106.90,
+          "units": 18.709,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-10-05-debit",
+              "instalment_id": "inst-2026-10-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-1005",
+              "effective_at": "2026-10-05T09:00:00+05:30",
+              "as_of": "2026-10-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-10-05-order",
+              "instalment_id": "inst-2026-10-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-1005",
+              "effective_at": "2026-10-05T11:00:00+05:30",
+              "as_of": "2026-10-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-10-05-allotment",
+              "instalment_id": "inst-2026-10-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-1006",
+              "effective_at": "2026-10-06T14:00:00+05:30",
+              "as_of": "2026-10-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-11-05",
+          "due_date": "2026-11-05",
+          "amount": 2000,
+          "nav": null,
+          "units": null,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-11-05-debit",
+              "instalment_id": "inst-2026-11-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-1105",
+              "effective_at": "2026-11-05T09:12:00+05:30",
+              "as_of": "2026-11-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-11-05-order",
+              "instalment_id": "inst-2026-11-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-1105",
+              "effective_at": "2026-11-05T11:40:00+05:30",
+              "as_of": "2026-11-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-11-05-allotment",
+              "instalment_id": "inst-2026-11-05",
+              "type": "allotment",
+              "status": "pending",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-1105",
+              "effective_at": null,
+              "as_of": "2026-11-06T10:00:00+05:30"
+            }
+          ]
+        }
+      ]
+    },
+    "stopped": {
+      "sip": {
+        "id": "sip-demo-01",
+        "name": "My first bike",
+        "fund_label": "Nifty 50 Index Fund (demo)",
+        "amount": 2000,
+        "day_of_month": 5,
+        "start_date": "2025-12-05",
+        "status": "stopped",
+        "status_changed_at": "2026-10-20T00:00:00+05:30",
+        "latest_nav": 98.00,
+        "latest_nav_date": "2026-11-04",
+        "dedication": null
+      },
+      "instalments": [
+        {
+          "id": "inst-2025-12-05",
+          "due_date": "2025-12-05",
+          "amount": 2000,
+          "nav": 100.00,
+          "units": 20.000,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2025-12-05-debit",
+              "instalment_id": "inst-2025-12-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-1205",
+              "effective_at": "2025-12-05T09:00:00+05:30",
+              "as_of": "2025-12-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2025-12-05-order",
+              "instalment_id": "inst-2025-12-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-1205",
+              "effective_at": "2025-12-05T11:00:00+05:30",
+              "as_of": "2025-12-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2025-12-05-allotment",
+              "instalment_id": "inst-2025-12-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-1206",
+              "effective_at": "2025-12-06T14:00:00+05:30",
+              "as_of": "2025-12-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-01-05",
+          "due_date": "2026-01-05",
+          "amount": 2000,
+          "nav": 102.40,
+          "units": 19.531,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-01-05-debit",
+              "instalment_id": "inst-2026-01-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0105",
+              "effective_at": "2026-01-05T09:00:00+05:30",
+              "as_of": "2026-01-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-01-05-order",
+              "instalment_id": "inst-2026-01-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0105",
+              "effective_at": "2026-01-05T11:00:00+05:30",
+              "as_of": "2026-01-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-01-05-allotment",
+              "instalment_id": "inst-2026-01-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0106",
+              "effective_at": "2026-01-06T14:00:00+05:30",
+              "as_of": "2026-01-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-02-05",
+          "due_date": "2026-02-05",
+          "amount": 2000,
+          "nav": 98.10,
+          "units": 20.387,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-02-05-debit",
+              "instalment_id": "inst-2026-02-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0205",
+              "effective_at": "2026-02-05T09:00:00+05:30",
+              "as_of": "2026-02-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-02-05-order",
+              "instalment_id": "inst-2026-02-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0205",
+              "effective_at": "2026-02-05T11:00:00+05:30",
+              "as_of": "2026-02-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-02-05-allotment",
+              "instalment_id": "inst-2026-02-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0206",
+              "effective_at": "2026-02-06T14:00:00+05:30",
+              "as_of": "2026-02-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-03-05",
+          "due_date": "2026-03-05",
+          "amount": 2000,
+          "nav": 95.30,
+          "units": 20.986,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-03-05-debit",
+              "instalment_id": "inst-2026-03-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0305",
+              "effective_at": "2026-03-05T09:00:00+05:30",
+              "as_of": "2026-03-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-03-05-order",
+              "instalment_id": "inst-2026-03-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0305",
+              "effective_at": "2026-03-05T11:00:00+05:30",
+              "as_of": "2026-03-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-03-05-allotment",
+              "instalment_id": "inst-2026-03-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0306",
+              "effective_at": "2026-03-06T14:00:00+05:30",
+              "as_of": "2026-03-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-04-05",
+          "due_date": "2026-04-05",
+          "amount": 2000,
+          "nav": 99.80,
+          "units": 20.040,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-04-05-debit",
+              "instalment_id": "inst-2026-04-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0405",
+              "effective_at": "2026-04-05T09:00:00+05:30",
+              "as_of": "2026-04-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-04-05-order",
+              "instalment_id": "inst-2026-04-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0405",
+              "effective_at": "2026-04-05T11:00:00+05:30",
+              "as_of": "2026-04-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-04-05-allotment",
+              "instalment_id": "inst-2026-04-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0406",
+              "effective_at": "2026-04-06T14:00:00+05:30",
+              "as_of": "2026-04-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-05-05",
+          "due_date": "2026-05-05",
+          "amount": 2000,
+          "nav": null,
+          "units": null,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-05-05-debit",
+              "instalment_id": "inst-2026-05-05",
+              "type": "debit",
+              "status": "failed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0505",
+              "effective_at": "2026-05-05T09:12:00+05:30",
+              "as_of": "2026-05-05T10:00:00+05:30",
+              "reason_code": "INSUFFICIENT_BALANCE"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-06-05",
+          "due_date": "2026-06-05",
+          "amount": 2000,
+          "nav": 104.20,
+          "units": 19.194,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-06-05-debit",
+              "instalment_id": "inst-2026-06-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0605",
+              "effective_at": "2026-06-05T09:00:00+05:30",
+              "as_of": "2026-06-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-06-05-order",
+              "instalment_id": "inst-2026-06-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0605",
+              "effective_at": "2026-06-05T11:00:00+05:30",
+              "as_of": "2026-06-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-06-05-allotment",
+              "instalment_id": "inst-2026-06-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0606",
+              "effective_at": "2026-06-06T14:00:00+05:30",
+              "as_of": "2026-06-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-07-05",
+          "due_date": "2026-07-05",
+          "amount": 2000,
+          "nav": null,
+          "units": null,
+          "skipped": true,
+          "events": []
+        },
+        {
+          "id": "inst-2026-08-05",
+          "due_date": "2026-08-05",
+          "amount": 2000,
+          "nav": 101.70,
+          "units": 19.666,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-08-05-debit",
+              "instalment_id": "inst-2026-08-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0805",
+              "effective_at": "2026-08-05T09:00:00+05:30",
+              "as_of": "2026-08-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-08-05-order",
+              "instalment_id": "inst-2026-08-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0805",
+              "effective_at": "2026-08-05T11:00:00+05:30",
+              "as_of": "2026-08-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-08-05-allotment",
+              "instalment_id": "inst-2026-08-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0806",
+              "effective_at": "2026-08-06T14:00:00+05:30",
+              "as_of": "2026-08-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-09-05",
+          "due_date": "2026-09-05",
+          "amount": 2000,
+          "nav": null,
+          "units": null,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-09-05-debit",
+              "instalment_id": "inst-2026-09-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0905",
+              "effective_at": "2026-09-05T09:00:00+05:30",
+              "as_of": "2026-09-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-09-05-order",
+              "instalment_id": "inst-2026-09-05",
+              "type": "order",
+              "status": "failed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0905",
+              "effective_at": "2026-09-05T11:00:00+05:30",
+              "as_of": "2026-09-05T12:00:00+05:30",
+              "reason_code": "ORDER_NOT_ACCEPTED"
+            },
+            {
+              "id": "ev-2026-09-05-refund",
+              "instalment_id": "inst-2026-09-05",
+              "type": "refund",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0912",
+              "effective_at": "2026-09-12T14:00:00+05:30",
+              "as_of": "2026-09-12T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-10-05",
+          "due_date": "2026-10-05",
+          "amount": 2000,
+          "nav": 106.90,
+          "units": 18.709,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-10-05-debit",
+              "instalment_id": "inst-2026-10-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-1005",
+              "effective_at": "2026-10-05T09:00:00+05:30",
+              "as_of": "2026-10-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-10-05-order",
+              "instalment_id": "inst-2026-10-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-1005",
+              "effective_at": "2026-10-05T11:00:00+05:30",
+              "as_of": "2026-10-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-10-05-allotment",
+              "instalment_id": "inst-2026-10-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-1006",
+              "effective_at": "2026-10-06T14:00:00+05:30",
+              "as_of": "2026-10-06T16:00:00+05:30"
+            }
+          ]
+        }
+      ]
+    },
+    "stale": {
+      "sip": {
+        "id": "sip-demo-01",
+        "name": "My first bike",
+        "fund_label": "Nifty 50 Index Fund (demo)",
+        "amount": 2000,
+        "day_of_month": 5,
+        "start_date": "2025-12-05",
+        "status": "active",
+        "status_changed_at": null,
+        "latest_nav": 98.00,
+        "latest_nav_date": "2026-11-04",
+        "dedication": null
+      },
+      "instalments": [
+        {
+          "id": "inst-2025-12-05",
+          "due_date": "2025-12-05",
+          "amount": 2000,
+          "nav": 100.00,
+          "units": 20.000,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2025-12-05-debit",
+              "instalment_id": "inst-2025-12-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-1205",
+              "effective_at": "2025-12-05T09:00:00+05:30",
+              "as_of": "2025-12-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2025-12-05-order",
+              "instalment_id": "inst-2025-12-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-1205",
+              "effective_at": "2025-12-05T11:00:00+05:30",
+              "as_of": "2025-12-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2025-12-05-allotment",
+              "instalment_id": "inst-2025-12-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-1206",
+              "effective_at": "2025-12-06T14:00:00+05:30",
+              "as_of": "2025-12-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-01-05",
+          "due_date": "2026-01-05",
+          "amount": 2000,
+          "nav": 102.40,
+          "units": 19.531,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-01-05-debit",
+              "instalment_id": "inst-2026-01-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0105",
+              "effective_at": "2026-01-05T09:00:00+05:30",
+              "as_of": "2026-01-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-01-05-order",
+              "instalment_id": "inst-2026-01-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0105",
+              "effective_at": "2026-01-05T11:00:00+05:30",
+              "as_of": "2026-01-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-01-05-allotment",
+              "instalment_id": "inst-2026-01-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0106",
+              "effective_at": "2026-01-06T14:00:00+05:30",
+              "as_of": "2026-01-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-02-05",
+          "due_date": "2026-02-05",
+          "amount": 2000,
+          "nav": 98.10,
+          "units": 20.387,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-02-05-debit",
+              "instalment_id": "inst-2026-02-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0205",
+              "effective_at": "2026-02-05T09:00:00+05:30",
+              "as_of": "2026-02-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-02-05-order",
+              "instalment_id": "inst-2026-02-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0205",
+              "effective_at": "2026-02-05T11:00:00+05:30",
+              "as_of": "2026-02-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-02-05-allotment",
+              "instalment_id": "inst-2026-02-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0206",
+              "effective_at": "2026-02-06T14:00:00+05:30",
+              "as_of": "2026-02-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-03-05",
+          "due_date": "2026-03-05",
+          "amount": 2000,
+          "nav": 95.30,
+          "units": 20.986,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-03-05-debit",
+              "instalment_id": "inst-2026-03-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0305",
+              "effective_at": "2026-03-05T09:00:00+05:30",
+              "as_of": "2026-03-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-03-05-order",
+              "instalment_id": "inst-2026-03-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0305",
+              "effective_at": "2026-03-05T11:00:00+05:30",
+              "as_of": "2026-03-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-03-05-allotment",
+              "instalment_id": "inst-2026-03-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0306",
+              "effective_at": "2026-03-06T14:00:00+05:30",
+              "as_of": "2026-03-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-04-05",
+          "due_date": "2026-04-05",
+          "amount": 2000,
+          "nav": 99.80,
+          "units": 20.040,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-04-05-debit",
+              "instalment_id": "inst-2026-04-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0405",
+              "effective_at": "2026-04-05T09:00:00+05:30",
+              "as_of": "2026-04-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-04-05-order",
+              "instalment_id": "inst-2026-04-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0405",
+              "effective_at": "2026-04-05T11:00:00+05:30",
+              "as_of": "2026-04-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-04-05-allotment",
+              "instalment_id": "inst-2026-04-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0406",
+              "effective_at": "2026-04-06T14:00:00+05:30",
+              "as_of": "2026-04-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-05-05",
+          "due_date": "2026-05-05",
+          "amount": 2000,
+          "nav": null,
+          "units": null,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-05-05-debit",
+              "instalment_id": "inst-2026-05-05",
+              "type": "debit",
+              "status": "failed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0505",
+              "effective_at": "2026-05-05T09:12:00+05:30",
+              "as_of": "2026-05-05T10:00:00+05:30",
+              "reason_code": "INSUFFICIENT_BALANCE"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-06-05",
+          "due_date": "2026-06-05",
+          "amount": 2000,
+          "nav": 104.20,
+          "units": 19.194,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-06-05-debit",
+              "instalment_id": "inst-2026-06-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0605",
+              "effective_at": "2026-06-05T09:00:00+05:30",
+              "as_of": "2026-06-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-06-05-order",
+              "instalment_id": "inst-2026-06-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0605",
+              "effective_at": "2026-06-05T11:00:00+05:30",
+              "as_of": "2026-06-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-06-05-allotment",
+              "instalment_id": "inst-2026-06-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0606",
+              "effective_at": "2026-06-06T14:00:00+05:30",
+              "as_of": "2026-06-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-07-05",
+          "due_date": "2026-07-05",
+          "amount": 2000,
+          "nav": null,
+          "units": null,
+          "skipped": true,
+          "events": []
+        },
+        {
+          "id": "inst-2026-08-05",
+          "due_date": "2026-08-05",
+          "amount": 2000,
+          "nav": 101.70,
+          "units": 19.666,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-08-05-debit",
+              "instalment_id": "inst-2026-08-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0805",
+              "effective_at": "2026-08-05T09:00:00+05:30",
+              "as_of": "2026-08-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-08-05-order",
+              "instalment_id": "inst-2026-08-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0805",
+              "effective_at": "2026-08-05T11:00:00+05:30",
+              "as_of": "2026-08-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-08-05-allotment",
+              "instalment_id": "inst-2026-08-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-0806",
+              "effective_at": "2026-08-06T14:00:00+05:30",
+              "as_of": "2026-08-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-09-05",
+          "due_date": "2026-09-05",
+          "amount": 2000,
+          "nav": null,
+          "units": null,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-09-05-debit",
+              "instalment_id": "inst-2026-09-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0905",
+              "effective_at": "2026-09-05T09:00:00+05:30",
+              "as_of": "2026-09-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-09-05-order",
+              "instalment_id": "inst-2026-09-05",
+              "type": "order",
+              "status": "failed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-0905",
+              "effective_at": "2026-09-05T11:00:00+05:30",
+              "as_of": "2026-09-05T12:00:00+05:30",
+              "reason_code": "ORDER_NOT_ACCEPTED"
+            },
+            {
+              "id": "ev-2026-09-05-refund",
+              "instalment_id": "inst-2026-09-05",
+              "type": "refund",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-0912",
+              "effective_at": "2026-09-12T14:00:00+05:30",
+              "as_of": "2026-09-12T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-10-05",
+          "due_date": "2026-10-05",
+          "amount": 2000,
+          "nav": 106.90,
+          "units": 18.709,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-10-05-debit",
+              "instalment_id": "inst-2026-10-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-1005",
+              "effective_at": "2026-10-05T09:00:00+05:30",
+              "as_of": "2026-10-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-10-05-order",
+              "instalment_id": "inst-2026-10-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-1005",
+              "effective_at": "2026-10-05T11:00:00+05:30",
+              "as_of": "2026-10-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-10-05-allotment",
+              "instalment_id": "inst-2026-10-05",
+              "type": "allotment",
+              "status": "confirmed",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-1006",
+              "effective_at": "2026-10-06T14:00:00+05:30",
+              "as_of": "2026-10-06T16:00:00+05:30"
+            }
+          ]
+        },
+        {
+          "id": "inst-2026-11-05",
+          "due_date": "2026-11-05",
+          "amount": 2000,
+          "nav": null,
+          "units": null,
+          "skipped": false,
+          "events": [
+            {
+              "id": "ev-2026-11-05-debit",
+              "instalment_id": "inst-2026-11-05",
+              "type": "debit",
+              "status": "confirmed",
+              "source": "bank",
+              "source_label": "Your bank",
+              "source_event_id": "BNK-DEMO-1105",
+              "effective_at": "2026-11-05T09:12:00+05:30",
+              "as_of": "2026-11-05T10:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-11-05-order",
+              "instalment_id": "inst-2026-11-05",
+              "type": "order",
+              "status": "confirmed",
+              "source": "order_route",
+              "source_label": "Order route (illustrative)",
+              "source_event_id": "ORD-DEMO-1105",
+              "effective_at": "2026-11-05T11:40:00+05:30",
+              "as_of": "2026-11-05T12:00:00+05:30"
+            },
+            {
+              "id": "ev-2026-11-05-allotment",
+              "instalment_id": "inst-2026-11-05",
+              "type": "allotment",
+              "status": "unknown",
+              "source": "registrar",
+              "source_label": "Registrar (illustrative)",
+              "source_event_id": "REG-DEMO-1105",
+              "effective_at": null,
+              "as_of": "2026-11-05T11:40:00+05:30",
+              "reason_code": "STATUS_UNAVAILABLE"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

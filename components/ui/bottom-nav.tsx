@@ -3,16 +3,16 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Layers, HelpCircle, Award } from "lucide-react";
+import { BookOpen, HelpCircle, SlidersHorizontal } from "lucide-react";
 
 export function BottomNav() {
   const pathname = usePathname();
 
+  // Final MVP (8 Nov): three tabs; Life Markers live inside each month now.
   const navItems = [
-    { label: "Home", href: "/", icon: Home },
-    { label: "My SIPs", href: "/locker", icon: Layers },
+    { label: "Passbook", href: "/passbook", icon: BookOpen },
     { label: "Ask", href: "/ask", icon: HelpCircle },
-    { label: "Year one", href: "/year-one", icon: Award },
+    { label: "Next steps", href: "/options", icon: SlidersHorizontal },
   ];
 
   return (

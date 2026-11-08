@@ -4,6 +4,7 @@ import path from "node:path";
 import { PromiseInputSchema, PromiseOutputSchema } from "@/lib/types";
 import { verifyGate, sanitizeInputText, extractNumbers } from "@/lib/gate";
 import { callClaudeHaiku } from "@/lib/anthropic";
+import { extractFirstJsonBlock } from "@/lib/sensecheck-fallback";
 
 const promptPath = path.join(process.cwd(), "prompts", "promise.md");
 const systemPrompt = fs.readFileSync(promptPath, "utf-8");
@@ -21,13 +22,13 @@ export async function POST(req: NextRequest) {
       one_line: firstSentence,
     };
 
-    // Extract numbers from transcript to define allowed numbers
-    const allowedNumbers = extractNumbers(input.transcript);
-
     const clientIp =
       req.headers.get("x-forwarded-for")?.split(",")[0] || "127.0.0.1";
 
     const sanitizedTranscript = sanitizeInputText(input.transcript);
+    // R35 (Claude): allowed numbers come from the MASKED transcript. Taken from the raw transcript, a phone or
+    // account number the investor spoke became an "allowed" number and passed the PII check if repeated.
+    const allowedNumbers = extractNumbers(sanitizedTranscript);
 
     const userPrompt = `Transcript:
 "${sanitizedTranscript}"
@@ -52,8 +53,10 @@ Provide the structured promise JSON.`;
 
     let parsedJson: any;
     try {
-      const cleaned = aiResult.content.replace(/```json\n?|\n?```/g, "").trim();
-      parsedJson = JSON.parse(cleaned);
+      // R41 (Claude): take the first JSON object even with a preamble or a code fence, and accept a year written as a
+      // number ("horizon": 2027). The first live eval fell back on "Car by 2027" because the schema wants text.
+      parsedJson = extractFirstJsonBlock(aiResult.content);
+      if (typeof parsedJson?.horizon === "number") parsedJson.horizon = String(parsedJson.horizon);
     } catch (e) {
       return NextResponse.json({
         ...fallbackOutput,
@@ -69,6 +72,7 @@ Provide the structured promise JSON.`;
       fallbackOutput,
       {
         textToCheck: parsedJson.one_line,
+        investorWords: sanitizedTranscript,
       }
     );
 

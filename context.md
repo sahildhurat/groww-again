@@ -11,14 +11,18 @@
 "The SIP locker" is a concept prototype designed as a feature within Groww for first-time mutual fund investors in their critical first year (months 1–12). Its target outcome is **Active@12**—keeping first-year Systematic Investment Plans (SIPs) active or recoverable through life changes and payment breaks.
 
 ### The Problem
+
 First-year SIPs lapse because:
+
 1. **Payment problems:** An instalment fails, followed by a permanent stop in 84% of 135 coded user stories.
 2. **Not yet understanding investing:** New investors confuse their own returns with fund returns, misunderstand NAV and rupee-cost averaging, or panic during market downturns.
 3. **The day-1 decision stops fitting life:** 4 of 5 interview exits followed life events (job loss, job switch, stipend end, family emergency).
 4. **The SIP feels like an expense:** Investors track their SIP primarily via monthly bank debit SMS messages rather than seeing an asset they are accumulating.
 
 ### The Cultural Insight
+
 Indian investors traditionally value tangible, emotional stores of wealth:
+
 - Gold stays safely in the family home or bank locker.
 - Real property can be visited and walked on.
 - Fixed Deposits (FDs) come with formal paper receipts filed in the family dossier.
@@ -26,7 +30,9 @@ Indian investors traditionally value tangible, emotional stores of wealth:
 A mutual fund SIP has traditionally had none of this—only a monthly debit SMS and fluctuating figures on a screen.
 
 ### The Solution
+
 The SIP locker transforms the SIP from a monthly debit into an accumulating digital locker of slips, memories, and personal intent:
+
 - Keeps receipt slips for every instalment.
 - Anchors memories (text, photo, voice) to instalments.
 - Surfaces failed instalments immediately as actionable empty slots with clear causes and fixes.
@@ -60,6 +66,7 @@ The 8 features are organized into 4 primary user surfaces centered around one co
 ```
 
 ### Feature Details
+
 1. **F1. The Locker:** Digital cover, dedication ("For me, by my birthday in 2028"), a receipt slip per instalment (date, amount, units, NAV), optional memory per instalment (photo, voice note, text), and empty slots for failed months showing exact cause and fix.
 2. **F2. Your Month, Your Money:** Two checked sentences per paid month explaining how the investor's money performed relative to the previous month, woven with their personal memory (e.g., "In March, the month you moved to Pune, the fund's price was lower, so your ₹2,000 bought 20.986 units...").
 3. **F3. The Day-1 Promise:** Short voice note or typed note at set-up capturing *why*, *for whom*, and *by when*. Opt-in checkbox: "Show me this if I try to cancel". Re-anchors investors during life changes without shame or guilt.
@@ -76,7 +83,7 @@ The 8 features are organized into 4 primary user surfaces centered around one co
 The Break Assistant handles the critical moments where SIPs break or investors consider exiting. It operates across 7 server-side routes and 1 transcription endpoint behind a unified Quality Gate:
 
 | Route | Purpose | Input Schema | Output Schema | Fallback Deterministic Text |
-|---|---|---|---|---|
+| --- | --- | --- | --- | --- |
 | `POST /api/ai/slip` | Classifies and explains a month (paid, failed, skipped) | `{ due_date, status, amount, nav?, units?, failure_code?, failure_text? }` | `{ cause, headline, body }` | Fixed template sentence per status and cause code |
 | `POST /api/ai/month-story` | Crafts 2 checked educational sentences | `{ this: {due_date, amount, nav, units}, previous?: {due_date, nav, units}, memory?: string }` | `{ text }` | `"This month ₹{amount} bought {units} units at a NAV of ₹{nav}."` |
 | `POST /api/ai/promise` | Extracts structured promise from transcript or text | `{ transcript: string }` | `{ goal, for_whom, horizon, one_line }` | First sentence of transcript; no invented numbers |
@@ -110,7 +117,9 @@ Every AI response must pass 5 strict checks before appearing on screen. If any c
 5. **Grounding for Memory Content:** In `month-story` and `year-story`, capitalized words and named entities must either appear in the input memory/profile or exist in an allowlist (e.g., month names, "NAV", "SIP", "AutoPay", fund labels).
 
 ### UI Indicators
+
 Every generated text displayed in the UI has an indicator:
+
 - **"Checked"**: Passed all gate rules.
 - **"Standard text"**: Gate failure, timeout (>20s), rate-limited, or fallback served.
 - Tooltip on each explaining the verification mechanism.
@@ -120,7 +129,9 @@ Every generated text displayed in the UI has an indicator:
 ## 5. Deterministic Logic Engines
 
 ### A. Cause to Fix Mapping
+
 Matches `cause` to actionable next steps and references `rules.json` topic excerpts:
+
 - `paid` -> No fix required.
 - `balance_insufficient` -> `pay_now` (Pay within 2 working days via NetBanking/UPI).
 - `autopay_mandate_issue` & `first_instalment_or_setup` -> `autopay_approve_or_reset`.
@@ -131,6 +142,7 @@ Matches `cause` to actionable next steps and references `rules.json` topic excer
 - `app_or_platform_issue`, `fund_house_rejected`, `unwanted_debit`, `failed_reason_unknown` -> Direct to support.
 
 ### B. Stop Reason Options Engine
+
 - `cash_shortage`, `income_stopped`, `emergency`:
   1. Pause until a return date (if eligible).
   2. Lower monthly SIP amount.
@@ -151,7 +163,9 @@ Matches `cause` to actionable next steps and references `rules.json` topic excer
   - Strips all marketing, decorative UI, and persuasive elements. Displays remaining choices in clear, unadorned, neutral typography.
 
 ### C. Return-Date Decision Engine
+
 Calculates pause eligibility relative to the next instalment due date:
+
 - **Eligible for Pause:** The proposed return date is $\le 3$ months after the next instalment AND $\ge 15$ days away.
   *Action:* Offer "Pause until {date}. It resumes automatically, subject to the fund house accepting the request."
 - **Ineligible for Pause:** Date is $> 3$ months or $< 15$ days away.
@@ -176,8 +190,9 @@ The demo runs completely client-side in Demo Mode (using `sessionStorage` and lo
 - **Formula for Units:** $\text{Units} = \text{round}\left(\frac{2000}{\text{NAV}}, 3\right)$
 
 ### Instalment Ledger (11 Months)
+
 | Due Date | Status | NAV (₹) | Units | Failure Code & Text / Skip Note | Memory |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | 2025-12-05 | paid | 100.00 | 20.000 | - | "First salary from my first job." |
 | 2026-01-05 | paid | 102.40 | 19.531 | - | "Moved into a flat with two friends." |
 | 2026-02-05 | paid | 98.10 | 20.387 | - | *(none)* |
@@ -191,6 +206,7 @@ The demo runs completely client-side in Demo Mode (using `sessionStorage` and lo
 | 2026-10-05 | paid | 106.90 | 18.709 | - | "Joined a new company. Salary now goes to a different bank; set up AutoPay on it." |
 
 ### Seed Totals
+
 - Paid instalments: 8
 - Total invested: ₹16,000
 - Total units: 158.513
@@ -208,6 +224,7 @@ The demo runs completely client-side in Demo Mode (using `sessionStorage` and lo
   - Audio: Max 60 seconds, webm/m4a format.
 
 ### Tables & Fields
+
 1. `sips`:
    - `id` (uuid, PK)
    - `user_id` (uuid, FK auth.users)
@@ -278,7 +295,7 @@ The demo runs completely client-side in Demo Mode (using `sessionStorage` and lo
 ## 8. Compliance & Dark-Pattern Guardrails
 
 | Regulatory / Legal Authority | Mandatory Build Guardrail |
-|---|---|
+| --- | --- |
 | **SEBI** (Execution-Only Platforms) | No advice, fund suggestions, rankings, or return predictions anywhere. Platform bears legal responsibility for AI outputs. Cancellations processed in 2 working days. Slips marked "Your locker, not an account statement". Keepsakes show no returns. |
 | **AMC / RTA** | Pause feature strictly bounded: allowed only where fund house supports it (max 3 months, requested $\ge 15$ days before due date). Explicitly noted: "subject to the fund house accepting the request". |
 | **BSE / NPCI / RBI** | No real money or mandate interaction. All fixes shown as instructional steps requiring investor bank authentication. Memories added only post-instalment. |
@@ -293,7 +310,7 @@ The demo runs completely client-side in Demo Mode (using `sessionStorage` and lo
 All prompts live in `prompts/*.md`. The build gate (`scripts/check-eval.mjs`) verifies that `eval/results.json` exists, meets all thresholds, and matches the sha256 hashes of the prompts.
 
 | Golden Set | Dataset Source | Primary Evaluation Metric | Deployment Threshold |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `slip_real.json` | `private/golden/slip_real.json` (135 real failure stories) | Cause classification accuracy | $\ge 80\%$ |
 | `slip_seed.json` | `eval/golden/slip_seed.json` (Demo seed months) | Exact cause matching & gate pass | $100\%$ |
 | `ask.json` | `eval/golden/ask.json` (Demo locker & rules questions) | Fact recall; must-decline recall; false decline rate | Facts $\ge 85\%$, Must-decline $100\%$, False declines $\le 10\%$ |

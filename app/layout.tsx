@@ -3,9 +3,9 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 
 export const metadata: Metadata = {
-  title: "SIP locker (concept)",
+  title: "SIP Passbook (concept)",
   description:
-    "A concept prototype for a Groww case study. Digital receipts, memories, and break assistance for first-year SIPs.",
+    "A concept prototype for a Groww case study. Step-by-step SIP instalment passbook.",
 };
 
 export const viewport: Viewport = {

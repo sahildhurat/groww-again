@@ -19,6 +19,7 @@ body {
   body {
     background: white !important;
   }
+
   .no-print {
     display: none !important;
   }

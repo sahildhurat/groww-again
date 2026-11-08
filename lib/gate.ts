@@ -34,6 +34,9 @@ const BANNED_PATTERNS = [
   /\bjourney\b/i,
   /\bdon'?t give up\b/i,
   /\bproud\b/i,
+  // R39 (Claude): telling the investor what to do. "You should receive a refund…" stays allowed.
+  /\byou (?:should|must|ought to) (?:continue|stop|keep|skip|pause|cancel|switch|invest|buy|sell|redeem|increase|reduce|change|restart|start|consider|wait|hold)\b/i,
+  /\b(?:it is|it's|it would be) (?:better|best|wise|advisable) to\b/i,
 ];
 
 // PII patterns (§8)
@@ -43,14 +46,19 @@ const IFSC_REGEX = /\b[A-Z]{4}0[A-Z0-9]{6}\b/i;
 const PHONE_REGEX = /\b[6-9]\d{9}\b/;
 const ACCOUNT_REGEX = /\b\d{9,18}\b/;
 
+// Global copies for redaction (R35, Claude): String.replace with a non-global pattern only replaced the FIRST match,
+// so a second account or phone number in the same text reached the model unmasked. The non-global patterns
+// stay for .test() in checkPii, where a global pattern would carry lastIndex state between calls.
+const g = (r: RegExp) => new RegExp(r.source, r.flags.includes("g") ? r.flags : r.flags + "g");
+
 export function sanitizeInputText(input: string): string {
   if (!input) return "";
   return input
-    .replace(PAN_REGEX, "[REDACTED_PAN]")
-    .replace(AADHAAR_REGEX, "[REDACTED_AADHAAR]")
-    .replace(IFSC_REGEX, "[REDACTED_IFSC]")
-    .replace(PHONE_REGEX, "[REDACTED_PHONE]")
-    .replace(ACCOUNT_REGEX, (match) => {
+    .replace(g(PAN_REGEX), "[REDACTED_PAN]")
+    .replace(g(AADHAAR_REGEX), "[REDACTED_AADHAAR]")
+    .replace(g(IFSC_REGEX), "[REDACTED_IFSC]")
+    .replace(g(PHONE_REGEX), "[REDACTED_PHONE]")
+    .replace(g(ACCOUNT_REGEX), (match) => {
       // Don't redact year numbers or short counts
       if (match.length >= 9 && match.length <= 18) {
         return "[REDACTED_ACC]";
@@ -85,9 +93,12 @@ export function checkPii(text: string, allowedNumbers: number[] = []): boolean {
   return false;
 }
 
-export function checkBannedPhrases(text: string): boolean {
+// R41 (Claude): `investorWords` is text the investor wrote or said themselves. A banned pattern that also matches it is not
+// counted, so a Future Thread line can keep "I want to quit my job" (the list exists to stop the app's own voice from
+// guilt-tripping or advising, not to censor the investor's words).
+export function checkBannedPhrases(text: string, investorWords?: string): boolean {
   for (const pattern of BANNED_PATTERNS) {
-    if (pattern.test(text)) {
+    if (pattern.test(text) && !(investorWords && pattern.test(investorWords))) {
       return true;
     }
   }
@@ -176,6 +187,74 @@ export function checkGrounding(
   return true;
 }
 
+// R39 (Claude, 7 Nov 2026): times and durations. The numbers check alone let "within 3 working days, around 4:30 pm"
+// through, because 3 is a standard count and 4 and 30 occur in the context's timestamps. A clock time must be one of
+// the times in the facts, and a duration ("2 working days", "5–6 business days", "24 hours", "T+1") must appear word for
+// word in the allowed source text (the facts, the help passages and the investor's own question).
+// (?!\d) keeps unit and NAV decimals such as "19.531" or "102.40" from reading as clock times.
+const CLOCK_TIME = /\b(\d{1,2})[:.](\d{2})(?!\d)\s*(?:am|pm|a\.m\.|p\.m\.)?|\b(\d{1,2})\s*(?:am|pm|a\.m\.|p\.m\.)(?![a-z])/gi;
+const DURATION =
+  /\b(?:\d+(?:\.\d+)?(?:\s*(?:-|–|—|to)\s*\d+)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty)[\s-]+(?:(?:bank|business|working|calendar|consecutive)\s+)?(?:minutes?|mins?|hours?|hrs?|days?|weeks?|months?|years?)\b/gi;
+const T_PLUS = /\bT\s*[+]\s*\d+\b/gi;
+
+const normDuration = (s: string) =>
+  s.toLowerCase().replace(/[–—]/g, "-").replace(/\s*-\s*/g, "-").replace(/\s+to\s+/g, "-").replace(/\s+/g, " ").trim();
+
+/** Returns the clock times (as "H:MM", hour without a leading zero) found in a text. */
+export function extractClockTimes(text: string): string[] {
+  const out: string[] = [];
+  for (const m of text.matchAll(CLOCK_TIME)) {
+    if (m[1] !== undefined) {
+      const h = Number(m[1]);
+      const min = m[2];
+      if (h <= 23 && Number(min) <= 59) out.push(`${h}:${min}`);
+    } else if (m[3] !== undefined) {
+      out.push(`${Number(m[3])}:00`);
+    }
+  }
+  return out;
+}
+
+/** True when every clock time in `text` is one of `allowedTimes` and every duration appears in `allowedSourceText`. */
+export function checkTimesAndDurations(text: string, allowedSourceText: string, allowedTimes: string[]): boolean {
+  const times = new Set(allowedTimes.flatMap((t) => extractClockTimes(t)));
+  for (const t of extractClockTimes(text)) {
+    if (!times.has(t)) return false;
+  }
+  const source = normDuration(allowedSourceText);
+  for (const re of [DURATION, T_PLUS]) {
+    for (const m of text.matchAll(re)) {
+      if (!source.includes(normDuration(m[0]))) return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * `as_of` must be null or equal (same instant) to one of the allowed timestamps. When `required` is set (an answer about a
+ * step that is pending or unknown), `as_of` must equal it and the answer text must state its clock time.
+ */
+export function checkAsOf(
+  asOf: string | null | undefined,
+  allowed: string[],
+  text: string,
+  required?: { iso: string; time: string } | null
+): boolean {
+  const same = (a: string, b: string) => {
+    const x = Date.parse(a);
+    const y = Date.parse(b);
+    return Number.isFinite(x) && Number.isFinite(y) && x === y;
+  };
+  if (required) {
+    if (!asOf || !same(asOf, required.iso)) return false;
+    const want = extractClockTimes(required.time);
+    const got = new Set(extractClockTimes(text));
+    return want.length > 0 && want.every((t) => got.has(t));
+  }
+  if (asOf === null || asOf === undefined || asOf === "") return true;
+  return allowed.some((a) => same(asOf, a));
+}
+
 // Master gate verification function
 export function verifyGate<T>(
   schema: z.ZodSchema<T>,
@@ -185,6 +264,14 @@ export function verifyGate<T>(
   options?: {
     textToCheck?: string;
     groundingInputTexts?: string[];
+    /** R39: facts + passages + question; durations in the answer must appear here word for word. */
+    allowedSourceText?: string;
+    /** R39: clock times allowed in the answer (e.g. "10:00", "09:12"). Used with allowedSourceText. */
+    allowedTimes?: string[];
+    /** R39: the answer's as_of field, the timestamps it may equal, and (for pending/unknown steps) the one it must equal. */
+    asOf?: { value: string | null | undefined; allowed: string[]; required?: { iso: string; time: string } | null };
+    /** R41: the investor's own words (Future Thread transcript). Banned words that appear there are allowed. */
+    investorWords?: string;
   }
 ): GateVerificationResult<T> {
   // 1. Schema check
@@ -218,8 +305,34 @@ export function verifyGate<T>(
     };
   }
 
+  // 2b. R39: clock times and durations must come from the facts or a passage
+  if (options?.allowedSourceText !== undefined) {
+    if (!checkTimesAndDurations(textContent, options.allowedSourceText, options.allowedTimes ?? [])) {
+      return {
+        isValid: false,
+        code: "time",
+        data: fallbackData,
+        isFallback: true,
+        reason: "A clock time or duration that is not in the facts or the help passages",
+      };
+    }
+  }
+
+  // 2c. R39: as_of must be a timestamp from the facts (and the pending step's own one when required)
+  if (options?.asOf) {
+    if (!checkAsOf(options.asOf.value, options.asOf.allowed, textContent, options.asOf.required)) {
+      return {
+        isValid: false,
+        code: "as_of",
+        data: fallbackData,
+        isFallback: true,
+        reason: "as_of missing, invented, or not stated in the answer for a pending or unknown step",
+      };
+    }
+  }
+
   // 3. Banned phrases check
-  if (checkBannedPhrases(textContent)) {
+  if (checkBannedPhrases(textContent, options?.investorWords)) {
     return {
       isValid: false,
       code: "banned",

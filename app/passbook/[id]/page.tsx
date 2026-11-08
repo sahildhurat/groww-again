@@ -1,0 +1,419 @@
+"use client";
+
+import React, { useMemo, useState } from "react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { TopBar } from "@/components/ui/top-bar";
+import { BottomNav } from "@/components/ui/bottom-nav";
+import { FooterNotice } from "@/components/ui/footer-notice";
+import { DemoBanner } from "@/components/ui/demo-banner";
+import { CheckedBadge, HowAnswersAreChecked } from "@/components/ui/checked-badge";
+import { useDemo } from "@/lib/demo-context";
+import passbookSeed from "@/data/passbook-seed.json";
+import rulesData from "@/data/rules.json";
+import { instalmentState } from "@/lib/passbook";
+import { getFailureCode } from "@/lib/failure-codes";
+import { formatDate, formatDateTime, formatMonthYear } from "@/lib/format";
+import { monthKey, resolveSources, suggestedQuestionsFor } from "@/lib/flow";
+import type { Instalment, PassbookEvent, PassbookSip } from "@/lib/passbook-types";
+import { MemoryCard } from "@/components/keepsake/memory-card";
+import { AskFriend } from "@/components/keepsake/ask-friend";
+import {
+  Sparkles,
+  HelpCircle,
+  ExternalLink,
+  ChevronRight,
+  Info,
+  MessageCircle,
+  SlidersHorizontal,
+  Clock,
+} from "lucide-react";
+
+// R42 (Claude, 7 Nov 2026): plain step labels; questions that fit the entry; help titles instead of rule ids;
+// next-step links (Ask about this instalment, What can I do next?). Final MVP (8 Nov): in version B, this month's
+// memory for your future self; while units are pending, the UPI line.
+const STEP_NAME: Record<string, string> = {
+  debit: "Bank debit",
+  order: "Order placed",
+  allotment: "Units allotted",
+  refund: "Refund",
+};
+
+function stepStatus(ev: PassbookEvent): string {
+  if (ev.status === "confirmed") return "Confirmed";
+  if (ev.status === "pending") return "Not confirmed yet";
+  if (ev.status === "failed") return "Failed";
+  return "Can't confirm right now";
+}
+
+function stepWhen(ev: PassbookEvent): string {
+  if (ev.effective_at) return formatDateTime(ev.effective_at);
+  return ev.status === "unknown" ? "Not known" : "Not confirmed yet";
+}
+
+export default function EntryDetailPage() {
+  const params = useParams();
+  const entryId = params.id as string;
+  const { scenario, version } = useDemo();
+
+  const scenarioData = useMemo(() => {
+    const scenarios = (passbookSeed as any).scenarios;
+    return (scenarios[scenario] || scenarios.running) as {
+      sip: PassbookSip;
+      instalments: Instalment[];
+    };
+  }, [scenario]);
+
+  const { sip, instalments } = scenarioData;
+  const entry = useMemo(
+    () => instalments.find((i) => i.id === entryId) || null,
+    [instalments, entryId]
+  );
+
+  const state = entry ? instalmentState(entry) : null;
+  const suggestedQuestions = useMemo(() => (entry ? suggestedQuestionsFor(entry) : []), [entry]);
+  const month = entry ? monthKey(entry.due_date) : "";
+
+  // Explainer AI state
+  const [explainerLoading, setExplainerLoading] = useState(false);
+  const [explainerAnswer, setExplainerAnswer] = useState<{
+    answer: string;
+    sources: string[];
+    gate_status?: "checked" | "standard";
+    declined?: boolean;
+  } | null>(null);
+
+  const CANT_ANSWER =
+    "Sensecheck can't answer right now. The entry above shows the latest confirmed status.";
+
+  const handleAskQuestion = async (q: string) => {
+    setExplainerLoading(true);
+    setExplainerAnswer(null);
+
+    try {
+      const res = await fetch("/api/ai/sensecheck", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: q, entry_id: entryId, scenario }),
+      });
+
+      if (!res.ok) {
+        setExplainerAnswer({ answer: CANT_ANSWER, sources: [], gate_status: "standard" });
+        return;
+      }
+
+      const data = await res.json();
+      setExplainerAnswer({
+        answer: data.answer || CANT_ANSWER,
+        sources: data.sources || [],
+        gate_status: data.gate_status || "standard",
+        declined: Boolean(data.declined),
+      });
+    } catch {
+      setExplainerAnswer({ answer: CANT_ANSWER, sources: [], gate_status: "standard" });
+    } finally {
+      setExplainerLoading(false);
+    }
+  };
+
+  if (!entry) {
+    return (
+      <div className="flex flex-col min-h-screen bg-gray-50">
+        <TopBar title="Entry Not Found" showBack backHref="/passbook" />
+        <main className="flex-1 p-4">
+          <p className="text-xs text-gray-500">
+            This instalment entry does not exist in the current scenario.{" "}
+            <Link href="/passbook" className="underline text-emerald-700">
+              Back to your passbook
+            </Link>
+          </p>
+        </main>
+        <FooterNotice />
+        <BottomNav />
+      </div>
+    );
+  }
+
+  const debitEvent = entry.events.find((e) => e.type === "debit");
+  const orderEvent = entry.events.find((e) => e.type === "order");
+  const allotmentEvent = entry.events.find((e) => e.type === "allotment");
+
+  const failureCodeStr =
+    debitEvent?.reason_code ||
+    orderEvent?.reason_code ||
+    allotmentEvent?.reason_code ||
+    (state === "unknown" ? "STATUS_UNAVAILABLE" : null);
+
+  const failureDetails = failureCodeStr ? getFailureCode(failureCodeStr) : null;
+  const answerSources = explainerAnswer ? resolveSources(explainerAnswer.sources) : [];
+  const monthLabel = formatMonthYear(month);
+
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      <TopBar title={`Instalment: ${formatDate(entry.due_date)}`} showBack backHref="/passbook" />
+      <DemoBanner />
+
+      <div className="bg-emerald-50 border-b border-emerald-100 px-4 py-2 text-center text-xs text-emerald-800 font-medium">
+        Information about your own SIP and the rules only. Not investment advice.
+      </div>
+
+      <main className="flex-1 p-4 space-y-4">
+        {/* Entry Summary */}
+        <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-gray-500">Amount due</span>
+            <span className="text-sm font-bold text-gray-900">
+              ₹{entry.amount.toLocaleString("en-IN")}
+            </span>
+          </div>
+          {entry.nav && (
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-500">Allotment NAV</span>
+              <span className="text-xs font-semibold text-gray-800">₹{entry.nav.toFixed(2)}</span>
+            </div>
+          )}
+          {entry.units && (
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-gray-500">Units allotted</span>
+              <span className="text-xs font-semibold text-gray-800">{entry.units.toFixed(3)}</span>
+            </div>
+          )}
+        </section>
+
+        {/* The UPI gap, in the product: shown only while units are not confirmed yet */}
+        {state === "in_progress" && (
+          <section className="bg-blue-50 rounded-2xl p-4 border border-blue-200 space-y-1.5" data-testid="upi-line">
+            <div className="flex items-start space-x-2">
+              <Clock className="w-4 h-4 text-blue-700 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-blue-950 leading-relaxed">
+                UPI moves money in seconds. Mutual fund units take longer: for AutoPay, Groww expects units two working
+                days after the order date (T+2). Your bank has confirmed the debit; the units step is shown below.
+              </p>
+            </div>
+            <a
+              href="https://groww.in/help/mutual-funds/order/how-many-days-does-it-take-for-the-units-to-be-allocated--61"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center text-[11px] text-blue-800 underline ml-6"
+            >
+              <span>Source: How many days does it take for the units to be allocated?</span>
+              <ExternalLink className="w-2.5 h-2.5 ml-1" />
+            </a>
+          </section>
+        )}
+
+        {/* Event Timeline */}
+        <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+            What happened, step by step ({entry.events.length}{" "}
+            {entry.events.length === 1 ? "step" : "steps"})
+          </h2>
+
+          {entry.events.length === 0 ? (
+            <p className="text-xs text-gray-500 italic">
+              This instalment was skipped by the investor. No debit was attempted.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {entry.events.map((ev, idx) => (
+                <div key={ev.id} className="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-gray-900">
+                      {idx + 1}. {STEP_NAME[ev.type] ?? ev.type}
+                    </span>
+                    <span className="text-[11px] font-medium text-gray-700 bg-white px-2 py-0.5 rounded border border-gray-200">
+                      {stepStatus(ev)}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-[11px] text-gray-600 pt-1">
+                    <div>
+                      <span className="text-gray-400 block">Source:</span>
+                      <span className="font-medium text-gray-800">{ev.source_label}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-400 block">Reference ID:</span>
+                      <span className="font-mono text-gray-700">{ev.source_event_id}</span>
+                    </div>
+                  </div>
+
+                  <div className="text-[11px] text-gray-600 pt-1 border-t border-gray-200/60">
+                    <div>
+                      <span className="text-gray-400">When it happened: </span>
+                      <span>{stepWhen(ev)}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-400">Last checked: </span>
+                      <span>{formatDateTime(ev.as_of)}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* B5 Failure / Refund / Unknown Block */}
+        {failureDetails && (
+          <section className="bg-amber-50/60 rounded-2xl p-5 border border-amber-200 shadow-sm space-y-3">
+            <div className="flex items-center space-x-2 text-amber-900">
+              <Info className="w-4 h-4 text-amber-700 flex-shrink-0" />
+              <h3 className="text-xs font-bold uppercase tracking-wider">What happened to this instalment</h3>
+            </div>
+
+            <div className="space-y-2 text-xs text-amber-950">
+              <p>
+                <strong>Reason:</strong> {failureDetails.meaning}
+              </p>
+              <p>
+                <strong>What happened to the money:</strong> {failureDetails.money_status}
+              </p>
+            </div>
+
+            {failureDetails.routes.length > 0 && (
+              <div className="pt-2 border-t border-amber-200 space-y-1.5">
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-800 block">
+                  Official help:
+                </span>
+                <div className="space-y-1.5">
+                  {failureDetails.routes.map((rt, idx) => {
+                    const rule = (rulesData as any[]).find((r) => r.id === rt.rule_id);
+                    const ruleUrl = rt.url || rule?.url || "#";
+
+                    if (failureCodeStr === "INSUFFICIENT_BALANCE" && rt.rule_id === "rule-three-miss-01") {
+                      return (
+                        <div
+                          key={idx}
+                          className="p-2.5 bg-white rounded-lg border border-amber-200 text-xs text-gray-800 space-y-1"
+                        >
+                          <p className="font-medium text-gray-900">Three missed instalments in a row cancel a SIP.</p>
+                          <a
+                            href={ruleUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-[11px] text-gray-500 hover:text-gray-800 underline block"
+                          >
+                            Source: {rt.title}
+                          </a>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div key={idx} className="p-2.5 bg-white rounded-lg border border-amber-200 text-xs text-gray-800">
+                        <a
+                          href={ruleUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="font-semibold text-emerald-800 hover:underline flex items-center justify-between"
+                        >
+                          <span>{rt.title}</span>
+                          <ExternalLink className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0 ml-1" />
+                        </a>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Explainer: What does this mean? */}
+        <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
+          <div className="flex items-center space-x-2">
+            <HelpCircle className="w-4 h-4 text-emerald-600" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-gray-900">What does this mean?</h2>
+          </div>
+          <p className="text-xs text-gray-600">Ask Sensecheck about this instalment:</p>
+
+          <div className="space-y-1.5">
+            {suggestedQuestions.map((q) => (
+              <button
+                key={q}
+                type="button"
+                onClick={() => handleAskQuestion(q)}
+                disabled={explainerLoading}
+                className="w-full text-left p-2.5 rounded-xl border border-gray-200 hover:border-emerald-500/40 bg-gray-50 hover:bg-emerald-50/30 text-xs text-gray-800 transition-colors flex items-center justify-between group"
+              >
+                <span>{q}</span>
+                <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-emerald-700 transition-transform" />
+              </button>
+            ))}
+          </div>
+
+          {explainerLoading && (
+            <div className="flex items-center space-x-2 text-xs text-gray-500 p-2">
+              <Sparkles className="w-4 h-4 text-emerald-600 animate-spin" />
+              <span>Checking verified passbook facts...</span>
+            </div>
+          )}
+
+          {explainerAnswer && (
+            <div className="p-3.5 bg-emerald-50/50 rounded-xl border border-emerald-200 space-y-2 mt-2">
+              <div className="flex items-center justify-between border-b border-emerald-100 pb-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-900">
+                  Sensecheck Answer
+                </span>
+                <CheckedBadge status={explainerAnswer.gate_status} declined={explainerAnswer.declined} />
+              </div>
+              <p className="text-xs text-gray-900 leading-relaxed whitespace-pre-line">{explainerAnswer.answer}</p>
+              {answerSources.length > 0 && (
+                <div className="flex flex-wrap gap-1 pt-1">
+                  {answerSources.map((s) => (
+                    <a
+                      key={`${s.title}|${s.url}`}
+                      href={s.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center text-[11px] text-emerald-700 bg-white px-2 py-0.5 rounded border border-emerald-200 hover:underline"
+                    >
+                      <span>{s.title}</span>
+                      <ExternalLink className="w-2.5 h-2.5 ml-1" />
+                    </a>
+                  ))}
+                </div>
+              )}
+              <div className="pt-1">
+                <HowAnswersAreChecked />
+              </div>
+            </div>
+          )}
+
+          {/* Next steps (always shown, equal weight) */}
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <Link
+              href={`/ask?entry_id=${encodeURIComponent(entry.id)}`}
+              className="flex items-center justify-center space-x-1.5 p-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-xs font-medium text-gray-800"
+            >
+              <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Ask your own question</span>
+            </Link>
+            <Link
+              href="/options"
+              className="flex items-center justify-center space-x-1.5 p-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-xs font-medium text-gray-800"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-600" />
+              <span>What can I do next?</span>
+            </Link>
+          </div>
+
+          {/* Version B: ask one person you trust (sent from the investor's own app) */}
+          {version === "B" && <AskFriend entry={entry} />}
+        </section>
+
+        {/* Version B: this month's memory for your future self (photo, voice or a line) */}
+        {version === "B" && (
+          <MemoryCard
+            month={month}
+            monthLabel={monthLabel}
+            invite={state === "allotted" && sip.status === "active"}
+          />
+        )}
+      </main>
+
+      <FooterNotice />
+      <BottomNav />
+    </div>
+  );
+}

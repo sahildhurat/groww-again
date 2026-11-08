@@ -182,6 +182,8 @@ export type GateResultCode =
   | "banned"
   | "pii"
   | "ungrounded"
+  | "time"
+  | "as_of"
   | "rate_limit"
   | "timeout"
   | "disabled";

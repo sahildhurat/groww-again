@@ -1,0 +1,9 @@
+{
+  "note": "Anthropic list prices used to cost eval runs and live calls. Copied from the research project's price table (config/llm.yaml), which records its source and the date it was checked.",
+  "source_url": "https://platform.claude.com/docs/en/about-claude/pricing",
+  "date_checked": "2026-10-28",
+  "currency": "USD",
+  "per_million_tokens": {
+    "claude-haiku-5-5": { "input": 0.10, "output": 0.50 }
+  }
+}

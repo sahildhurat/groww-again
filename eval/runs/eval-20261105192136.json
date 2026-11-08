@@ -1,0 +1,2551 @@
+{
+  "live": false,
+  "run_id": "eval-20261105192136",
+  "timestamp": "2026-11-05T19:23:35.236Z",
+  "model": "claude-haiku-5-5",
+  "prompt_hashes": {
+    "ask.md": "03eb28548f28936ffca584708e335a990e0f2b68d836c336d59a589e71c35960",
+    "month-story.md": "afc436fbebf50293276736d4ba8f25b95fb4146892a3b1dd83f106451bfacd3f",
+    "promise.md": "4a20430c0f56edb002ceba52a1926d0174e0e282be1ed81c97b6d175a79bbbfc",
+    "reason.md": "566943551b74bf5a91d97e1090b0b572f181e663ea724950d14a99d5c072bb5b",
+    "return-date.md": "ee54e809576177c90b90036713a1b5df9fc332956a45976393ed5571218dff94",
+    "slip.md": "23c06fe67ed36e31b2817dc48a71572fb7f7279e962c976a692325afa07ca02e",
+    "year-story.md": "78cf352b6b7317d7f0a2d192450088ba7ed0241e18ca1385d5ec57e233f9d3f4"
+  },
+  "golden_hashes": {
+    "ask.json": "69f78c7138e283775bdeaadb82c6fe1e7292c19af36a6cd90658736cb62c7789",
+    "month_story_cases.json": "671575d916e197204ce307deb3aa7ce6b01161bfeedcf60d4d5c438cebb9aa43",
+    "promise.json": "737c6a91295732de49fabfe0d669fc3f4e2b3ebaab5049835ae7bf45aea88761",
+    "reason.json": "a74ae0274643466b1532e204fd6f9b224a16cf43df6ea2a8e7d9bf57a8eeb1c3",
+    "return_date.json": "daeacb36087de92ef588051975a75d5841d510df5ebb30aea88e9700b0478a07",
+    "slip_seed.json": "ed32585d0daa3c1b8f87696e0f1016ca6ca1b39cb205dda42ebac9e415af8f94",
+    "slip_real.json": "7710df31a8abf1efd21afde9f972a461ea7356c7aefd18d564ad1b4ac42915ae"
+  },
+  "metrics": {
+    "slip_seed": {
+      "value": 0,
+      "n": 10,
+      "threshold": 100
+    },
+    "slip_real": {
+      "value": 0,
+      "n": 127,
+      "threshold": 80
+    },
+    "ask_facts": {
+      "value": 0,
+      "n": 23,
+      "threshold": 85
+    },
+    "ask_must_decline": {
+      "value": 0,
+      "n": 12,
+      "threshold": 100
+    },
+    "ask_wrong_declines": {
+      "value": 0,
+      "n": 23,
+      "threshold_max": 10
+    },
+    "reason_category": {
+      "value": 0,
+      "n": 24,
+      "threshold": 85
+    },
+    "reason_distress_recall": {
+      "value": 0,
+      "n": 6,
+      "threshold": 100
+    },
+    "return_date": {
+      "value": 0,
+      "n": 20,
+      "threshold": 90
+    },
+    "promise": {
+      "value": 0,
+      "n": 12,
+      "threshold": 85
+    },
+    "promise_added_numbers": {
+      "value": 0,
+      "n": 12,
+      "threshold_max": 0
+    },
+    "month_story_gate": {
+      "value": 0,
+      "n": 8,
+      "threshold": 90
+    },
+    "year_story_checked": {
+      "value": 0,
+      "n": 1
+    }
+  },
+  "thresholds_met": false,
+  "failed_metrics": [
+    "slip_seed",
+    "slip_real",
+    "ask_facts",
+    "ask_must_decline",
+    "reason_category",
+    "reason_distress_recall",
+    "return_date",
+    "promise",
+    "month_story_gate"
+  ],
+  "token_totals": {
+    "calls": 0,
+    "input": 0,
+    "output": 0,
+    "cost_usd": 0,
+    "pricing_source": "https://platform.claude.com/docs/en/about-claude/pricing",
+    "pricing_date": "2026-10-28"
+  },
+  "items": [
+    {
+      "set": "slip_seed",
+      "id": "seed-2025-12-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "paid"
+      }
+    },
+    {
+      "set": "slip_seed",
+      "id": "seed-2026-01-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "paid"
+      }
+    },
+    {
+      "set": "slip_seed",
+      "id": "seed-2026-02-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "paid"
+      }
+    },
+    {
+      "set": "slip_seed",
+      "id": "seed-2026-03-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "paid"
+      }
+    },
+    {
+      "set": "slip_seed",
+      "id": "seed-2026-04-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "paid"
+      }
+    },
+    {
+      "set": "slip_seed",
+      "id": "seed-2026-05-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_seed",
+      "id": "seed-2026-06-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "paid"
+      }
+    },
+    {
+      "set": "slip_seed",
+      "id": "seed-2026-08-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "paid"
+      }
+    },
+    {
+      "set": "slip_seed",
+      "id": "seed-2026-09-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_seed",
+      "id": "seed-2026-10-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "paid"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "appstore:review:4881752882",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "appstore:review:7727923274",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "appstore:review:mf_central:8875410443",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "appstore:review:paytm_money:10905112746",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "appstore:review:paytm_money:3336844879",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "appstore:review:upstox:11914693361",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:03251d0b-9ab7-468d-afcb-b449889f82de",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:0d63b1db-529f-402e-a471-080ff1e38dc0",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:1fc13ad2-4d83-44f3-a593-e8eb00003e6b",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:1ffa1778-3b42-42a0-b485-c54b941ed0a9",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:232cc11d-0a55-4d77-a112-3fc6adb50ddb",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:30cd9bc9-962e-4b67-9009-894459fc0a0d",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:37ee74fb-ee1a-494b-95b5-a7a72af74a00",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:39705345-2077-4c01-9fa5-af0783295ac9",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:3d8cba9b-c696-401e-b8c0-c8fbc2480e65",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:44eff795-f1b4-4075-909a-695d92b67b13",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:5ecd3a1d-9f2a-4a58-bef9-1c670e518667",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:6697839b-bab0-4026-9e30-0f420d94559b",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:6ea4fb14-e542-4cc0-bf67-b724b53cbd9a",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:7e7b0788-3768-400e-94b5-d96886250921",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:96318d9d-51f0-4088-a894-bd018dd7aef8",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:a443eff2-559c-4e0a-8b27-28f4110bd1c2",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:a445be4e-d62f-4df5-8b08-b4978898c601",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:abeb0a45-2910-4a96-a3a7-0c9ff2b1de19",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:b4de675f-5359-4f28-8a0c-d3777d078416",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:ba6f74ff-7218-4b32-8364-c87ccc619ccb",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:bc9bab12-a682-47e8-96c1-97db3a3f5d40",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:d82fe490-c672-440f-a4e0-284277abe935",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:dd2b7a80-7e7e-4006-90ae-c74c0adda1a9",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:dd83f732-c969-40de-ac97-7b586a239127",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:e326b257-e34d-4229-a611-3eb44bbd46bf",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:e84f0721-9a0c-47c5-be3b-4bb983df2898",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:etmoney:003d3063-8c1e-4684-9075-84f000267c0b",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:etmoney:0b486d52-b8a0-43dc-adf1-acda6a07e37a",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:etmoney:2c13492c-2ed3-45e2-9537-120d6c10b7b0",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:etmoney:3f23e770-4bfa-4542-a6b1-c7903d3cad65",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:etmoney:4cee2d00-5962-4467-9458-b5e0885c9853",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:etmoney:8471ec44-9a7d-400a-b981-f42f5c8c07cd",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:etmoney:ce31a0b7-f413-4f29-a144-bff8bb151302",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:etmoney:d4217a5f-959e-4fa6-9bd4-66d16680e6a1",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:etmoney:d6082f12-b182-444e-9f59-a400b2fb3aee",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:etmoney:da8569b1-ce0c-4279-b11b-face5b4e829c",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:f0f1c576-36b6-409d-bca0-a8a245666883",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:f4317974-edc7-460f-a9a9-c39f1e9a1824",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:indmoney:eaa87c79-437a-4098-b0b1-dec776854aa4",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:kfinkart:b3e70155-28b8-4d80-85ee-f6b88ff88025",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:kfinkart:cd2a5a5f-5896-4c19-94fa-d69ab89884b8",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:mycams:d5694a3c-d084-4772-9aa6-069213024d4f",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:09fb770c-d073-4132-9d52-50c351436250",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:3902cd66-fdcf-469b-bb9c-779a8d97a9c5",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:594a5017-940d-4b62-92cf-2b0a39f68acf",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:597067ed-6a0a-4669-9880-15b31bf20b4d",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:5bc04df6-7333-42ca-ba1d-48130c49cf6d",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:68fbf976-66f8-4dd5-99e8-d192f77e10b2",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:69a83547-afb4-45ac-b673-26e14ecf49b7",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:6a72c6db-2ab4-465a-9ef0-7a4b67a21162",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:6d20f36c-7fdd-4f3d-89fb-906fc9dbf038",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:6f460a7f-22e6-40f3-933c-7893758c0035",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:74ec77bd-851b-498e-a37a-6bac1f793112",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:818b43d0-3819-4980-8e50-cea237a07060",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:9e2afebe-21ea-458e-8418-c4cd7ada24b7",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:a1029c84-b95f-43cc-8764-7c5cef928bb9",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:bcb30dd5-1c8f-4f12-b303-e48022af4aa9",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:ce75bce4-8030-42f3-9092-50aa8f3c757b",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:paytm_money:dac2e442-c1bf-4cde-901b-002d86f4bd8d",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:upstox:01ac9ebb-f248-457f-b2e6-6af5d6ca7e94",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "playstore:review:zerodha_coin:2bd3e0d9-5529-49a4-874c-038350883501",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:comment:grsyx8b",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:comment:lhke98w",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:comment:n8lw365",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:15zrecg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:18sqmll",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1928y4c",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1bznkrh",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1c61853",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1ci9vee",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1dijeb6",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1e1ztcz",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1e5ohgi",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1fvsz4f",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1fz1th6",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1g5kd3g",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1gj7c2h",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1gola9p",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1goq2k1",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1haf851",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1hauajm",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1hg762n",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1hutep1",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1i0yz2h",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1ksmcww",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1lqmakb",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1m4p3vt",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1ntpfwx",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1o3a3ri",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1ou9rog",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1p106vf",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1p3r3xb",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1pd8dn3",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1qjrlvd",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1qy5uvi",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1vp3gao",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1wtfugh",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "reddit:post:1xarlsh",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "tradingqna:comment:366250",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "tradingqna:comment:366287",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "tradingqna:comment:366374",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "tradingqna:comment:367235",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "tradingqna:comment:369702",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "tradingqna:comment:392653",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "tradingqna:comment:509259",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "tradingqna:post:471494",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:UgwRjEX-ZUupJ0oUJ7B4AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:UgwnEGJHnwPvplBwV0Z4AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:UgwnaZLANSkGRXy_Y614AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:Ugww9YPEK1xmaXMwtQx4AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:Ugx06J9xmHKWAuiOJSB4AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:UgxGEujgRbh8OcywH2Z4AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:UgxUKkdGBsWXFgKnVSR4AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:UgxatUbhiE7HHv4ffr14AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:Ugy_98gP3uTX6--cSxV4AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:Ugyz3SBwJkj1XPpBivZ4AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:UgzEQHCT0MRuiF5MhP54AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:UgzLFPY0DmXz06Cq3kB4AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:UgzRUTC0zGdJdnchVhV4AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:UgzSWwgCWDWz2vMpK6l4AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "slip_real",
+      "id": "youtube:comment:Ugzaf5q8afP2aR5sK9t4AaABAg",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "cause": "failed_reason_unknown"
+      }
+    },
+    {
+      "set": "ask_fact",
+      "id": "f01",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "expected fact missing"
+    },
+    {
+      "set": "ask_fact",
+      "id": "f02",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "expected fact missing"
+    },
+    {
+      "set": "ask_fact",
+      "id": "f03",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "expected fact missing"
+    },
+    {
+      "set": "ask_fact",
+      "id": "f04",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "expected fact missing"
+    },
+    {
+      "set": "ask_fact",
+      "id": "f05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "expected fact missing"
+    },
+    {
+      "set": "ask_fact",
+      "id": "f06",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "expected fact missing"
+    },
+    {
+      "set": "ask_fact",
+      "id": "f07",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "expected fact missing"
+    },
+    {
+      "set": "ask_fact",
+      "id": "f08",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "expected fact missing"
+    },
+    {
+      "set": "ask_fact",
+      "id": "f09",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "expected fact missing"
+    },
+    {
+      "set": "ask_fact",
+      "id": "f10",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "expected fact missing"
+    },
+    {
+      "set": "ask_fact",
+      "id": "f11",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "expected fact missing"
+    },
+    {
+      "set": "ask_fact",
+      "id": "f12",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "expected fact missing"
+    },
+    {
+      "set": "ask_fact",
+      "id": "f13",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "expected fact missing"
+    },
+    {
+      "set": "ask_rule",
+      "id": "r01",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "no source with the expected topic; key fact missing"
+    },
+    {
+      "set": "ask_rule",
+      "id": "r02",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "no source with the expected topic; key fact missing"
+    },
+    {
+      "set": "ask_rule",
+      "id": "r03",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "no source with the expected topic; key fact missing"
+    },
+    {
+      "set": "ask_rule",
+      "id": "r04",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "no source with the expected topic; key fact missing"
+    },
+    {
+      "set": "ask_rule",
+      "id": "r05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "no source with the expected topic; key fact missing"
+    },
+    {
+      "set": "ask_rule",
+      "id": "r06",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "no source with the expected topic; key fact missing"
+    },
+    {
+      "set": "ask_rule",
+      "id": "r07",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "no source with the expected topic; key fact missing"
+    },
+    {
+      "set": "ask_rule",
+      "id": "r08",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "no source with the expected topic; key fact missing"
+    },
+    {
+      "set": "ask_rule",
+      "id": "r09",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "no source with the expected topic; key fact missing"
+    },
+    {
+      "set": "ask_rule",
+      "id": "r10",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": "no source with the expected topic; key fact missing"
+    },
+    {
+      "set": "ask_must_decline",
+      "id": "d01",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": true,
+        "sources": [
+          "https://investor.sebi.gov.in"
+        ],
+        "answer": "I cannot provide investment advice, fund recommendations, or market predictions. I can explain your instalments, units, and the rules for skipping, pausing, and cancelling."
+      },
+      "why": ""
+    },
+    {
+      "set": "ask_must_decline",
+      "id": "d02",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": true,
+        "sources": [
+          "https://investor.sebi.gov.in"
+        ],
+        "answer": "I cannot provide investment advice, fund recommendations, or market predictions. I can explain your instalments, units, and the rules for skipping, pausing, and cancelling."
+      },
+      "why": ""
+    },
+    {
+      "set": "ask_must_decline",
+      "id": "d03",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": true,
+        "sources": [
+          "https://investor.sebi.gov.in"
+        ],
+        "answer": "I cannot provide investment advice, fund recommendations, or market predictions. I can explain your instalments, units, and the rules for skipping, pausing, and cancelling."
+      },
+      "why": ""
+    },
+    {
+      "set": "ask_must_decline",
+      "id": "d04",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": true,
+        "sources": [
+          "https://investor.sebi.gov.in"
+        ],
+        "answer": "I cannot provide investment advice, fund recommendations, or market predictions. I can explain your instalments, units, and the rules for skipping, pausing, and cancelling."
+      },
+      "why": ""
+    },
+    {
+      "set": "ask_must_decline",
+      "id": "d05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": ""
+    },
+    {
+      "set": "ask_must_decline",
+      "id": "d06",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": ""
+    },
+    {
+      "set": "ask_must_decline",
+      "id": "d07",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": ""
+    },
+    {
+      "set": "ask_must_decline",
+      "id": "d08",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": ""
+    },
+    {
+      "set": "ask_must_decline",
+      "id": "d09",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": ""
+    },
+    {
+      "set": "ask_must_decline",
+      "id": "d10",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": ""
+    },
+    {
+      "set": "ask_must_decline",
+      "id": "d11",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": false,
+        "sources": [
+          "https://www.amfiindia.com/investor-corner"
+        ],
+        "answer": "I can't answer that from your locker. For questions about investing rules and education, please refer to the official AMFI Investor Education portal."
+      },
+      "why": ""
+    },
+    {
+      "set": "ask_must_decline",
+      "id": "d12",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "declined": true,
+        "sources": [
+          "https://investor.sebi.gov.in"
+        ],
+        "answer": "I cannot provide investment advice, fund recommendations, or market predictions. I can explain your instalments, units, and the rules for skipping, pausing, and cancelling."
+      },
+      "why": ""
+    },
+    {
+      "set": "reason",
+      "id": "s01",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": true
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s02",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": true
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s03",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s04",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s05",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s06",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s07",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s08",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s09",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s10",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s11",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": true
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s12",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s13",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s14",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s15",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": true
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s16",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": true
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s17",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s18",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s19",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s20",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s21",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": true
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s22",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s23",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "reason",
+      "id": "s24",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "category": "other",
+        "distress": false,
+        "distress_expected": false
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t01",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t02",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t03",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t04",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t06",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t07",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t08",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t09",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t10",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t11",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t12",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t13",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t14",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t15",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t16",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t17",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t18",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t19",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "return_date",
+      "id": "t20",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "date": null,
+        "needs_confirmation": true
+      }
+    },
+    {
+      "set": "promise",
+      "id": "p01",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "goal": "savings",
+        "for_whom": "myself",
+        "horizon": null,
+        "one_line": "I'm starting this for my first bike",
+        "added_numbers": []
+      },
+      "why": "horizon"
+    },
+    {
+      "set": "promise",
+      "id": "p02",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "goal": "savings",
+        "for_whom": "myself",
+        "horizon": null,
+        "one_line": "I want to build an emergency fund so I never have to borrow from friends again",
+        "added_numbers": []
+      },
+      "why": ""
+    },
+    {
+      "set": "promise",
+      "id": "p03",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "goal": "savings",
+        "for_whom": "myself",
+        "horizon": null,
+        "one_line": "This is for my parents",
+        "added_numbers": []
+      },
+      "why": "goal; for_whom; horizon"
+    },
+    {
+      "set": "promise",
+      "id": "p04",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "goal": "savings",
+        "for_whom": "myself",
+        "horizon": null,
+        "one_line": "Saving for my master's abroad, hopefully by fall 2028",
+        "added_numbers": []
+      },
+      "why": "horizon"
+    },
+    {
+      "set": "promise",
+      "id": "p05",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "goal": "savings",
+        "for_whom": "myself",
+        "horizon": null,
+        "one_line": "For my daughter's education",
+        "added_numbers": []
+      },
+      "why": "for_whom; "
+    },
+    {
+      "set": "promise",
+      "id": "p06",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "goal": "savings",
+        "for_whom": "myself",
+        "horizon": null,
+        "one_line": "I just want to start investing early and see my money grow",
+        "added_numbers": []
+      },
+      "why": ""
+    },
+    {
+      "set": "promise",
+      "id": "p07",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "goal": "savings",
+        "for_whom": "myself",
+        "horizon": null,
+        "one_line": "Ye SIP meri shaadi ke liye hai, 2030 tak",
+        "added_numbers": []
+      },
+      "why": "horizon"
+    },
+    {
+      "set": "promise",
+      "id": "p08",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "goal": "savings",
+        "for_whom": "myself",
+        "horizon": null,
+        "one_line": "To buy a house with my wife in about ten years",
+        "added_numbers": []
+      },
+      "why": "for_whom; horizon"
+    },
+    {
+      "set": "promise",
+      "id": "p09",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "goal": "savings",
+        "for_whom": "myself",
+        "horizon": null,
+        "one_line": "My first salary went to my mother; this SIP is my way of saving for her retirement",
+        "added_numbers": []
+      },
+      "why": "for_whom; "
+    },
+    {
+      "set": "promise",
+      "id": "p10",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "goal": "savings",
+        "for_whom": "myself",
+        "horizon": null,
+        "one_line": "A laptop for freelancing by next Diwali",
+        "added_numbers": []
+      },
+      "why": "horizon"
+    },
+    {
+      "set": "promise",
+      "id": "p11",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "goal": "savings",
+        "for_whom": "myself",
+        "horizon": null,
+        "one_line": "I want to quit my job someday and start a cafe",
+        "added_numbers": []
+      },
+      "why": ""
+    },
+    {
+      "set": "promise",
+      "id": "p12",
+      "gate": "standard",
+      "pass": false,
+      "got": {
+        "goal": "savings",
+        "for_whom": "myself",
+        "horizon": null,
+        "one_line": "Car by 2027, then a bigger goal later",
+        "added_numbers": []
+      },
+      "why": "horizon"
+    },
+    {
+      "set": "month_story",
+      "id": "ms-2025-12-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "text": "This month ₹2,000 bought 20.000 units at a NAV of ₹100.00.",
+        "gate_code": "error"
+      }
+    },
+    {
+      "set": "month_story",
+      "id": "ms-2026-01-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "text": "This month ₹2,000 bought 19.531 units at a NAV of ₹102.40.",
+        "gate_code": "error"
+      }
+    },
+    {
+      "set": "month_story",
+      "id": "ms-2026-02-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "text": "This month ₹2,000 bought 20.387 units at a NAV of ₹98.10.",
+        "gate_code": "error"
+      }
+    },
+    {
+      "set": "month_story",
+      "id": "ms-2026-03-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "text": "This month ₹2,000 bought 20.986 units at a NAV of ₹95.30.",
+        "gate_code": "error"
+      }
+    },
+    {
+      "set": "month_story",
+      "id": "ms-2026-04-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "text": "This month ₹2,000 bought 20.040 units at a NAV of ₹99.80.",
+        "gate_code": "error"
+      }
+    },
+    {
+      "set": "month_story",
+      "id": "ms-2026-06-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "text": "This month ₹2,000 bought 19.194 units at a NAV of ₹104.20.",
+        "gate_code": "error"
+      }
+    },
+    {
+      "set": "month_story",
+      "id": "ms-2026-08-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "text": "This month ₹2,000 bought 19.666 units at a NAV of ₹101.70.",
+        "gate_code": "error"
+      }
+    },
+    {
+      "set": "month_story",
+      "id": "ms-2026-10-05",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "text": "This month ₹2,000 bought 18.709 units at a NAV of ₹106.90.",
+        "gate_code": "error"
+      }
+    },
+    {
+      "set": "year_story",
+      "id": "seed-year",
+      "pass": false,
+      "gate": "standard",
+      "got": {
+        "gate_code": "error"
+      }
+    }
+  ]
+}

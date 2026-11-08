@@ -4,15 +4,19 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/check-eval.mjs && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "eval": "tsx scripts/run-eval.ts",
+    "eval": "next build && tsx scripts/run-eval.ts",
     "check:eval": "node scripts/check-eval.mjs",
-    "check:privacy": "node scripts/check-privacy.mjs"
+    "check:privacy": "node scripts/check-privacy.mjs",
+    "build:nogate": "next build",
+    "rules": "node scripts/build-rules.mjs",
+    "ai:check": "node scripts/ai-check.mjs",
+    "cloud:check": "tsx scripts/cloud-check.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

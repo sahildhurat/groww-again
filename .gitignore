@@ -13,3 +13,5 @@ playwright-report/
 test-results/
 *.log
 .vercel
+# TypeScript incremental build cache
+*.tsbuildinfo

@@ -2,99 +2,177 @@
   {
     "id": "rule-skip-01",
     "topic": "skip_rules",
-    "title": "Skipping an instalment",
-    "text": "You can skip one instalment at a time. Skips count toward three missed instalments in a row. A skipped instalment will not be debited, and your SIP will resume from the following month.",
-    "url": "https://groww.in/help/mutual-funds/sip/skip-installment"
+    "title": "What is the maximum period for which I can skip my SIP installments?",
+    "text": "Currently, you can skip only one SIP installment at a time. After skipping one, you can request to skip another installment for the same SIP once the first skipped installment date has passed. Important Points: If you skip three consecutive SIP installments, your SIP will be automatically canceled. If your next installment is due within two days, your skip request will not apply to that installment but will apply to the ones after.",
+    "url": "https://groww.in/help/mutual-funds/mf-sip/what-is-the-maximum-period-for-which-i-can-skip-my-sip-installments--63",
+    "source_type": "groww_help"
   },
   {
     "id": "rule-cancel-01",
     "topic": "cancel_rules",
-    "title": "Cancelling your SIP",
-    "text": "Cancelling a SIP stops future instalments only. Your accumulated units stay with you in your folio and continue to grow with the fund until you decide to redeem them.",
-    "url": "https://groww.in/help/mutual-funds/sip/cancel-sip"
+    "title": "How can I cancel an ongoing SIP?",
+    "text": "Canceling the SIP will stop future installments, but your invested amount will remain as is until you redeem it. Once you place the request to cancel the SIP, it cannot be undone.",
+    "url": "https://groww.in/help/mutual-funds/mf-sip/how-to-cancel-my-sip",
+    "source_type": "groww_help"
+  },
+  {
+    "id": "rule-cancel-02",
+    "topic": "cancel_rules",
+    "title": "Will I be charged for cancelling my SIP?",
+    "text": "No, you will not be charged for cancelling an SIP Cancelling your SIP won't cost anything.",
+    "url": "https://groww.in/help/mutual-funds/sip/will-i-be-charged-for-cancelling-my-sip--37",
+    "source_type": "groww_help"
   },
   {
     "id": "rule-cancel-timing-01",
     "topic": "cancel_timing",
-    "title": "Cancellation processing time",
-    "text": "Under SEBI regulations, cancellation requests must be processed within 2 working days by the mutual fund company.",
-    "url": "https://groww.in/help/mutual-funds/sip/cancellation-timeline"
+    "title": "How can I cancel an ongoing SIP?",
+    "text": "Note: You cannot cancel your SIP if the next installment is due within the next 7 days. The installment must be paid before you can cancel it.",
+    "url": "https://groww.in/help/mutual-funds/mf-sip/how-to-cancel-my-sip",
+    "source_type": "groww_help"
+  },
+  {
+    "id": "rule-cancel-timing-02",
+    "topic": "cancel_timing",
+    "title": "Public rule",
+    "text": "Summary of a public rule: SEBI requires SIP cancellation requests to be processed within 2 working days, from 1 December 2024.",
+    "url": "https://cafemutual.com/news/press-news/33765-new-sip-rule-sebi-mandates-mf-companies-to-process-cancellations-in-2-days",
+    "source_type": "public_rule_summary"
   },
   {
     "id": "rule-pause-01",
     "topic": "pause_terms",
-    "title": "Pausing your SIP",
-    "text": "A pause is offered only where the fund house allows it. Up to 3 months can be paused, requested at least 15 days before the next instalment, subject to the fund house accepting the request.",
-    "url": "https://groww.in/help/mutual-funds/sip/pause-sip"
+    "title": "Can I pause SIP for next month?",
+    "text": "You can pause your upcoming SIPs on Groww. Follow these steps: 1. Click on the button below to go to the \"My SIPs\" section 2. Select the SIP you wish to pause 3. Click the \"Edit SIP\" button 4. Choose \"Skip Installment\"",
+    "url": "https://groww.in/help/mutual-funds/order/can-i-pause-sip-for-next-month",
+    "source_type": "groww_help"
+  },
+  {
+    "id": "rule-pause-02",
+    "topic": "pause_terms",
+    "title": "Public rule",
+    "text": "Summary of a public source: fund houses that offer a SIP pause usually need the request 15 to 21 days before the next instalment, allow a pause of up to six months (some only three), usually once or twice over the life of the SIP, and resume the SIP automatically when the pause ends. Terms vary by fund house.",
+    "url": "https://www.valueresearchonline.com/stories/52346/want-to-pause-sip-investments-all-you-need-to-know/",
+    "source_type": "public_rule_summary"
   },
   {
     "id": "rule-pay-now-01",
     "topic": "pay_now",
-    "title": "Pay Now for missed instalments",
-    "text": "If an instalment fails due to insufficient balance, you can use Pay Now within 2 working days via NetBanking or UPI to complete the instalment for that month.",
-    "url": "https://groww.in/help/mutual-funds/sip/missed-payment-pay-now"
+    "title": "How do I pay a missed SIP installment?",
+    "text": "If your SIP failed due to insufficient balance, you'll see a 'Pay Now' option on the dashboard to pay the missed SIP. This option will be available for 2 working days.",
+    "url": "https://groww.in/help/mutual-funds/mf-sip/how-do-i-pay-for-a-missed-installment-3",
+    "source_type": "groww_help"
   },
   {
     "id": "rule-change-bank-01",
     "topic": "change_bank_autopay",
-    "title": "Changing your bank account for AutoPay",
-    "text": "To change your salary or bank account, set up a new AutoPay mandate on your active bank account and link it to this SIP. The mandate must be authenticated by you with your bank.",
-    "url": "https://groww.in/help/mutual-funds/sip/change-bank-autopay"
+    "title": "How do I change the AutoPay or bank for my SIP on Groww?",
+    "text": "To change AutoPay or bank for your SIP: 1. Go to the SIPs section. 2. Select the SIP you want to update. 3. Click 'CHANGE AUTOPAY' and choose the new bank. Note: If you don’t have AutoPay set up for the new bank, set it up in the 'Bank and AutoPay' section first.",
+    "url": "https://groww.in/help/mutual-funds/mf-sip/how-to-change-autopay---bank-for-sip-on-groww--38",
+    "source_type": "groww_help"
   },
   {
     "id": "rule-autopay-reset-01",
     "topic": "autopay_approve_or_reset",
-    "title": "AutoPay mandate approval or reset",
-    "text": "If an AutoPay mandate is rejected or pending, approve the mandate request in your net banking or UPI app, or reset AutoPay with your bank.",
-    "url": "https://groww.in/help/mutual-funds/autopay/approve-mandate"
+    "title": "My AutoPay is approved, but my SIP still failed. Why?",
+    "text": "The approval time for AutoPay depends on the method you choose: Autopay via UPI: Approved within 24 hours. Autopay via OTP: Takes 2 working days for approval. Autopay via Form: Takes 21 working days for approval. Your SIP may have failed due to the following reasons: Insufficient Balance: Ensure that your bank account has sufficient balance at least 2 working days before the SIP installment date. Rejected AutoPay: Your SIP might still be linked to a previously rejected AutoPay. Click on 'MY SIPs' and switch to an approved AutoPay.",
+    "url": "https://groww.in/help/mutual-funds/searchable/my-autopay-is-approved-even-then-my-sip-failed",
+    "source_type": "groww_help"
   },
   {
     "id": "rule-kyc-01",
     "topic": "kyc_update",
-    "title": "Updating your KYC status",
-    "text": "If an instalment fails due to KYC status, update your KYC records with the KRA or submit updated identity documents for verification before the next due date.",
-    "url": "https://groww.in/help/mutual-funds/kyc/update-kyc"
+    "title": "Why did my SIP installment fail?",
+    "text": "KYC & Investor Details Issues: Your name, date of birth, email, mobile, or tax status might not match NSDL/KRA/RTA records. KYC verification could be incomplete, on hold, or expired. Your PAN might not be linked with Aadhaar or could be invalid.",
+    "url": "https://groww.in/help/mutual-funds/order/why-did-my-sip-installment-fail--36",
+    "source_type": "groww_help"
   },
   {
     "id": "rule-refund-01",
     "topic": "refund_timeline",
-    "title": "Refund timeline for debited orders without units",
-    "text": "If money was debited from your bank account but units were not allocated, the full amount will be refunded to your source bank account within 7 working days.",
-    "url": "https://groww.in/help/mutual-funds/orders/refund-timeline"
+    "title": "Money is debited from my account but my order failed. When will I get my money back?",
+    "text": "If the amount has been debited from your bank account but your order has failed then you will receive a refund within 7 working days. If it has been more than 7 working days and you have still not received the amount, then please contact us using the button below and our team will assist you.",
+    "url": "https://groww.in/help/mutual-funds/order/money-is-debited-from-my-account-but-my-order-failed-when-will-i-get-my-money-back-1",
+    "source_type": "groww_help"
   },
   {
     "id": "rule-withdraw-01",
     "topic": "withdrawal_timing",
-    "title": "Withdrawal settlement timeline",
-    "text": "Mutual fund redemption requests are processed by the fund house and proceeds are credited to your verified bank account within 2 to 3 working days.",
-    "url": "https://groww.in/help/mutual-funds/redemption/settlement-timeline"
+    "title": "How do I withdraw or redeem from a mutual fund?",
+    "text": "The amount will reflect in your bank account within 3-4 working days. Note: ELSS funds have a 3-year lock-in period.",
+    "url": "https://groww.in/help/mutual-funds/order/how-to-withdraw-redeem-4",
+    "source_type": "groww_help"
   },
   {
     "id": "rule-exit-load-01",
     "topic": "exit_load",
-    "title": "Exit load charges",
-    "text": "Exit load is a fee charged by the mutual fund company if units are redeemed before a specified holding period (typically 1 year for equity funds).",
-    "url": "https://groww.in/help/mutual-funds/redemption/exit-load"
+    "title": "What is exit load?",
+    "text": "Exit load is a fee payable to a mutual fund house for exiting a fund (fully or partially) before the completion of a specified period from the date of investment. An approximate value of your exit load amount (if applicable) is shown while placing the redeem order.",
+    "url": "https://groww.in/help/mutual-funds/order/what-is-exit-load--71",
+    "source_type": "groww_help"
   },
   {
     "id": "rule-elss-01",
     "topic": "elss_lockin",
-    "title": "ELSS tax saver lock-in period",
-    "text": "ELSS (Equity Linked Savings Scheme) mutual funds have a mandatory statutory lock-in period of 3 years from the date of each instalment.",
-    "url": "https://groww.in/help/mutual-funds/elss/lockin-period"
+    "title": "Can I withdraw/redeem my investments any time?",
+    "text": "Yes, you can redeem your mutual fund investments any time you want. Groww does not charge for this. Note: 1. You may have to pay an exit load for redeeming. 2. Tax-saving ELSS funds have a lock-in period of 3 years.",
+    "url": "https://groww.in/help/mutual-funds/order/can-i-withdraw-redeem-my-investments-any-time",
+    "source_type": "groww_help"
   },
   {
     "id": "rule-three-miss-01",
     "topic": "three_miss_rule",
-    "title": "SEBI three missed instalments rule",
-    "text": "Under SEBI and mutual fund operating guidelines, three missed instalments in a row cancel a monthly SIP automatically.",
-    "url": "https://groww.in/help/mutual-funds/sip/three-missed-instalments-cancellation"
+    "title": "Why was my SIP cancelled?",
+    "text": "Automatic Cancellation: The system automatically cancelled your SIP because the last three consecutive installments weren't paid. This could happen if payments were missed or if the orders were rejected by the payment gateway or AMC.",
+    "url": "https://groww.in/help/mutual-funds/order/why-was-my-order-cancelled--68",
+    "source_type": "groww_help"
+  },
+  {
+    "id": "rule-three-miss-02",
+    "topic": "three_miss_rule",
+    "title": "Public rule",
+    "text": "Summary of a public rule: under SEBI's uniform rule, effective 1 April 2024, a monthly SIP is cancelled after three consecutive failed instalments, and a quarterly or longer SIP after two.",
+    "url": "https://docs.fintechprimitives.com/compliance/changes/sip-auto-cancellation/",
+    "source_type": "public_rule_summary"
   },
   {
     "id": "rule-restart-01",
     "topic": "restart_new_sip",
-    "title": "Starting a new SIP after cancellation",
-    "text": "A cancelled SIP cannot be resumed or un-cancelled. To continue investing in the fund, you must start a new SIP.",
-    "url": "https://groww.in/help/mutual-funds/sip/restart-cancelled-sip"
+    "title": "How can I cancel an ongoing SIP?",
+    "text": "Once you place the request to cancel the SIP, it cannot be undone. You can create a new SIP in the same fund, and the amount will be added to the investment.",
+    "url": "https://groww.in/help/mutual-funds/mf-sip/how-to-cancel-my-sip",
+    "source_type": "groww_help"
+  },
+  {
+    "id": "rule-allotment-01",
+    "topic": "allotment_timing",
+    "title": "How can I confirm if my SIP instalment was deducted successfully?",
+    "text": "Keep in mind that while the amount is deducted on the SIP date (T-day), the complete order processing and unit allocation can take up to 5–6 business days, depending on the payment method and fund type. If your SIP still doesn’t show up after this period, please contact our support team for assistance.",
+    "url": "https://groww.in/help/mutual-funds/order/how-can-i-confirm-if-my-sip-instalment-was-deducted-successfully--18",
+    "source_type": "groww_help"
+  },
+  {
+    "id": "rule-allotment-02",
+    "topic": "allotment_timing",
+    "title": "It's beyond the expected time. Why are units still not allotted?",
+    "text": "Please note it generally takes up to 4 working days for the units to be allocated to your account after placing a purchase order. You can keep a track of the order on your dashboard. However, if it has been more than 6 working days since you placed the purchase order and you still cannot see the units allocated to your account then please contact us using the button below.",
+    "url": "https://groww.in/help/mutual-funds/order/it-s-beyond-the-expected-time--why-are-units-still-not-allotted--98",
+    "source_type": "groww_help"
+  },
+  {
+    "id": "rule-change-amount-01",
+    "topic": "change_amount_date",
+    "title": "How can I change my SIP date or amount?",
+    "text": "Navigate to the 'Mutual Funds' section on your home screen. Select the SIPs tab at the top. Choose the SIP you wish to modify. Click 'Change Amount/Date'. Update the amount or date as needed, then click 'Save Changes'. Review your changes and click 'Confirm'. Alternatively, you can go to the 'SIPs' section under Mutual Funds and follow the same steps. Note: If your next instalment is within 2 working days, changes will apply only to future instalments.",
+    "url": "https://groww.in/help/mutual-funds/mf-sip/how-to-change-sip-date-or-amount",
+    "source_type": "groww_help"
+  },
+  {
+    "id": "rule-amc-confirmation-01",
+    "topic": "order_confirmation",
+    "title": "Will I get an order confirmation from the mutual fund company too?",
+    "text": "Once your order is confirmed, you will receive a confirmation email from both Groww and the mutual fund company, also known as the Asset Management Company (AMC). Groww will notify you about the successful placement of your order, and the AMC will send an official confirmation email with important details such as the number of units allotted, the NAV (Net Asset Value) at which the units were bought, and the transaction date.",
+    "url": "https://groww.in/help/mutual-funds/order/will-i-also-get-an-order-confirmation-from-the-mutual-fund-company--53",
+    "source_type": "groww_help"
   }
 ]

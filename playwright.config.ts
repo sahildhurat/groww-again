@@ -28,7 +28,11 @@ export default defineConfig({
   webServer: {
     command: "npm run start",
     port: 3000,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 60000,
+    env: {
+      MVP_LIVE_ENABLED: "false",
+      ALLOW_PAID: "0",
+    },
   },
 });

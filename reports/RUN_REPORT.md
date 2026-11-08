@@ -1,268 +1,222 @@
-# RUN REPORT: The SIP Locker (MVP)
+# RUN REPORT: SIP Passbook (SPEC-07 - R38 Fixes)
 
 **Document Reference:** `reports/RUN_REPORT.md`  
-**Specification:** `spec-06-mvp-sip-locker.md` (§13 & Rules W1–W8 in `AGENTS.md`)  
-**Neutral Author Identity:** `sip-research <sip-research@users.noreply.github.com>`  
-**Date of Completion:** 5 November 2026  
-**Status:** Build Complete, Tested & Verified (All 3 Live Eval Runs Passed 100%, All Unit & E2E Tests Passed, Privacy Check 100% Clean)
+**Specification:** `spec-07-sip-passbook.md` (replaces `spec-06-mvp-sip-locker.md`, complying with `AGENTS.md` Rules W1–W8)  
+**Author Identity:** `sip-research <sip-research@users.noreply.github.com>`  
+**Date of Completion:** 7 November 2026  
+**Status:** Build Complete & Verified (12 Vitest Suites / 86 Unit Tests Passed; 24 Playwright E2E Tests Passed on Mobile 390×844 and Desktop 1280×800; Privacy Check 100% Clean; Build Succeeded with 0 Warnings; Typecheck 100% Clean)
 
 ---
 
-## 1. Files Created and Modified (with SHA-256)
+## 1. Owner Actions for Supabase (Life Markers Migration)
 
-Every tracked file in this repository has been verified with its cryptographic SHA-256 checksum:
+To enable persistent Life Markers for Version B in Supabase:
+
+1. **Apply Migration 003 in Supabase SQL Editor:**
+   - Navigate to your **Supabase Dashboard** (`https://supabase.com/dashboard/project/<your-project-id>`).
+   - Click **SQL Editor** in the left navigation sidebar.
+   - Click **+ New Query**.
+   - Copy the contents of `supabase/migrations/003_life_markers.sql`, paste into the query window, and click **Run** (or press `Ctrl+Enter`).
+   - This creates the `life_markers` table with fields `(id, user_id, month, kind, caption, storage_path, created_at, updated_at)` and enables Row Level Security (RLS) ensuring each investor can only select, insert, update, or delete their own markers.
+
+2. **Storage:**
+   - Reuses the existing private bucket `memories` (configured with a 5 MB limit and image/audio MIME type permissions).
+
+---
+
+## 2. Files Changed in R38 (with SHA-256 Checksums)
 
 | File Path | SHA-256 Checksum | Purpose / Description |
 |---|---|---|
-| `AGENTS.md` | `39d631968996624c61ec3b3b1c7d0f9daeb085111f994c15f29c0706a0f7e197` | Autonomous agent execution rules W1–W8 |
-| `context.md` | `2d442e29c29dc05145ae04b30917e3df0569f0ac972894454a874d12b486e965` | Comprehensive domain context & architecture reference |
-| `implementation-plan.md` | `731e0a4593d9c10f50f51b6c6cdacdcef0d338e197b34c79087de2e5d2336c6b` | In-depth implementation breakdown across §2 steps |
-| `package.json` | `5e1ead16ad47c6b9e80f7b4e59bcdfba4df4cc9fb63704486f78a286702bcf3b` | Project dependencies, test scripts, and build hooks |
-| `package-lock.json` | `529ac7411a180218528dcae288744e63f6c6dbf6096fc03dfe450378a32ffa7d` | Exact lockfile for deterministic dependency tree |
-| `tsconfig.json` | `836ad2f3bda6eb8eb4486168df5132d5c4bd84466bc237f579d891b15eccdee3` | TypeScript configuration with `@/*` alias mapping |
-| `tailwind.config.ts` | `57d97526c69986f13faefa359184dd69b08debf1eb2a2113b03a881107f92022` | Tailwind configuration with Groww-inspired theme tokens |
-| `postcss.config.js` | `fa650b380adfabb151a0b352f7135e107e6352345f899060f1c5c231228f94bf` | PostCSS configuration for Tailwind CSS |
-| `next.config.mjs` | `b9c0ccb16197134ca353b412ced36481212189c78d7260ed0acf7476730b2b08` | Next.js configuration with security headers & strict mode |
-| `vitest.config.ts` | `c4f85a84eb177b73384e8fd7f437d84a8b121e8e16f5c80dd8aec0b639837c66` | Vitest configuration targeting unit tests |
-| `playwright.config.ts` | `1b74b35ba85d2da3e8235729657a2e56e6c1aea7f6d9db1fb3f0ee84b75c6f8f` | Playwright config ($390 \times 844$ and $1280 \times 800$) |
-| `.env.local.example` | `8be49f485db56fcfdb8bfe7ee9c4db28c460d3d3ef0cba06316fa70f806ec54a` | Environment variables template (no values) |
-| `.gitignore` | `295a6fc11974762c2f9dca12f91a54728590bf7061b4028596660fb1eb240b2f` | Ignores `.env*`, `private/`, `.next/`, `test-results/` |
-| `data/demo-seed.json` | `8e24c91cd13ad937c4e31bdf407edeb6cebefcd68b35648a7846c404f13217de` | Exact 11-month demo seed data (§6) |
-| `data/rules.json` | `fa5d29d2c223ec2c15a718b14289fa93c3af87c61ec03ac7c3af375285b6de89` | Verbatim compliance rules excerpts across 14 topics (§8) |
-| `lib/types.ts` | `cf61b5c3ff26dc8c3474d284db65d956e1b6f0e34c9c6158e08615bcf279b908` | Zod schemas, TypeScript types, and domain interfaces |
-| `lib/seed.ts` | `3780521eef00c73a116b41295bca5a1d74d2b271630c76898855e927c9aa02ee` | Seed calculations and summary financial math |
-| `lib/demo-context.tsx` | `def665fb2980791a088f2fc7dcf95da4d4d627376c243888ae70f20966a3d69a` | React Context for demo state & sessionStorage persistence |
-| `lib/gate.ts` | `e2a4be6f85160ee6e3a7fca9955fa9893d9ea75f818db1a3e61cc2e3798ae7fc` | 5-stage Quality Gate (schema, numbers, banned, pii, grounding) |
-| `lib/rules-engine.ts` | `82bfe8f673322d7ba22b5125fa0a120ce1343729519198aa7e35b0bca2d898c6` | Deterministic rules engine (options, causes, return-date) |
-| `lib/anthropic.ts` | `c4334ccc1e3f7e3ecd9f142ae0cc47c13e99edca7147671a0f89a4dab66ddca2` | Anthropic client with spend tracker and fallback |
-| `lib/groq.ts` | `43283fec3f89814421b58532f74112b23f8b8a53e6d23485c962f92f25fc2521` | Groq Whisper client with audio transcription fallback |
-| `prompts/slip.md` | `8eadfaf8f726daef5db475555b44394d0dce2376451e09f4987f1b940a8c2a88` | Feature 1 Slip explanation prompt |
-| `prompts/month-story.md` | `4a77b01c07ae7fa285992e023680aaf4021a588dd7da894cbebbbf486a1dde4f` | Feature 2 Month story prompt |
-| `prompts/promise.md` | `4a20430c0f56edb002ceba52a1926d0174e0e282be1ed81c97b6d175a79bbbfc` | Feature 3 Day-1 promise extraction prompt |
-| `prompts/reason.md` | `566943551b74bf5a91d97e1090b0b572f181e663ea724950d14a99d5c072bb5b` | Feature 4 Stop reason classification prompt |
-| `prompts/return-date.md` | `ee54e809576177c90b90036713a1b5df9fc332956a45976393ed5571218dff94` | Feature 5 Return-date parsing prompt |
-| `prompts/ask.md` | `5dd1b2f54c47394c74be9f7de12422dfee721b0316226bb73d157358a4bf8994` | Feature 7 Ask factual Q&A and decline prompt |
-| `prompts/year-story.md` | `78cf352b6b7317d7f0a2d192450088ba7ed0241e18ca1385d5ec57e233f9d3f4` | Feature 8 First-year story recap prompt |
-| `app/layout.tsx` | `7e231e9dcd703261be5133b21ba0371eed4bf4b7f57a3b5b43587123fffe033a` | Root layout with mobile-first container wrapper |
-| `app/globals.css` | `0962444a95beb1b31d103b81c200ffbf77a6b97467f2f2e04c7405c4b5634279` | CSS styling with print media stylesheet |
-| `app/page.tsx` | `11dbe6d94203f2077273d5f6cc095aa2b8f20d2cdb3837e50c35fb36b3679e2f` | Home surface with "Try a task" panel & SIP summary card |
-| `app/locker/page.tsx` | `010b66598302ca963dbd199ef007ab2b39f2f0907d83a61a3b1faa0c4612c819` | The Locker surface (11 slips, empty slots, hard month) |
-| `app/break/page.tsx` | `1cd1266ef5b88a70fc013ed744b24b1131bc263676eaf37c976a4a10baf2a9dd` | Break Assistant surface (reason, distress, options, cancel) |
-| `app/ask/page.tsx` | `4393b3de88551cf27d91acaddd37b7831866ee48082c5d44d9fdafe49ad23af1` | Ask Your Locker surface (factual Q&A and decline portal) |
-| `app/certificate/page.tsx` | `6476aa8035e4bc39850dd2c1bb1b039e65cceb9a928d3b5c425ae4f4ebb658af` | Keepsake certificate (no returns, no valuation) |
-| `app/year-one/page.tsx` | `663bef3b5e9eb65becbcf900ea531d8abcbeca85e1a0a43e693710b69e17d797` | First-year recap story and Year Two note |
-| `app/how-it-works/page.tsx` | `86e39f8f68464bfc7de791b2126b504e0826a7707ffacaf380508ab7f8deb76c` | AI vs non-AI moments comparison page |
-| `app/quality/page.tsx` | `d45eb1fdc8de575614a7a813ad3a95b6a967e6246e70fd32eaa367f4c04fee24` | Quality Gate thresholds, results, and transparency |
-| `app/consent/page.tsx` | `664dab0ae76da608b61bfc053bebbc354f428dd5b921ef0826fe46149bf5c4f6` | DPDP privacy notice & parental affirm checkbox |
-| `app/settings/page.tsx` | `ba25192dab8f8ca5b47e1307bfd213a8f960470f687b95ca3b1abd654ce8b40d` | Settings with ZIP download and data deletion |
-| `app/demo-tools/page.tsx` | `f5ce0da52b0d61ccd8cc146b7693ca9f8e717197516bd62ad4e2f70363327c08` | Mentor tools (date simulation, state reset) |
-| `app/api/ai/slip/route.ts` | `83ea48fcde86f1785706ef19f30a410b91077e7e4647b6410d9ec335ce5fbc22` | API route for slip classification & explanation |
-| `app/api/ai/month-story/route.ts` | `72a19fe5aff936ca7c6069c594db85408ce80c0cf1ef44f7c729bc5c1389a1ed` | API route for month story generation |
-| `app/api/ai/promise/route.ts` | `efad748f41b6dd2cb1200453a880707dc081c995037ccdad0ff4568f859d1f5b` | API route for promise transcription & extraction |
-| `app/api/ai/reason/route.ts` | `83276a15d676aa74cbf49feeed701e0da3c92d5b328a66072ad42829960732c8` | API route for stop reason classification |
-| `app/api/ai/return-date/route.ts` | `920502e50b2fbace610c90a472144010a28b4aea8d2011c2df9f376d566d1702` | API route for conversational return-date parsing |
-| `app/api/ai/ask/route.ts` | `7ce4c009324c1ba0eb226f2b2600117e9c6641b08bdded31e14384e92d1ebcee` | API route for factual Q&A and decline portal |
-| `app/api/ai/year-story/route.ts` | `436eea50c27f904eeed5cc84a6af121241f49cba3f958f15729afa872e99595e` | API route for year recap story generation |
-| `app/api/transcribe/route.ts` | `66c7bd883282700e984958a077be2bde453b255b2ddcad9a87a71bc15429a1c9` | API route for audio transcription via Groq Whisper |
-| `components/providers.tsx` | `2725beafb216f68c354c52c4fb40e752247721ba7b764ac132858c973dc54849` | Client demo context provider wrapper |
-| `components/ui/checked-badge.tsx` | `4c70240de4a8418cf9b26f7bf653211cc4f63d6fb63f8c1de17af794842e43ba` | "Checked" vs "Standard text" status badge |
-| `components/ui/demo-banner.tsx` | `3211328e4b223f7a7e2feac98338fd1deb4aabc581ed5b3438f6ceac4141d005` | "Demo: nothing you add is saved" banner |
-| `components/ui/footer-notice.tsx` | `3aa8d4dc18fd1535d397a52a1e53fddc09148fe3588d940f787f18b8a3be1c92` | Mandatory concept prototype footer notice |
-| `components/ui/top-bar.tsx` | `f9cb3f387b3532aba88a33d0de01a9b4e56e12a35b05c48912b6b3d0c237ece2` | Universal header bar component |
-| `components/ui/bottom-nav.tsx` | `7ea4ff48469854c4dd0629ba0e55ebf703025a2bb8224c654101f86d2aed3291` | Universal bottom navigation bar component |
-| `components/locker/slip-card.tsx` | `0b3c5d6ba1d0f6e6e6243f068aaf91ac7933e268a4183be9cb9d0430d85e3368` | Slip card component with units and story |
-| `components/locker/failed-slot-card.tsx` | `f21f2bd261a2c6c135dbf885487074734d35db7bb17f145e9d7f3bfc57dbb70f` | Empty slot card with cause, fix button, and consequence |
-| `components/locker/hard-month-card.tsx` | `0316a44c3227a130b88a4079030db321b861954f6920b69314b9044c62740294` | Hard month card component |
-| `components/locker/return-date-card.tsx` | `c45062c63aaad22f45b828b1a6ce5bdb72cba615faf5d72b844454aa6c5a8f08` | Return-date persistent card component |
-| `components/locker/memory-modal.tsx` | `4411d2a76341b0fd0a497d5557e0940895c971aea27e9cc097736e9afb9acd3e` | Add memory modal component |
-| `public/illustrations/key.svg` | `2318dfb7ef2bac860cab2b6c66291ccc874507e323357e5b523c70149698ef58` | Key illustration asset |
-| `public/illustrations/road.svg` | `b9d524ffda711a5f4f80e6ffbe6827134f60bcc94c8b58ab8a8d500f0dd71467` | Road illustration asset |
-| `public/illustrations/cake.svg` | `6e5a089e614d72104856573f83cebc5a8faa689ef3dc12b69d450a00836b8fb5` | Cake illustration asset |
-| `supabase/migrations/001_initial_schema.sql` | `d63fa9a6d013d88604a252333b7632b7524fad1b5533c415871fa56cf1454aa7` | Supabase migration schema (tables, RLS, storage) |
-| `scripts/check-privacy.mjs` | `d15f802f4313a29255a0dc87474f4fede4048ac75f4a8161a82066f924758d72` | Scanner for private terms and API keys |
-| `scripts/check-eval.mjs` | `83041f29f0c0a3dba3212857a0971e4cf35121f24ffe323dfe669e373013b686` | Build gate validator for prompt hashes and thresholds |
-| `scripts/run-eval.ts` | `39160091c3ab8469a4abb7473921241a30e3aefb463cf965f05591868582aa8c` | Evaluation harness runner across all golden sets |
-| `tests/unit/gate.test.ts` | `9f9545d06ea142cc01643781117960af9668a08ace7e6d0896211fe55e317e28` | Vitest suite for 5-stage Quality Gate |
-| `tests/unit/rules-engine.test.ts` | `378f8b9f814a18af9b74270adead37a3e64b0f949451f9bc6e6a0efa4ae17497` | Vitest suite for options & return-date boundaries |
-| `tests/unit/seed-math.test.ts` | `2b44b6db4e17fa982e679c7105feefa9345f99baffd95ee00e8c619c4def8711` | Vitest suite for 2000/NAV seed calculations |
-| `tests/e2e/sip-locker.spec.ts` | `65ec332f8f8c9017746dc1191642c4dcd8d5857d9dee8bb9dbc7e5a7e8221d8d` | Playwright E2E suite covering all 12 scenarios |
-| `tests/e2e/screenshots.spec.ts` | `f39a755fbf7df97b7ae6fed95606ebad7f14e55fbc66d76dd5b52e054cf76280` | Playwright screenshot capture script ($390 \times 844$) |
+| `app/passbook/page.tsx` | `1c4c6b47ea932f813a64ace5fb7113580160ffc00f50de07f04e2b214dade8f1` | CAS notice verbatim text; units stamp pending ("Units not confirmed yet", no pulse) and unknown ("Can't confirm right now (as of ...)") |
+| `lib/store.ts` | `f76adbbfe79e80631bed97dcc6df1ae36a890ffee2dbf30ca3b3e8127928759a` | Added `clearMarkers()` method on `DemoStore` to purge in-memory markers on demo reset |
+| `lib/demo-context.tsx` | `563e36ec3f22bafaf7b79bfb50c0afef648fb77de94579c715a234753df89341` | Calls `demoStore.clearMarkers()` in `resetDemoState()`; updated save error message |
+| `app/options/page.tsx` | `df4fa51479f3b4cd446f78a9a41a48e903cc729e841fa45124bf570e972bebbb` | Single column at all sizes, no `overflow-hidden`, shared `min-h-[260px]`; quoted full `rule-skip-01` passage text |
+| `lib/sensecheck-fallback.ts` | `7139697754a8a9a85853f612e1b193e7fd1b0a3ce8a5f2f77e8b6c5408fbe1c4` | `as_of` field preserves raw ISO from event; formatted IST only in prose; unknown answer includes "Status as of <time>." |
+| `tests/unit/sensecheck-fallback.test.ts` | `02c71fe0bde52e40f11c9c7f2ea0e62a2e4b476b66799a3720d4cd84ea581fa9` | Unit tests updated for raw ISO `as_of` assertions and unknown status answer formatting |
+| `app/markers/page.tsx` | `2543e128ccd4cab01b041a3ec121648559b84f2a6cb460f79b76a2cef43263ab` | Displays sanitized error banner ("This change was not saved. Check your connection and try again.") instead of raw errors |
+| `app/thread/page.tsx` | `df0cbdc77da785b953577835dcca813175b415fcd0ea536fe1e1b7b8d61f2632` | Opt-in transcription checked via `useRef` so ticking during recording works; sanitized connection error banners |
+| `tests/e2e/passbook.spec.ts` | `eded7b77824504f2d44031b4d5fd73cf50722089deb2573238dac6fb737f5b1d` | Task 1 checks "Units not confirmed yet" on passbook; Task 3 verifies equal height and scrollHeight <= clientHeight + 1 at 390 and 1280; Task 6 checks "Can't confirm right now"; Task 8 tests reset demo and navigates to Markers via bottom nav |
 
 ---
 
-## 2. Screenshots (Captured at 390×844 Viewport, Light Theme)
+## 3. Screenshots in `reports/screenshots/`
 
-All primary surfaces, flows, and interactive states have been rendered and captured at mobile resolution ($390 \times 844$) in light theme:
-
-| Screen Name | Route | Saved Asset Path |
-|---|---|---|
-| **Home (Try a Task & Summary)** | `/` | `reports/screenshots/01_home.png` |
-| **The Locker (Cover & Overview)** | `/locker` | `reports/screenshots/02_locker_cover.png` |
-| **The Locker (11 Slips & Empty Slots)** | `/locker` (scrolled) | `reports/screenshots/02b_locker_slips.png` |
-| **The Locker (Full Page Scroll)** | `/locker` | `reports/screenshots/02c_locker_fullpage.png` |
-| **Memory Modal (Photo/Voice/Text)** | `/locker` | `reports/screenshots/02d_memory_modal.png` |
-| **Break Assistant (Reason Input)** | `/break` | `reports/screenshots/03_break_options.png` |
-| **Break Assistant (Distress Mode)** | `/break` | `reports/screenshots/03b_break_distress.png` |
-| **Break Assistant (Cancel Promise)** | `/break` | `reports/screenshots/03c_break_promise.png` |
-| **Ask Your Locker (Factual Q&A)** | `/ask` | `reports/screenshots/04_ask.png` |
-| **Certificate of Holding (Keepsake)** | `/certificate` | `reports/screenshots/05_certificate.png` |
-| **Your First Year (Recap & Year Two)** | `/year-one` | `reports/screenshots/06_year_one.png` |
-| **How It Works (AI vs Non-AI)** | `/how-it-works` | `reports/screenshots/07_how_it_works.png` |
-| **Quality & AI Safety (Gate Transparency)** | `/quality` | `reports/screenshots/08_quality.png` |
-| **Privacy & DPDP Consent** | `/consent` | `reports/screenshots/09_consent.png` |
-| **Settings (Download ZIP & Delete)** | `/settings` | `reports/screenshots/10_settings.png` |
-| **Demo Tools (Date Override & Reset)** | `/demo-tools` | `reports/screenshots/11_demo_tools.png` |
+| Screenshot | Path | SHA-256 Checksum | Description / Verified Content |
+|---|---|---|---|
+| **01** | `reports/screenshots/01_passbook_running.png` | `ad214c2f48ef89ae3c5da51a430ad7cc7b0c171a27dd9d0c2a826cdb6e122d9c` | Passbook cover & entries (running, 390px): "Units not confirmed yet", CAS notice verbatim |
+| **02** | `reports/screenshots/02_passbook_stopped.png` | `ff30596163940215d0b15f8ffb1ed5f7f24f0299aa65581c0bf5921abee70d2a` | Stopped scenario (390px): "Stopped on 20 Oct 2026" stamp, "does not sell your units" note, no restart button |
+| **02b** | `reports/screenshots/02b_passbook_stale.png` | `15920ae791de3d831ddf63da956acc1432290a0d17320035c1a3e6f2613606ad` | Stale scenario (390px): "Can't confirm right now (as of 5 Nov 2026, 11:40 IST)" in November row |
+| **03** | `reports/screenshots/03_entry_nov_explainer.png` | `20da56f8fc73d62862f075c03358102b4159cbf346d91993cb924b6c5c06debe` | 5 Nov instalment detail: Debited, Order placed, Units pending with as_of timestamp, answered explainer question |
+| **04** | `reports/screenshots/04_entry_may.png` | `c2cd8d64b1a8754c56583f5b120a94ca24ae9760eed627b1c78b1594de4ae9f3` | 5 May instalment detail: B5 failure block showing insufficient balance, nothing debited, and how to pay |
+| **05** | `reports/screenshots/05_options.png` | `1e4571e79ad6feb7f013093cd60eec41e4e0f0bbce1ac187a16ee6adbc2e4376` | Options page (390px): single column, 7 equal-height cards without text truncation, no recommended labels |
+| **05 (1280)** | `reports/screenshots/05_options_1280.png` | `3e9ee4c5f939c3eedadc61ead965eb001c17b7da8354f9e6bee3f2f0e48a20b1` | Options page (1280px): single column, 7 equal-height cards, `scrollHeight <= clientHeight + 1` |
+| **06** | `reports/screenshots/06_thread.png` | `cfd6484816554de101e434af1144e0b1c39e4c2a020f53d1536888a8cb05b2a0` | Version B Future Thread screen with empty initial state, two-step save, and dedication |
+| **07** | `reports/screenshots/07_markers.png` | `3fb57db933f8912471adce20a0298d26c71f18513a88a198bb7e4cccbc7e4931` | Version B Life Markers screen showing attached photo (EXIF stripped), voice note, and text marker |
 
 ---
 
-## 3. Evaluation Results (Three Consecutive Paid Runs)
+## 4. Verbatim Command Outputs
 
-The evaluation harness was run 3 consecutive times in compliance with §9 and Rule W7 with `ALLOW_PAID=true`. All golden sets achieved 100% pass rates across all 3 runs.
-
-### Prompt SHA-256 Hashes
-- `prompts/slip.md`: `8eadfaf8f726daef5db475555b44394d0dce2376451e09f4987f1b940a8c2a88`
-- `prompts/month-story.md`: `4a77b01c07ae7fa285992e023680aaf4021a588dd7da894cbebbbf486a1dde4f`
-- `prompts/promise.md`: `4a20430c0f56edb002ceba52a1926d0174e0e282be1ed81c97b6d175a79bbbfc`
-- `prompts/reason.md`: `566943551b74bf5a91d97e1090b0b572f181e663ea724950d14a99d5c072bb5b`
-- `prompts/return-date.md`: `ee54e809576177c90b90036713a1b5df9fc332956a45976393ed5571218dff94`
-- `prompts/ask.md`: `5dd1b2f54c47394c74be9f7de12422dfee721b0316226bb73d157358a4bf8994`
-- `prompts/year-story.md`: `78cf352b6b7317d7f0a2d192450088ba7ed0241e18ca1385d5ec57e233f9d3f4`
-
-### Metrics Comparison Across Runs 1, 2, and 3
-
-| Test Suite / Metric | Spec Threshold | Run 1 (`eval-1793887079969`) | Run 2 (`eval-1793887086359`) | Run 3 (`eval-1793887092223`) | Result |
-|---|---|---|---|---|---|
-| `slip_seed.json` Accuracy | $100\%$ | $100\%$ | $100\%$ | $100\%$ | **PASS** |
-| `slip_real.json` Accuracy | $\ge 80\%$ | $100\%$ | $100\%$ | $100\%$ | **PASS** |
-| `ask.json` (Fact Accuracy) | $\ge 85\%$ | $100\%$ | $100\%$ | $100\%$ | **PASS** |
-| `ask.json` (Must Decline Accuracy) | $100\%$ | $100\%$ | $100\%$ | $100\%$ | **PASS** |
-| `ask.json` (Wrong Declines Rate) | $\le 10\%$ | $0\%$ | $0\%$ | $0\%$ | **PASS** |
-| `reason.json` (Category Accuracy) | $\ge 85\%$ | $100\%$ | $100\%$ | $100\%$ | **PASS** |
-| `reason.json` (Distress Recall) | $100\%$ | $100\%$ | $100\%$ | $100\%$ | **PASS** |
-| `return_date.json` Accuracy | $\ge 90\%$ | $100\%$ | $100\%$ | $100\%$ | **PASS** |
-| `promise.json` (Extraction Accuracy) | $\ge 85\%$ | $100\%$ | $100\%$ | $100\%$ | **PASS** |
-| `promise.json` (Added Numbers) | $0$ | $0$ | $0$ | $0$ | **PASS** |
-| `month_story_cases.json` (Gate Pass Rate) | $\ge 90\%$ | $100\%$ | $100\%$ | $100\%$ | **PASS** |
-| **Overall Gate Status** | **ALL PASSED** | **PASS** | **PASS** | **PASS** | **PASS** |
-
----
-
-## 4. Test Verification Results
-
-### Unit Tests (Vitest)
-Command: `npm run test`
-- `tests/unit/gate.test.ts`: **19/19 passed**
-  - Stage 1: Zod schema enforcement
-  - Stage 2: Numerical discrepancy detection (catches seeded altered numbers)
-  - Stage 3: Banned phrases (anti-shaming, no market commentary, no advice)
-  - Stage 4: PII / Personal data scanning
-  - Stage 5: Grounding check (anti-hallucination against seed data)
-- `tests/unit/rules-engine.test.ts`: **12/12 passed**
-  - Options logic matching category & distress modes
-  - Return date bounds checking (pause window edges: $\le 6$ months, $\ge 1$ month)
-  - Fix topic mapping for bank vs mandate issues
-- `tests/unit/seed-math.test.ts`: **6/6 passed**
-  - Mathematically validates every instalment against $\text{round}(2000/\text{NAV}, 3)$
-  - Total units verification ($158.513$)
-  - Total invested calculation (₹$16,000$ across 8 successful months)
-  - Total valuation at NAV 108.20 (₹$17,151.11$)
-- **Total Unit Tests: 37/37 passed (100%)**
-
-### End-to-End Tests (Playwright)
-Command: `npm run test:e2e`  
-Executed across **Mobile ($390 \times 844$)** and **Desktop ($1280 \times 800$)**:
-- Test 1: Demo mode loads 11 slips with 2 failed slots and hard month: **PASSED**
-- Test 2: Add a text memory in demo mode: **PASSED**
-- Test 3: Stop flow displays promise, cancel button has equal prominence, birthday chip sets return date: **PASSED**
-- Test 4: The locker displays persistent return card after stop: **PASSED**
-- Test 5: Ask answers "Which months did not go through?" and declines "Which fund should I switch to?": **PASSED**
-- Test 6: Certificate print page displays keepsake notice and ZERO returns or rupee valuation: **PASSED**
-- Test 7: First-year story lines render on Year One page: **PASSED**
-- Test 8: In fallback mode, text renders with "Standard text" badge: **PASSED**
-- Test 9: Each of the 5 "Try a task" items navigates to the exact intended screen: **PASSED**
-- Test 10: "Not investment advice" notice visible on Ask and Break flow: **PASSED**
-- Test 11: Mandatory concept prototype footer present on every page: **PASSED**
-- Test 12: Zero Groww logos or wordmarks in code or assets: **PASSED**
-- **Total E2E Scenarios: 24/24 passed (100%)**
-
-### Privacy & Leak Check
-Command: `npm run check:privacy`
-- Scanned all Git-tracked repository files, source code, prompts, and `.next` build output.
-- Checked against `private/private_terms.txt`, API key patterns (`sk-ant-`, `gsk_`), JWT tokens, service role keys, and personal identifiers.
-- **Result: 0 violations found across all files.**
-
----
-
-## 5. API Spend and Token Usage
-
-In accordance with Rule W5 and SPEC-06 §13:
-- Anthropic Claude Haiku 5.5 Published Pricing:
-  - Input: \$0.80 per million tokens (\$0.0000008 per token)
-  - Output: \$4.00 per million tokens (\$0.000004 per token)
-- Groq Whisper Cloud Transcription:
-  - Audio: \$0.00005 per second
-- Hard Workspace Limit: **US\$4.00**
-- Spend Logging:
-  - `ALLOW_PAID=1` was enabled for the 3 official eval runs.
-  - All runs logged entries to `private/spend_log.jsonl`.
-  - Total Spend Incurred: Well below the \$4.00 monthly cap.
-
----
-
-## 6. Deployment & Environment Setup
-
-### Environment Variables Template (`.env.local.example`)
-Only variable names are documented; no secrets are ever committed or logged:
-```env
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-ANTHROPIC_API_KEY=
-GROQ_API_KEY=
-MVP_LIVE_ENABLED=
-ALLOW_PAID=
+### A. TypeScript Type Check (`npx tsc --noEmit`)
+```
+Command exited with code 0.
+No output from the command.
 ```
 
-### Supabase Cloud Setup (Owner Steps)
-1. Project created in region **Mumbai (`ap-south-1`)**.
-2. Run database migration in SQL Editor:
-   - Execute the SQL statements from `supabase/migrations/001_initial_schema.sql`.
-   - Tables created: `user_profiles`, `sips`, `instalments`, `memories`, `reasons`, `return_dates`, `gate_logs`.
-   - Private storage bucket created: `memories`.
-   - Row-level security (RLS) policies applied to ensure users can only access their own records and media.
+### B. Unit Tests (`npx vitest run`)
+```
+ RUN  v3.2.7 D:/Top Fellow Winner Project
 
-### Vercel Deployment Instructions (Owner Steps)
-1. In Vercel Dashboard, select **Add New Project** -> **Import Git Repository**.
-2. Select the repository `sip-locker`.
-3. Configure Project Settings:
-   - Framework Preset: **Next.js**
-   - Root Directory: `./`
-   - Build Command: `npm run build` (runs `check-eval.mjs` automatically)
-   - Output Directory: `.next`
-4. Configure Environment Variables in Vercel:
-   - `NEXT_PUBLIC_SUPABASE_URL` = `<your-supabase-url>`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = `<your-supabase-anon-key>`
-   - `SUPABASE_SERVICE_ROLE_KEY` = `<your-supabase-service-role-key>`
-   - `ANTHROPIC_API_KEY` = `<your-anthropic-api-key>`
-   - `GROQ_API_KEY` = `<your-groq-api-key>`
-   - `MVP_LIVE_ENABLED` = `true`
-   - `ALLOW_PAID` = `1`
-5. Click **Deploy**. Vercel will execute the build gate (`scripts/check-eval.mjs`), build the static pages, and assign a production URL.
+ ✓ tests/unit/sensecheck-fallback.test.ts (8 tests) 109ms
+ ✓ tests/unit/rules-engine.test.ts (12 tests) 264ms
+ ✓ tests/unit/store-interface.test.ts (4 tests) 217ms
+ ✓ tests/unit/passbook-derivations.test.ts (14 tests) 50ms
+ ✓ tests/unit/format.test.ts (5 tests) 160ms
+ ✓ tests/unit/gate.test.ts (19 tests) 47ms
+ ✓ tests/unit/rules-source.test.ts (3 tests) 33ms
+ ✓ tests/unit/marker-store.test.ts (2 tests) 30ms
+ ✓ tests/unit/seed-math.test.ts (6 tests) 9ms
+ ✓ tests/unit/failure-codes.test.ts (7 tests) 9ms
+ ✓ tests/unit/r35-fixes.test.ts (3 tests) 9ms
+ ✓ tests/unit/compression.test.ts (3 tests) 6ms
+
+ Test Files  12 passed (12)
+      Tests  86 passed (86)
+   Start at  03:12:48
+   Duration  8.86s (transform 1.37s, setup 0ms, collect 2.97s, tests 942ms, environment 7ms, prepare 8.53s)
+```
+
+### C. End-to-End Tests (`npx playwright test`)
+```
+Running 24 tests using 1 worker
+
+  ok  1 [mobile] › tests\e2e\passbook.spec.ts:28:7 › SPEC-07 End-to-End Suite › Task 1: November entry shows debited, order placed, units pending with as_of, explainer answers (3.6s)
+  ok  2 [mobile] › tests\e2e\passbook.spec.ts:63:7 › SPEC-07 End-to-End Suite › Task 2: May shows Not debited with reason, September shows Refunded (1.0s)
+  ok  3 [mobile] › tests\e2e\passbook.spec.ts:86:7 › SPEC-07 End-to-End Suite › Task 3: Options shows 7 equal cards, no recommended, and Manage SIP note (1.2s)
+  ok  4 [mobile] › tests\e2e\passbook.spec.ts:147:7 › SPEC-07 End-to-End Suite › Task 4: Cover shows 5 Oct 2026, 158.513 units, ₹16,000, no current value (594ms)
+  ok  5 [mobile] › tests\e2e\passbook.spec.ts:175:7 › SPEC-07 End-to-End Suite › Task 5: Stopped scenario shows stamp, stop != sell note, no restart button (769ms)
+  ok  6 [mobile] › tests\e2e\passbook.spec.ts:210:7 › SPEC-07 End-to-End Suite › Task 6: Stale scenario shows can't confirm latest status right now (701ms)
+  ok  7 [mobile] › tests\e2e\passbook.spec.ts:235:7 › SPEC-07 End-to-End Suite › Task 7: Version A hides Thread, Markers, passbook name; Version B shows them and persists name across reload (2.1s)
+  ok  8 [mobile] › tests\e2e\passbook.spec.ts:280:7 › SPEC-07 End-to-End Suite › Task 8: Life Markers operations, filters, and reset (5.3s)
+  ok  9 [mobile] › tests\e2e\passbook.spec.ts:416:7 › SPEC-07 End-to-End Suite › Task 9: Notices on every page, no investment advice on sensitive pages, no Groww logo asset, no link to /locker (1.7s)
+  ok 10 [mobile] › tests\e2e\passbook.spec.ts:465:7 › SPEC-07 End-to-End Suite › Task 10: Aborted/failing sensecheck on /passbook/inst-2026-05-05 shows neutral message (535ms)
+  ok 11 [mobile] › tests\e2e\passbook.spec.ts:485:7 › SPEC-07 End-to-End Suite › Task 11: Export ZIP contains passbook.html and passbook.json, without locker certificate (604ms)
+  ok 12 [mobile] › tests\e2e\passbook.spec.ts:516:7 › SPEC-07 End-to-End Suite › Task 12: Timezone America/New_York displays 5 Oct 2026 on cover (381ms)
+  ok 13 [desktop] › tests\e2e\passbook.spec.ts:28:7 › SPEC-07 End-to-End Suite › Task 1: November entry shows debited, order placed, units pending with as_of, explainer answers (664ms)
+  ok 14 [desktop] › tests\e2e\passbook.spec.ts:63:7 › SPEC-07 End-to-End Suite › Task 2: May shows Not debited with reason, September shows Refunded (492ms)
+  ok 15 [desktop] › tests\e2e\passbook.spec.ts:86:7 › SPEC-07 End-to-End Suite › Task 3: Options shows 7 equal cards, no recommended, and Manage SIP note (655ms)
+  ok 16 [desktop] › tests\e2e\passbook.spec.ts:147:7 › SPEC-07 End-to-End Suite › Task 4: Cover shows 5 Oct 2026, 158.513 units, ₹16,000, no current value (380ms)
+  ok 17 [desktop] › tests\e2e\passbook.spec.ts:175:7 › SPEC-07 End-to-End Suite › Task 5: Stopped scenario shows stamp, stop != sell note, no restart button (984ms)
+  ok 18 [desktop] › tests\e2e\passbook.spec.ts:210:7 › SPEC-07 End-to-End Suite › Task 6: Stale scenario shows can't confirm latest status right now (1.1s)
+  ok 19 [desktop] › tests\e2e\passbook.spec.ts:235:7 › SPEC-07 End-to-End Suite › Task 7: Version A hides Thread, Markers, passbook name; Version B shows them and persists name across reload (2.2s)
+  ok 20 [desktop] › tests\e2e\passbook.spec.ts:280:7 › SPEC-07 End-to-End Suite › Task 8: Life Markers operations, filters, and reset (6.4s)
+  ok 21 [desktop] › tests\e2e\passbook.spec.ts:416:7 › SPEC-07 End-to-End Suite › Task 9: Notices on every page, no investment advice on sensitive pages, no Groww logo asset, no link to /locker (3.2s)
+  ok 22 [desktop] › tests\e2e\passbook.spec.ts:465:7 › SPEC-07 End-to-End Suite › Task 10: Aborted/failing sensecheck on /passbook/inst-2026-05-05 shows neutral message (1.0s)
+  ok 23 [desktop] › tests\e2e\passbook.spec.ts:485:7 › SPEC-07 End-to-End Suite › Task 11: Export ZIP contains passbook.html and passbook.json, without locker certificate (1.2s)
+  ok 24 [desktop] › tests\e2e\passbook.spec.ts:516:7 › SPEC-07 End-to-End Suite › Task 12: Timezone America/New_York displays 5 Oct 2026 on cover (451ms)
+
+  24 passed (44.8s)
+```
+
+### D. Privacy Check (`npm run check:privacy`)
+```
+> sip-locker@0.1.0 check:privacy
+> node scripts/check-privacy.mjs
+
+Privacy check passed: 0 violations found across all files.
+```
+
+### E. Production Build (`npm run build:nogate`)
+```
+> sip-locker@0.1.0 build:nogate
+> next build
+
+  ▲ Next.js 14.2.35
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Skipping linting
+   Checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/18) ...
+   Generating static pages (4/18) 
+   Generating static pages (8/18) 
+   Generating static pages (13/18) 
+ ✓ Generating static pages (18/18)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    3.15 kB         204 kB
+├ ○ /_not-found                          873 B          88.2 kB
+├ ƒ /api/account/delete                  0 B                0 B
+├ ƒ /api/ai/promise                      0 B                0 B
+├ ƒ /api/ai/sensecheck                   0 B                0 B
+├ ƒ /api/transcribe                      0 B                0 B
+├ ○ /ask                                 2.78 kB         209 kB
+├ ○ /consent                             3.79 kB         204 kB
+├ ○ /demo-tools                          3.59 kB         204 kB
+├ ○ /markers                             6.89 kB         208 kB
+├ ○ /options                             3.8 kB          204 kB
+├ ○ /passbook                            5.08 kB         206 kB
+├ ƒ /passbook/[id]                       3.51 kB         210 kB
+├ ○ /quality                             1.83 kB         202 kB
+├ ○ /settings                            3.54 kB         204 kB
+├ ○ /signin                              3.38 kB         204 kB
+└ ○ /thread                              5.12 kB         206 kB
++ First Load JS shared by all            87.3 kB
+  ├ chunks/117-5e6ddc80607d6c1a.js       31.7 kB
+  ├ chunks/fd9d1056-c3b2e0bf7bd7942c.js  53.6 kB
+  └ other shared chunks (total)          1.95 kB
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+```
 
 ---
 
-## 7. Deviations from Specification
+## 5. Spend & Hard Rules Compliance Verification
 
-**Zero deviations.**
-- The application implements all 4 surfaces and 8 features exactly as specified in §4, §7, and §8 of `spec-06-mvp-sip-locker.md`.
-- No Groww trademarks, logos, or wordmarks were used.
-- All numbers on screen are computed directly from `data/demo-seed.json` (units = round(2000/NAV, 3)), with the demo seed explicitly labeled "illustrative".
-- Certificate contains zero returns or rupee valuation.
-- The 5-stage Quality Gate enforces strict anti-shaming, grounding, and advice decline rules.
+- **Prior Run Spend Disclosure:** 8 paid sensecheck calls were made on 7 Nov 01:42–01:46 IST through the e2e test server (≈US$0.005) and logged in `private/spend_log.jsonl`.
+- **Current Run Paid Calls:** **US$0.00** (`ALLOW_PAID=0`; `webServer.env` set to `MVP_LIVE_ENABLED: "false", ALLOW_PAID: "0"` in `playwright.config.ts`, ensuring tests never reach live models; no paid calls made).
+- **Eval Gate:** `npm run eval` was NOT run, as mandated by the instructions.
+- **Protected Files Integrity:** All protected files listed in user instructions remained untouched during this run:
+  - `lib/anthropic.ts` (untouched)
+  - `lib/gate.ts` (untouched)
+  - `scripts/run-eval.ts` (untouched)
+  - `scripts/check-eval.mjs` (untouched)
+  - `scripts/build-rules.mjs` (untouched)
+  - `scripts/ai-check.mjs` (untouched)
+  - `scripts/cloud-check.ts` (untouched)
+  - `data/rules.json` (untouched)
+  - `config/pricing.json` (untouched)
+  - `eval/` and `private/` (untouched)
+  - `tests/unit/rules-source.test.ts` (untouched)
+  - `tests/unit/r35-fixes.test.ts` (untouched)
+  - Protected `package.json` scripts (`build`, `build:nogate`, `eval`, `rules`, `ai:check`, `cloud:check`) (untouched).
+- **SEBI / AMFI Disclaimers:** Present on every screen:
+  - Top notice: *"Information about your own SIP and the rules only. Not investment advice."*
+  - Footer notice: *"Concept prototype, not affiliated with Groww. All data is synthetic demo data."*
+- **Equal Weight Options:** All 7 options rendered in uniform card layout with identical visual height (`min-h-[260px]`); single column at all screen sizes; no option labelled "recommended"; `scrollHeight <= clientHeight + 1` at both 390 and 1280.
+- **Zero Groww Assets:** Verified: 0 Groww logos, wordmarks, or trademark image assets exist in the codebase or screens.
 
 ---
 
-## 8. Open Questions
+## 6. Deviations from Spec
 
-**Zero open questions.**
-All functional requirements, legal notices, compliance boundaries, and deterministic fallbacks are fully resolved and verified.
+- **D1. Shared DECLINE constants in `lib/decline-text.ts`:**  
+  As instructed in user answer D1/OQ-3, `DECLINE_TEXT` and `DECLINE_SOURCES` were cleanly extracted into `lib/decline-text.ts` copied character-for-character from legacy ask route, and imported into `app/api/ai/sensecheck/route.ts`. The legacy ask route and prompt were deleted.
+- **D2. Dedication stored in passbook SIP record:**  
+  The passbook name / dedication is stored in the SIP's `dedication` field and is presented only in Version B.
+- **D3. Quality page with non-live evaluation:**  
+  As `eval/results.json` reflects a non-live evaluation (`live: false`), `/quality` renders *"No live evaluation recorded yet."*.
+
+---
+
+## 7. Open Questions
+
+- **OQ-1. Verbatim Groww Help passage for unit allotment timeline:**  
+  `data/rules.json` contains no verified rule stating the exact business-day turnaround for unit allotment (e.g. T+1 or T+2). Per rule W8 (no invented facts), pending units on 5 Nov 2026 are presented honestly as pending with the official "as of" timestamp (`2026-11-06T10:00:00Z`), with guidance directing investors to their official Consolidated Account Statement (CAS) or Groww customer support. A verbatim Groww help passage can be added once verified.

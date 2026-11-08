@@ -125,7 +125,7 @@ export function getStopOptionsForCategory(
         id: "pause",
         title: "Pause until a date you choose",
         consequence:
-          "Units stay with you; debits stop until that date; misses don't count toward three in a row.",
+          "Units stay with you; debits stop until that date. Subject to the fund house's terms.",
         action: "pause",
       });
     }

@@ -12,7 +12,7 @@ interface TopBarProps {
 }
 
 export function TopBar({
-  title = "SIP locker (concept)",
+  title = "SIP Passbook (concept)",
   showBack = false,
   backHref,
   rightAction,
@@ -47,9 +47,10 @@ export function TopBar({
       <div className="flex items-center space-x-2">
         {rightAction || (
           <a
-            href="/consent"
+            href="/your-data"
             className="flex items-center space-x-1 text-xs text-gray-500 hover:text-gray-800 p-1 rounded hover:bg-gray-50"
-            title="Account & Privacy"
+            title="Your data and privacy"
+            aria-label="Your data and privacy"
           >
             <UserCircle className="w-5 h-5 text-gray-400" />
           </a>
