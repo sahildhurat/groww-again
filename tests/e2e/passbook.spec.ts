@@ -419,13 +419,16 @@ test.describe("SPEC-07 End-to-End Suite", () => {
 
   // Task 13 (R42, updated for the final MVP): the links between pages
   test("Task 13: Flow links between passbook, entry, Ask, What can I do next?, Quality and Your data", async ({ page }) => {
-    // Final feature: Home opens on the lock screen; the bank SMS, then Groww's message; tapping it opens that month
+    // Owner, 8 Nov 23:38: Home leads with the passbook and Sensecheck, above the fold
     await page.goto("/");
-    await expect(page.getByTestId("lock-screen").getByTestId("bank-message")).toContainText("₹2,000 debited");
-    await expect(page.getByTestId("lock-screen").getByTestId("groww-message").first()).toContainText("order is placed");
-    await page.getByTestId("lock-screen").getByTestId("groww-message").first().click();
-    await expect(page).toHaveURL(/\/passbook\/inst-2026-11-05$/);
-    await expect(page.getByTestId("second-message")).toContainText("units are expected two working days after the SIP date (T+2)");
+    const open = page.getByRole("link", { name: "Open my passbook" });
+    await expect(open).toBeVisible();
+    const box = await open.boundingBox();
+    expect(box && box.y + box.height).toBeLessThan(page.viewportSize()!.height);
+    await expect(page.getByTestId("lock-screen")).toHaveCount(0);
+    await page.goto("/passbook/inst-2026-11-05");
+    await expect(page.getByTestId("second-message")).toHaveCount(0);
+
     // Version B (default) shows the goal, piece by piece; the units chart is version A's asset view
     await page.goto("/passbook");
     await expect(page.getByTestId("goal-pieces")).toBeVisible();

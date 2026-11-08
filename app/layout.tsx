@@ -32,9 +32,8 @@ export default function RootLayout({
             <aside className="stage-note" aria-hidden="true">
               <p className="stage-title">SIP Passbook</p>
               <p className="stage-line">
-                Your bank&apos;s SMS shows the money leaving. Groww&apos;s message and the passbook show what it became:
-                every month, from your bank to the units in your name. A concept for first-year SIP investors, shown at
-                phone size.
+                Your bank&apos;s SMS shows the money leaving. The passbook shows what it became: every month, from your
+                bank to the units in your name. A concept for first-year SIP investors, shown at phone size.
               </p>
               <p className="stage-small">Not affiliated with Groww. All data is synthetic demo data.</p>
             </aside>

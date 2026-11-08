@@ -20,8 +20,6 @@ import { MemoryCard } from "@/components/keepsake/memory-card";
 import { AskFriend } from "@/components/keepsake/ask-friend";
 import { MoneyTrail } from "@/components/ui/money-trail";
 import { payNowWindowClosed } from "@/lib/demo-now";
-import { messagesFor } from "@/lib/second-message";
-import { MessageBubble } from "@/components/ui/phone-messages";
 import {
   Sparkles,
   HelpCircle,
@@ -107,7 +105,6 @@ export default function EntryDetailPage() {
     return suggestedQuestionsFor(entry, { isLatest: newest?.id === entry.id, sipActive: sip.status === "active" });
   }, [entry, instalments, sip.status]);
   const month = entry ? monthKey(entry.due_date) : "";
-  const secondMessages = useMemo(() => (entry ? messagesFor(entry, instalments, sip) : []), [entry, instalments, sip]);
 
   // Explainer AI state
   const [explainerLoading, setExplainerLoading] = useState(false);
@@ -215,6 +212,100 @@ export default function EntryDetailPage() {
           )}
         </section>
 
+        {/* Owner, 8 Nov 23:38: Sensecheck sits right under the month's summary, never below a long scroll */}
+        <section id="sensecheck" className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
+          <div className="flex items-center space-x-2">
+            <HelpCircle className="w-4 h-4 text-emerald-600" />
+            <h2 className="text-xs font-bold uppercase tracking-wider text-gray-900">What does this mean?</h2>
+          </div>
+          <p className="text-xs text-gray-600">Ask Sensecheck about this instalment:</p>
+
+          <div className="space-y-1.5">
+            {suggestedQuestions.map((q) => (
+              <button
+                key={q}
+                type="button"
+                onClick={() => handleAskQuestion(q)}
+                disabled={explainerLoading}
+                className="w-full text-left p-2.5 rounded-xl border border-gray-200 hover:border-emerald-500/40 bg-gray-50 hover:bg-emerald-50/30 text-xs text-gray-800 transition-colors flex items-center justify-between group"
+              >
+                <span>{q}</span>
+                <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-emerald-700 transition-transform" />
+              </button>
+            ))}
+          </div>
+
+          {explainerLoading && (
+            <div className="flex items-center space-x-2 text-xs text-gray-500 p-2">
+              <Sparkles className="w-4 h-4 text-emerald-600 animate-spin" />
+              <span>Checking verified passbook facts...</span>
+            </div>
+          )}
+
+          {explainerAnswer && (
+            <div className="p-3.5 bg-emerald-50/50 rounded-xl border border-emerald-200 space-y-2 mt-2">
+              <div className="flex items-center justify-between border-b border-emerald-100 pb-1">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-900" data-testid="answer-month">
+                  Sensecheck answer about the {formatDate(entry.due_date)} instalment
+                </span>
+                <CheckedBadge status={explainerAnswer.gate_status} declined={explainerAnswer.declined} />
+              </div>
+              <p className="text-xs text-gray-900 leading-relaxed whitespace-pre-line">
+                {splitOptionsLinks(explainerAnswer.answer).map((part, i) =>
+                  part.link ? (
+                    <Link key={i} href="/options" className="underline font-medium text-emerald-800">
+                      What can I do next?
+                    </Link>
+                  ) : (
+                    <React.Fragment key={i}>{part.text}</React.Fragment>
+                  )
+                )}
+              </p>
+              {answerSources.length > 0 && (
+                <div className="flex flex-wrap gap-1 pt-1">
+                  {answerSources.map((s) => (
+                    <a
+                      key={`${s.title}|${s.url}`}
+                      href={s.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center text-[11px] text-emerald-700 bg-white px-2 py-0.5 rounded border border-emerald-200 hover:underline"
+                    >
+                      <span>{s.title}</span>
+                      <ExternalLink className="w-2.5 h-2.5 ml-1" />
+                    </a>
+                  ))}
+                </div>
+              )}
+              <div className="pt-1">
+                <HowAnswersAreChecked />
+              </div>
+            </div>
+          )}
+
+          {/* Next steps (always shown, equal weight) */}
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <Link
+              href={`/ask?entry_id=${encodeURIComponent(entry.id)}`}
+              className="flex items-center justify-center space-x-1.5 p-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-xs font-medium text-gray-800"
+            >
+              <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Ask your own question</span>
+            </Link>
+            <Link
+              href="/options"
+              className="flex items-center justify-center space-x-1.5 p-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-xs font-medium text-gray-800"
+            >
+              <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-600" />
+              <span>What can I do next?</span>
+            </Link>
+          </div>
+
+          {/* Version B: ask one person you trust (sent from the investor's own app) */}
+          {version === "B" && <AskFriend entry={entry} />}
+        </section>
+
+
         {/* The UPI gap, in the product: shown only while units are not confirmed yet */}
         {state === "in_progress" && (
           <section className="bg-blue-50 rounded-2xl p-4 border border-blue-200 space-y-1.5" data-testid="upi-line">
@@ -317,22 +408,6 @@ export default function EntryDetailPage() {
           )}
         </section>
 
-        {/* Final feature: "The second message": what Groww sends for this month, next to the bank's SMS */}
-        {secondMessages.length > 0 && (
-          <section className="bg-white rounded-[28px] p-5 border border-gray-200/70 space-y-3" data-testid="second-message">
-            <div>
-              <h2 className="text-[15px] font-semibold text-gray-900">Messages for this month</h2>
-              <p className="text-[12px] text-gray-500 mt-0.5">
-                What arrives on your phone: your bank&apos;s SMS, then Groww&apos;s message at each step.
-              </p>
-            </div>
-            <div className="space-y-2">
-              {secondMessages.map((m, i) => (
-                <MessageBubble key={i} m={m} />
-              ))}
-            </div>
-          </section>
-        )}
 
         {/* B5 Failure / Refund / Unknown Block */}
         {failureDetails && (
@@ -415,99 +490,6 @@ export default function EntryDetailPage() {
             )}
           </section>
         )}
-
-        {/* Explainer: What does this mean? */}
-        <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
-          <div className="flex items-center space-x-2">
-            <HelpCircle className="w-4 h-4 text-emerald-600" />
-            <h2 className="text-xs font-bold uppercase tracking-wider text-gray-900">What does this mean?</h2>
-          </div>
-          <p className="text-xs text-gray-600">Ask Sensecheck about this instalment:</p>
-
-          <div className="space-y-1.5">
-            {suggestedQuestions.map((q) => (
-              <button
-                key={q}
-                type="button"
-                onClick={() => handleAskQuestion(q)}
-                disabled={explainerLoading}
-                className="w-full text-left p-2.5 rounded-xl border border-gray-200 hover:border-emerald-500/40 bg-gray-50 hover:bg-emerald-50/30 text-xs text-gray-800 transition-colors flex items-center justify-between group"
-              >
-                <span>{q}</span>
-                <ChevronRight className="w-3.5 h-3.5 text-gray-400 group-hover:text-emerald-700 transition-transform" />
-              </button>
-            ))}
-          </div>
-
-          {explainerLoading && (
-            <div className="flex items-center space-x-2 text-xs text-gray-500 p-2">
-              <Sparkles className="w-4 h-4 text-emerald-600 animate-spin" />
-              <span>Checking verified passbook facts...</span>
-            </div>
-          )}
-
-          {explainerAnswer && (
-            <div className="p-3.5 bg-emerald-50/50 rounded-xl border border-emerald-200 space-y-2 mt-2">
-              <div className="flex items-center justify-between border-b border-emerald-100 pb-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-900" data-testid="answer-month">
-                  Sensecheck answer about the {formatDate(entry.due_date)} instalment
-                </span>
-                <CheckedBadge status={explainerAnswer.gate_status} declined={explainerAnswer.declined} />
-              </div>
-              <p className="text-xs text-gray-900 leading-relaxed whitespace-pre-line">
-                {splitOptionsLinks(explainerAnswer.answer).map((part, i) =>
-                  part.link ? (
-                    <Link key={i} href="/options" className="underline font-medium text-emerald-800">
-                      What can I do next?
-                    </Link>
-                  ) : (
-                    <React.Fragment key={i}>{part.text}</React.Fragment>
-                  )
-                )}
-              </p>
-              {answerSources.length > 0 && (
-                <div className="flex flex-wrap gap-1 pt-1">
-                  {answerSources.map((s) => (
-                    <a
-                      key={`${s.title}|${s.url}`}
-                      href={s.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center text-[11px] text-emerald-700 bg-white px-2 py-0.5 rounded border border-emerald-200 hover:underline"
-                    >
-                      <span>{s.title}</span>
-                      <ExternalLink className="w-2.5 h-2.5 ml-1" />
-                    </a>
-                  ))}
-                </div>
-              )}
-              <div className="pt-1">
-                <HowAnswersAreChecked />
-              </div>
-            </div>
-          )}
-
-          {/* Next steps (always shown, equal weight) */}
-          <div className="grid grid-cols-2 gap-2 pt-1">
-            <Link
-              href={`/ask?entry_id=${encodeURIComponent(entry.id)}`}
-              className="flex items-center justify-center space-x-1.5 p-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-xs font-medium text-gray-800"
-            >
-              <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-              <span>Ask your own question</span>
-            </Link>
-            <Link
-              href="/options"
-              className="flex items-center justify-center space-x-1.5 p-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-xs font-medium text-gray-800"
-            >
-              <SlidersHorizontal className="w-3.5 h-3.5 text-emerald-600" />
-              <span>What can I do next?</span>
-            </Link>
-          </div>
-
-          {/* Version B: ask one person you trust (sent from the investor's own app) */}
-          {version === "B" && <AskFriend entry={entry} />}
-        </section>
 
         {/* Version B: this month's memory for your future self (photo, voice or a line) */}
         {version === "B" && (

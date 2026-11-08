@@ -42,18 +42,18 @@ export function answersAnotherEntry(opts: {
 }): boolean {
   const { entry, instalments, factsUsed, question, declined, answer } = opts;
   if (!entry || declined) return false;
-  if (answer) {
+  // Live checks, 8 Nov: judge by the dates the answer names first. An answer that names another instalment's date and
+  // not this one's is about another month, whatever it cites; one that names only this month's date is about it.
+  if (answer && !questionPointsElsewhere(question, entry.due_date)) {
     const full = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    const m = parseInt(entry.due_date.slice(5, 7), 10) - 1;
-    const y = entry.due_date.slice(0, 4);
-    // ...but only when it names no other instalment's date (live, 8 Nov 23:30: an October answer that was really
-    // about 5 Nov 2026 also mentioned October, and slipped through).
-    const namesOther = instalments.some((i) => {
-      if (i.id === entry.id) return false;
+    const names = (i: Instalment) => {
       const mi = parseInt(i.due_date.slice(5, 7), 10) - 1;
       return answer.includes(formatDate(i.due_date)) || answer.includes(`${full[mi]} ${i.due_date.slice(0, 4)}`);
-    });
-    if (!namesOther && (answer.includes(formatDate(entry.due_date)) || answer.includes(`${full[m]} ${y}`))) return false;
+    };
+    const namesOwn = names(entry);
+    const namesOther = instalments.some((i) => i.id !== entry.id && names(i));
+    if (namesOther && !namesOwn) return true;
+    if (namesOwn && !namesOther) return false;
   }
   if (!Array.isArray(factsUsed)) return false;
   const facts = factsUsed.filter((f): f is string => typeof f === "string");

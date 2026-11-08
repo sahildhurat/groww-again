@@ -8,32 +8,9 @@ import { FooterNotice } from "@/components/ui/footer-notice";
 import { DemoBanner } from "@/components/ui/demo-banner";
 import { ChevronRight, ArrowRight, Clock, AlertTriangle, SlidersHorizontal, Camera, MessageCircle, PenLine, Users } from "lucide-react";
 import { useDemo } from "@/lib/demo-context";
-import passbookSeed from "@/data/passbook-seed.json";
-import type { Instalment, PassbookSip } from "@/lib/passbook-types";
-import { instalmentState } from "@/lib/passbook";
-import { messagesFor, type PhoneMessage } from "@/lib/second-message";
-import { MessageBubble } from "@/components/ui/phone-messages";
 
 export default function HomePage() {
-  const { version, scenario } = useDemo();
-  // Final feature: the lock screen on SIP week. The bank's SMS, then Groww's matching messages (newest first).
-  const lock = React.useMemo(() => {
-    const sc = (passbookSeed as any).scenarios[scenario] ?? (passbookSeed as any).scenarios.running;
-    const sip = sc.sip as PassbookSip;
-    const all = sc.instalments as Instalment[];
-    const desc = [...all].sort((a, b) => b.due_date.localeCompare(a.due_date));
-    const latest = desc[0];
-    const lastAllotted = desc.find((i) => i.id !== latest.id && instalmentState(i) === "allotted");
-    const items: { m: PhoneMessage; href?: string }[] = [
-      ...messagesFor(latest, all, sip).map((m) => ({ m, href: m.from === "groww" ? `/passbook/${latest.id}` : undefined })),
-      ...(lastAllotted
-        ? messagesFor(lastAllotted, all, sip)
-            .filter((m) => m.title === "Units in your name")
-            .map((m) => ({ m, href: `/passbook/${lastAllotted.id}` }))
-        : []),
-    ];
-    return items.sort((a, b) => b.m.at.localeCompare(a.m.at)).slice(0, 3);
-  }, [scenario]);
+  const { version } = useDemo();
   // Owner, 8 Nov: each task is a short scenario: what happened, what to find out, and where it starts.
   const tasks = [
     {
@@ -108,32 +85,13 @@ export default function HomePage() {
       <DemoBanner />
 
       <main className="flex-1 p-4 space-y-5">
-        {/* Final feature: "The second message" on the lock screen */}
-        <section className="rounded-[28px] bg-ink text-white p-4 pb-5 shadow-[0_18px_40px_-24px_rgba(20,33,61,0.9)]" data-testid="lock-screen">
-          <div className="text-center pt-1 pb-3">
-            <p className="text-[12px] text-white/70">Friday, 6 November</p>
-            <p className="text-[44px] leading-none font-semibold tracking-[-0.03em] mt-1">10:30</p>
-          </div>
-          <div className="space-y-2">
-            {lock.map(({ m, href }, i) => (
-              <MessageBubble key={i} m={m} href={href} dark />
-            ))}
-          </div>
-          <p className="text-[11px] text-white/60 text-center mt-3">Tap a Groww message to open that month.</p>
-        </section>
-
         <section className="bg-white rounded-3xl p-5 border border-gray-200/70 space-y-3">
           <h1 className="text-[19px] font-bold leading-snug tracking-[-0.01em] text-gray-900">
             Your bank&apos;s SMS shows the money leaving. This shows what it became.
           </h1>
           <p className="text-[13px] text-gray-600 leading-relaxed">
-            UPI moves money in seconds; a SIP takes days and used to show nothing in between. Now Groww sends a
-            message at every step, and the passbook shows every month&apos;s money, from your bank debit to the units in
-            your name.
-          </p>
-          <p className="text-[13px] text-gray-600 leading-relaxed">
-            Sensecheck explains any line in plain words, using only your passbook and Groww&apos;s help pages. Not
-            investment advice.
+            UPI moves money in seconds; a SIP takes days. The passbook shows every month&apos;s money, from your bank
+            debit to the units in your name. Sensecheck explains any line in plain words. Not investment advice.
           </p>
           <div className="pt-1 space-y-2">
             <Link
