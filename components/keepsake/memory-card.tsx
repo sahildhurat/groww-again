@@ -22,10 +22,19 @@ export function MemoryCard({
   month,
   monthLabel,
   invite,
+  autoEdit = false,
+  onClose,
+  embedded = false,
 }: {
   month: string;
   monthLabel: string;
   invite: boolean;
+  /** Opened from a month on the passbook: go straight to the editor when there is no memory yet. */
+  autoEdit?: boolean;
+  /** Called after Save or Cancel when the card was opened from the passbook. */
+  onClose?: () => void;
+  /** Sits inside a passbook month card: no outer card styling. */
+  embedded?: boolean;
 }) {
   const tick = useKeepsakeTick();
   const [memory, setMemory] = useState<MemoryRecord | undefined>();
@@ -43,6 +52,11 @@ export function MemoryCard({
     getMemory(month).then((m) => {
       setMemory(m);
       setLoaded(true);
+      if (autoEdit && !hasContent(m)) {
+        setPhoto(undefined);
+        setText("");
+        setEditing(true);
+      }
     });
   }, [month, tick]);
 
@@ -86,6 +100,7 @@ export function MemoryCard({
     try {
       await saveMemory(next);
       setEditing(false);
+      onClose?.();
     } catch {
       setError("This couldn't be saved on this device. Try a smaller photo.");
     }
@@ -96,7 +111,11 @@ export function MemoryCard({
 
   return (
     <section
-      className="bg-white rounded-2xl p-5 border border-purple-100 shadow-sm space-y-2.5"
+      className={
+        embedded
+          ? "rounded-2xl p-3.5 bg-violet-50/60 border border-violet-100 space-y-2.5"
+          : "bg-white rounded-2xl p-5 border border-purple-100 shadow-sm space-y-2.5"
+      }
       data-testid="memory-card"
     >
       <h2 className="text-xs font-bold uppercase tracking-wider text-gray-900">Your memory for {monthLabel}</h2>
@@ -130,6 +149,11 @@ export function MemoryCard({
               <Trash2 className="w-3 h-3" />
               <span>Delete</span>
             </button>
+            {onClose && (
+              <button type="button" onClick={onClose} className="text-xs text-gray-500 underline">
+                Close
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -232,7 +256,10 @@ export function MemoryCard({
             </button>
             <button
               type="button"
-              onClick={() => setEditing(false)}
+              onClick={() => {
+                setEditing(false);
+                onClose?.();
+              }}
               className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-700"
             >
               Cancel

@@ -7,7 +7,17 @@ import { BottomNav } from "@/components/ui/bottom-nav";
 import { FooterNotice } from "@/components/ui/footer-notice";
 import { DemoBanner } from "@/components/ui/demo-banner";
 import rulesData from "@/data/rules.json";
-import { Info, ExternalLink, ChevronDown, ChevronUp, MessageCircle } from "lucide-react";
+import { Info, ExternalLink, ChevronDown, ChevronUp, MessageCircle, CircleCheck, Landmark, CalendarCog, SkipForward, CircleStop, RotateCcw } from "lucide-react";
+
+// Visual pass (8 Nov): one quiet icon per option, all in the same neutral tone (no option looks recommended).
+const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  "keep-as-is": CircleCheck,
+  "change-autopay-bank": Landmark,
+  "change-amount-or-date": CalendarCog,
+  "skip-one-instalment": SkipForward,
+  stop: CircleStop,
+  "restart-later": RotateCcw,
+};
 
 // R42 (Claude, 7 Nov 2026): compact cards of equal size and weight (no ranking, no "recommended"); each card has
 // the same two actions: read Groww's rule (verbatim from data/rules.json, with its source) and ask Sensecheck about it.
@@ -90,10 +100,10 @@ const GROUPS: { id: OptionItem["group"]; title: string }[] = [
   { id: "stop", title: "Stop, and come back later" },
 ];
 
-// Shown on the Stop card only (not given to the AI): Groww's own help pages disagree on the notice period.
+// Shown on the Stop card only (not given to the AI): the help pages disagree on the notice period.
 const CANCEL_NOTICE = [
   {
-    text: "One Groww help page says a SIP can't be cancelled if an instalment is due in the next 3 days.",
+    text: "One help page says a SIP can't be cancelled if an instalment is due in the next 3 days.",
     title: "I cancelled my SIP instalment but still my amount got deducted.",
     url: "https://groww.in/help/mutual-funds/order/i-cancelled-my-sip-instalment-but-still-my-amount-got-deducted--79",
   },
@@ -122,22 +132,20 @@ export default function OptionsPage() {
       <TopBar title="What can I do next?" showBack backHref="/passbook" />
       <DemoBanner />
 
-      <div className="bg-emerald-50 border-b border-emerald-100 px-4 py-2 text-center text-xs text-emerald-800 font-medium">
-        Information about your own SIP and the rules only. Not investment advice.
-      </div>
+      <p className="px-4 pt-3 -mb-1 text-[12px] text-gray-500">Information about your own SIP and the rules only. Not investment advice.</p>
 
       <main className="flex-1 p-4 space-y-4">
         <div className="space-y-1">
           <h1 className="text-sm font-bold text-gray-900">What can I do next?</h1>
           <p className="text-xs text-gray-600">
-            Groww already offers these. Open any one to read Groww&apos;s rule, or ask Sensecheck what it means for
-            your passbook. They are in no particular order.
+            These are the changes you can make to this SIP. Open one to read the rule, or ask Sensecheck what it
+            means for you. They are in no particular order.
           </p>
         </div>
 
         {GROUPS.map((g) => (
         <div key={g.id} className="space-y-2" data-testid="option-group">
-          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gray-500 px-1">{g.title}</h2>
+          <h2 className="text-[13px] font-semibold text-gray-700 px-1">{g.title}</h2>
         <div className="grid grid-cols-1 gap-3">
           {OPTIONS.filter((o) => o.group === g.id).map((opt) => {
             const isOpen = open === opt.id;
@@ -149,11 +157,21 @@ export default function OptionsPage() {
                 key={opt.id}
                 id={opt.id}
                 data-testid="option-card"
-                className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm flex flex-col justify-between min-h-[152px] scroll-mt-24"
+                className="bg-white rounded-3xl p-4 border border-gray-200/70 flex flex-col justify-between min-h-[176px] scroll-mt-24"
               >
-                <div>
-                  <h3 className="text-xs font-bold text-gray-900">{opt.title}</h3>
-                  <p className="text-xs text-gray-600 mt-1.5 leading-relaxed">{opt.summary}</p>
+                <div className="flex items-start gap-3">
+                  {(() => {
+                    const I = ICONS[opt.id];
+                    return I ? (
+                      <span className="w-9 h-9 rounded-xl bg-gray-100 text-gray-700 flex items-center justify-center flex-shrink-0" aria-hidden>
+                        <I className="w-[18px] h-[18px]" />
+                      </span>
+                    ) : null;
+                  })()}
+                  <div>
+                    <h3 className="text-[14px] font-semibold text-gray-900">{opt.title}</h3>
+                    <p className="text-[13px] text-gray-600 mt-1 leading-relaxed">{opt.summary}</p>
+                  </div>
                 </div>
 
                 {isOpen && (
@@ -181,7 +199,7 @@ export default function OptionsPage() {
                     {opt.id === "stop" && (
                       <div className="p-2.5 bg-amber-50 rounded-xl border border-amber-200 space-y-1.5" data-testid="cancel-notice">
                         <p className="text-xs text-amber-950 leading-relaxed">
-                          Groww&apos;s help pages give different notice periods. The date shown in Manage SIP applies.
+                          Our help pages give different notice periods. The date shown in Manage SIP is the one that applies.
                         </p>
                         {CANCEL_NOTICE.map((c) => (
                           <p key={c.url} className="text-xs text-gray-700 leading-relaxed">
@@ -221,20 +239,20 @@ export default function OptionsPage() {
         </div>
         ))}
 
-        <section className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-2.5">
+        <section className="bg-white rounded-3xl p-4 border border-gray-200/70 space-y-2.5">
           <button
             type="button"
             onClick={() => setShowManageNote(!showManageNote)}
             className="w-full py-2.5 px-4 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold text-xs transition-colors flex items-center justify-center space-x-1.5"
           >
-            <span>Manage SIP in the Groww app</span>
+            <span>Open Manage SIP</span>
             <ExternalLink className="w-3.5 h-3.5 text-gray-500" />
           </button>
 
           {showManageNote && (
             <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 flex items-start space-x-2">
               <Info className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" />
-              <span>In the real app this opens Manage SIP. Nothing is changed in this prototype.</span>
+              <span>Manage SIP is where you make any of these changes. Nothing is changed in this demo.</span>
             </div>
           )}
         </section>

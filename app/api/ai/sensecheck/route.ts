@@ -23,10 +23,12 @@ import {
 import type { Instalment, PassbookEvent, PassbookSip } from "@/lib/passbook-types";
 import { formatDateTime } from "@/lib/format";
 import { getFailureCode } from "@/lib/failure-codes";
+import { DEMO_NOW_DISPLAY } from "@/lib/demo-now";
+import { answersAnotherEntry } from "@/lib/entry-focus";
 
 // R39 (Claude): every event the model sees carries its times as display text ("6 Nov 2026, 10:00 IST"), so the answer
 // can state the as-of time without converting time zones, and the gate can check that every clock time is a real one.
-const DEMO_NOW_DISPLAY = "6 Nov 2026, 10:30 IST";
+// R45: the demo clock now lives in lib/demo-now.ts, shared with the pages (Pay Now window).
 // R41 (Claude): an event with no time is no longer labelled "not happened yet" when its status is unknown (the first live
 // eval copied that label into answers about an unknown allotment). Failure events also carry the meaning of their reason
 // code, and a failed debit carries its money status ("Nothing was taken from your bank account."), the same sentences the
@@ -86,15 +88,20 @@ export async function POST(req: NextRequest) {
     const contextJson = {
       // R39: the demo's "now" (SPEC-07 §4.4), so answers about time windows (e.g. Pay Now) can be placed correctly.
       demo_now_display: DEMO_NOW_DISPLAY,
+      // R44: the SIP's name is not shown anywhere in the product (owner, 8 Nov), so the model does not get it either.
       sip: {
-        name: sip.name,
         fund_label: sip.fund_label,
         amount: sip.amount,
         status: sip.status,
         status_changed_at: sip.status_changed_at,
         latest_nav: sip.latest_nav,
         latest_nav_date: sip.latest_nav_date,
+        // R45: how the instalments are paid, which sets the allotment timing that applies (Groww help 61).
+        payment_route: sip.payment_route ?? null,
       },
+      // R45: the investor's official record, as the passbook page states it.
+      official_record:
+        "Your official record is your Consolidated Account Statement (CAS), from MF Central, CAMS or KFintech. This passbook is a supplementary view.",
       confirmed_totals: totals,
       value_at_latest_nav: value,
       last_fully_confirmed_date: lastConfirmed?.due_date ?? null,
@@ -249,6 +256,24 @@ Provide the Sensecheck JSON response.`;
         },
       }
     );
+
+    // R45: on an instalment page, an answer built only from other instalments' facts is replaced by the fallback.
+    if (
+      gateResult.isValid &&
+      answersAnotherEntry({
+        entry,
+        instalments,
+        factsUsed: parsedJson?.facts_used,
+        question: sanitizedQuestion,
+        declined: parsedJson?.declined === true,
+      })
+    ) {
+      return NextResponse.json({
+        ...fallbackOutput,
+        gate_status: "standard",
+        gate_code: "wrong_entry",
+      });
+    }
 
     return NextResponse.json({
       ...gateResult.data,

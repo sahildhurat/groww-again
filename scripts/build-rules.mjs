@@ -60,6 +60,10 @@ const SPEC = [
     "Keep in mind that while the amount is deducted on the SIP date (T-day), the complete order processing and unit allocation can take up to 5–6 business days, depending on the payment method and fund type. If your SIP still doesn’t show up after this period, please contact our support team for assistance."],
   ["rule-allotment-02", "allotment_timing", G, "https://groww.in/help/mutual-funds/order/it-s-beyond-the-expected-time--why-are-units-still-not-allotted--98",
     "Please note it generally takes up to 4 working days for the units to be allocated to your account after placing a purchase order. You can keep a track of the order on your dashboard. However, if it has been more than 6 working days since you placed the purchase order and you still cannot see the units allocated to your account then please contact us using the button below."],
+  // R45 (Claude, 8 Nov 2026): allotment timing by payment route (Groww help 61). Stored as a summary because the page is
+  // written as a list; the sixth element is the help page title shown on the source chip.
+  ["rule-allotment-03", "allotment_timing", P, "https://groww.in/help/mutual-funds/order/how-many-days-does-it-take-for-the-units-to-be-allocated--61",
+    "Summary of a public Groww help page: for SIPs paid through Groww AutoPay, the money is taken on the SIP date (T day) and units are expected on T+2, two working days after the SIP date. For BSE mandates (biller or one-time), units are expected on T+5 or T+6. T day is the SIP instalment's due date.", "How many days does it take for the units to be allocated?"],
   ["rule-change-amount-01", "change_amount_date", G, "https://groww.in/help/mutual-funds/mf-sip/how-to-change-sip-date-or-amount",
     "Navigate to the 'Mutual Funds' section on your home screen. Select the SIPs tab at the top. Choose the SIP you wish to modify. Click 'Change Amount/Date'. Update the amount or date as needed, then click 'Save Changes'. Review your changes and click 'Confirm'. Alternatively, you can go to the 'SIPs' section under Mutual Funds and follow the same steps. Note: If your next instalment is within 2 working days, changes will apply only to future instalments."],
   ["rule-amc-confirmation-01", "order_confirmation", G, "https://groww.in/help/mutual-funds/order/will-i-also-get-an-order-confirmation-from-the-mutual-fund-company--53",
@@ -68,8 +72,8 @@ const SPEC = [
 
 const out = [];
 const errors = [];
-for (const [id, topic, source_type, url, text] of SPEC) {
-  let title = "Public rule";
+for (const [id, topic, source_type, url, text, pageTitle] of SPEC) {
+  let title = pageTitle ?? "Public rule";
   if (source_type === G) {
     const page = pages.get(url);
     if (!page) { errors.push(`${id}: url not in the help corpus`); continue; }

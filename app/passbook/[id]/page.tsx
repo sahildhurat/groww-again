@@ -14,10 +14,14 @@ import rulesData from "@/data/rules.json";
 import { instalmentState } from "@/lib/passbook";
 import { getFailureCode } from "@/lib/failure-codes";
 import { formatDate, formatDateTime, formatMonthYear } from "@/lib/format";
-import { monthKey, resolveSources, suggestedQuestionsFor } from "@/lib/flow";
+import { monthKey, resolveSources, splitOptionsLinks, suggestedQuestionsFor } from "@/lib/flow";
 import type { Instalment, PassbookEvent, PassbookSip } from "@/lib/passbook-types";
 import { MemoryCard } from "@/components/keepsake/memory-card";
 import { AskFriend } from "@/components/keepsake/ask-friend";
+import { MoneyTrail } from "@/components/ui/money-trail";
+import { payNowWindowClosed } from "@/lib/demo-now";
+import { messagesFor } from "@/lib/second-message";
+import { MessageBubble } from "@/components/ui/phone-messages";
 import {
   Sparkles,
   HelpCircle,
@@ -46,6 +50,32 @@ function stepStatus(ev: PassbookEvent): string {
   return "Can't confirm right now";
 }
 
+// R45 (Claude, 8 Nov 2026): the amount's label says what happened to it, and a reference appears only once it exists.
+function amountLabel(state: string | null, inst: Instalment): string {
+  const debit = inst.events.find((e) => e.type === "debit");
+  const refund = inst.events.find((e) => e.type === "refund");
+  switch (state) {
+    case "allotted":
+      return "Amount invested";
+    case "in_progress":
+      return "Amount debited";
+    case "refunded":
+      return refund?.status === "confirmed" ? "Amount refunded" : "Amount debited, refund not confirmed yet";
+    case "failed":
+      return "Instalment amount (not debited)";
+    case "skipped":
+      return "Instalment amount (skipped)";
+    default:
+      return debit?.status === "confirmed" ? "Amount debited" : "Instalment amount";
+  }
+}
+
+function stepRef(ev: PassbookEvent): string {
+  if (ev.status === "pending") return "Not issued yet";
+  if (ev.status === "unknown") return "Not available right now";
+  return ev.source_event_id;
+}
+
 function stepWhen(ev: PassbookEvent): string {
   if (ev.effective_at) return formatDateTime(ev.effective_at);
   return ev.status === "unknown" ? "Not known" : "Not confirmed yet";
@@ -71,8 +101,13 @@ export default function EntryDetailPage() {
   );
 
   const state = entry ? instalmentState(entry) : null;
-  const suggestedQuestions = useMemo(() => (entry ? suggestedQuestionsFor(entry) : []), [entry]);
+  const suggestedQuestions = useMemo(() => {
+    if (!entry) return [];
+    const newest = [...instalments].sort((a, b) => b.due_date.localeCompare(a.due_date))[0];
+    return suggestedQuestionsFor(entry, { isLatest: newest?.id === entry.id, sipActive: sip.status === "active" });
+  }, [entry, instalments, sip.status]);
   const month = entry ? monthKey(entry.due_date) : "";
+  const secondMessages = useMemo(() => (entry ? messagesFor(entry, instalments, sip) : []), [entry, instalments, sip]);
 
   // Explainer AI state
   const [explainerLoading, setExplainerLoading] = useState(false);
@@ -153,29 +188,29 @@ export default function EntryDetailPage() {
       <TopBar title={`Instalment: ${formatDate(entry.due_date)}`} showBack backHref="/passbook" />
       <DemoBanner />
 
-      <div className="bg-emerald-50 border-b border-emerald-100 px-4 py-2 text-center text-xs text-emerald-800 font-medium">
-        Information about your own SIP and the rules only. Not investment advice.
-      </div>
+      <p className="px-4 pt-3 -mb-1 text-[12px] text-gray-500">Information about your own SIP and the rules only. Not investment advice.</p>
 
       <main className="flex-1 p-4 space-y-4">
-        {/* Entry Summary */}
-        <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-2">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-gray-500">Amount due</span>
-            <span className="text-sm font-bold text-gray-900">
-              ₹{entry.amount.toLocaleString("en-IN")}
-            </span>
-          </div>
-          {entry.nav && (
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">Allotment NAV</span>
-              <span className="text-xs font-semibold text-gray-800">₹{entry.nav.toFixed(2)}</span>
+        {/* Entry Summary: the amount, what it became, and the money's trail */}
+        <section className="bg-white rounded-[28px] p-5 border border-gray-200/70 space-y-4">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[13px] text-gray-500" data-testid="amount-label">{amountLabel(state, entry)}</p>
+              <p className="text-[28px] leading-tight font-semibold tracking-[-0.02em] text-gray-900">
+                ₹{entry.amount.toLocaleString("en-IN")}
+              </p>
             </div>
-          )}
-          {entry.units && (
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500">Units allotted</span>
-              <span className="text-xs font-semibold text-gray-800">{entry.units.toFixed(3)}</span>
+            {entry.units ? (
+              <div className="text-right">
+                <p className="text-[13px] text-gray-500">Units allotted</p>
+                <p className="text-[28px] leading-tight font-semibold tracking-[-0.02em] text-emerald-700">{entry.units.toFixed(3)}</p>
+                {entry.nav && <p className="text-[12px] text-gray-500">Allotment NAV ₹{entry.nav.toFixed(2)}</p>}
+              </div>
+            ) : null}
+          </div>
+          {entry.events.length > 0 && (
+            <div className="pt-4 border-t border-gray-100">
+              <MoneyTrail inst={entry} paymentRoute={sip.payment_route} />
             </div>
           )}
         </section>
@@ -186,8 +221,19 @@ export default function EntryDetailPage() {
             <div className="flex items-start space-x-2">
               <Clock className="w-4 h-4 text-blue-700 flex-shrink-0 mt-0.5" />
               <p className="text-xs text-blue-950 leading-relaxed">
-                UPI moves money in seconds. Mutual fund units take longer: for AutoPay, Groww expects units two working
-                days after the SIP date (T+2). Your bank has confirmed the debit; the units step is shown below.
+                {sip.payment_route === "Groww AutoPay" ? (
+                  <>
+                    This SIP is paid through Groww AutoPay. UPI moves money in seconds; mutual fund units take longer.
+                    With Groww AutoPay, units are expected two working days after the SIP date (T+2). With a BSE
+                    mandate it is T+5 or T+6. Your bank has confirmed the debit; the units step is shown below.
+                  </>
+                ) : (
+                  <>
+                    UPI moves money in seconds; mutual fund units take longer. Units are expected two working days
+                    after the SIP date (T+2) with Groww AutoPay, and T+5 or T+6 with a BSE mandate. Your bank has
+                    confirmed the debit; the units step is shown below.
+                  </>
+                )}
               </p>
             </div>
             <a
@@ -203,55 +249,90 @@ export default function EntryDetailPage() {
         )}
 
         {/* Event Timeline */}
-        <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-3">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-            What happened, step by step ({entry.events.length}{" "}
-            {entry.events.length === 1 ? "step" : "steps"})
+        <section className="bg-white rounded-[28px] p-5 border border-gray-200/70">
+          <h2 className="text-[15px] font-semibold text-gray-900">
+            {entry.events.length === 0
+              ? "What happened"
+              : `What happened, step by step (${entry.events.length} ${entry.events.length === 1 ? "step" : "steps"})`}
           </h2>
 
           {entry.events.length === 0 ? (
-            <p className="text-xs text-gray-500 italic">
+            <p className="text-[13px] text-gray-500 mt-3">
               This instalment was skipped by the investor. No debit was attempted.
             </p>
           ) : (
-            <div className="space-y-3">
-              {entry.events.map((ev, idx) => (
-                <div key={ev.id} className="p-3 bg-gray-50 rounded-xl border border-gray-100 space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-gray-900">
-                      {idx + 1}. {STEP_NAME[ev.type] ?? ev.type}
-                    </span>
-                    <span className="text-[11px] font-medium text-gray-700 bg-white px-2 py-0.5 rounded border border-gray-200">
-                      {stepStatus(ev)}
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2 text-[11px] text-gray-600 pt-1">
-                    <div>
-                      <span className="text-gray-400 block">Source:</span>
-                      <span className="font-medium text-gray-800">{ev.source_label}</span>
+            <ol className="mt-4 relative">
+              {entry.events.map((ev, idx) => {
+                const last = idx === entry.events.length - 1;
+                const dot =
+                  ev.status === "confirmed"
+                    ? ev.type === "refund"
+                      ? "bg-violet-600 border-violet-600"
+                      : "bg-emerald-600 border-emerald-600"
+                    : ev.status === "failed"
+                    ? "bg-[#B4433A] border-[#B4433A]"
+                    : ev.status === "pending"
+                    ? "bg-white border-blue-500 border-dashed"
+                    : "bg-gray-300 border-gray-300";
+                const chip =
+                  ev.status === "confirmed"
+                    ? "text-emerald-800 bg-emerald-50"
+                    : ev.status === "failed"
+                    ? "text-[#8E3329] bg-[#FBECEA]"
+                    : ev.status === "pending"
+                    ? "text-blue-800 bg-blue-50"
+                    : "text-gray-700 bg-gray-100";
+                return (
+                  <li key={ev.id} className="relative pl-8 pb-5 last:pb-0">
+                    {!last && <span aria-hidden className="absolute left-[9px] top-5 bottom-0 w-0.5 bg-gray-200" />}
+                    <span aria-hidden className={`absolute left-0 top-0.5 w-5 h-5 rounded-full border-2 ${dot}`} />
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[14px] font-semibold text-gray-900">
+                        {idx + 1}. {STEP_NAME[ev.type] ?? ev.type}
+                      </span>
+                      <span className={`text-[12px] font-medium px-2 py-0.5 rounded-full ${chip}`}>{stepStatus(ev)}</span>
                     </div>
-                    <div>
-                      <span className="text-gray-400 block">Reference ID:</span>
-                      <span className="font-mono text-gray-700">{ev.source_event_id}</span>
-                    </div>
-                  </div>
-
-                  <div className="text-[11px] text-gray-600 pt-1 border-t border-gray-200/60">
-                    <div>
-                      <span className="text-gray-400">When it happened: </span>
-                      <span>{stepWhen(ev)}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-400">Last checked: </span>
-                      <span>{formatDateTime(ev.as_of)}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                    <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1.5 text-[12px]">
+                      <div>
+                        <dt className="text-gray-400">Source:</dt>
+                        <dd className="text-gray-800">{ev.source_label}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-gray-400">Reference ID:</dt>
+                        <dd className="text-gray-700 break-all">{stepRef(ev)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-gray-400">When it happened: </dt>
+                        <dd className="text-gray-800">{stepWhen(ev)}</dd>
+                      </div>
+                      <div>
+                        <dt className="text-gray-400">Last checked: </dt>
+                        <dd className="text-gray-800">{formatDateTime(ev.as_of)}</dd>
+                      </div>
+                    </dl>
+                  </li>
+                );
+              })}
+            </ol>
           )}
         </section>
+
+        {/* Final feature: "The second message": what Groww sends for this month, next to the bank's SMS */}
+        {secondMessages.length > 0 && (
+          <section className="bg-white rounded-[28px] p-5 border border-gray-200/70 space-y-3" data-testid="second-message">
+            <div>
+              <h2 className="text-[15px] font-semibold text-gray-900">Messages for this month</h2>
+              <p className="text-[12px] text-gray-500 mt-0.5">
+                What arrives on your phone: your bank&apos;s SMS, then Groww&apos;s message at each step.
+              </p>
+            </div>
+            <div className="space-y-2">
+              {secondMessages.map((m, i) => (
+                <MessageBubble key={i} m={m} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* B5 Failure / Refund / Unknown Block */}
         {failureDetails && (
@@ -273,6 +354,17 @@ export default function EntryDetailPage() {
                     }. Only the units step can't be confirmed right now.`
                   : failureDetails.money_status}
               </p>
+              {failureCodeStr === "INSUFFICIENT_BALANCE" && debitEvent?.status === "failed" && (
+                <p data-testid="pay-now-note">
+                  <strong>Pay Now:</strong> after a debit fails for insufficient balance, Pay Now stays open for 2
+                  working days.{" "}
+                  {payNowWindowClosed(debitEvent.effective_at ?? debitEvent.as_of) === true
+                    ? "For this instalment, that window has closed."
+                    : payNowWindowClosed(debitEvent.effective_at ?? debitEvent.as_of) === false
+                    ? "For this instalment, that window is still open."
+                    : ""}
+                </p>
+              )}
             </div>
 
             {failureDetails.routes.length > 0 && (
@@ -357,12 +449,22 @@ export default function EntryDetailPage() {
           {explainerAnswer && (
             <div className="p-3.5 bg-emerald-50/50 rounded-xl border border-emerald-200 space-y-2 mt-2">
               <div className="flex items-center justify-between border-b border-emerald-100 pb-1">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-900">
-                  Sensecheck Answer
+                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-900" data-testid="answer-month">
+                  Sensecheck answer about the {formatDate(entry.due_date)} instalment
                 </span>
                 <CheckedBadge status={explainerAnswer.gate_status} declined={explainerAnswer.declined} />
               </div>
-              <p className="text-xs text-gray-900 leading-relaxed whitespace-pre-line">{explainerAnswer.answer}</p>
+              <p className="text-xs text-gray-900 leading-relaxed whitespace-pre-line">
+                {splitOptionsLinks(explainerAnswer.answer).map((part, i) =>
+                  part.link ? (
+                    <Link key={i} href="/options" className="underline font-medium text-emerald-800">
+                      What can I do next?
+                    </Link>
+                  ) : (
+                    <React.Fragment key={i}>{part.text}</React.Fragment>
+                  )
+                )}
+              </p>
               {answerSources.length > 0 && (
                 <div className="flex flex-wrap gap-1 pt-1">
                   {answerSources.map((s) => (

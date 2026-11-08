@@ -18,6 +18,7 @@ import {
   resolveSources,
   splitOptionsLinks,
   starterQuestionsFor,
+  suggestedQuestionsFor,
 } from "@/lib/flow";
 import type { Instalment, PassbookSip } from "@/lib/passbook-types";
 
@@ -89,13 +90,21 @@ function AskContent() {
     if (initialQuery && inputRef.current) inputRef.current.focus();
   }, [initialQuery]);
 
-  const starterQuestions = starterQuestionsFor(scenario);
   const selectedEntry = entriesNewestFirst.find((i) => i.id === selectedEntryId) || null;
+  // Owner, 8 Nov: the suggestions follow the month picked in "About" (its state, whether it is the latest, and
+  // whether the SIP is running); with no month picked they fit the whole passbook.
+  const starterQuestions = selectedEntry
+    ? suggestedQuestionsFor(selectedEntry, {
+        isLatest: entriesNewestFirst[0]?.id === selectedEntry.id,
+        sipActive: scenario !== "stopped",
+      })
+    : starterQuestionsFor(scenario);
 
   const handleSend = async (queryText: string) => {
     if (!queryText.trim() || loading) return;
 
-    setMessages((prev) => [...prev, { id: `u-${Date.now()}`, sender: "user", text: queryText.trim() }]);
+    // Owner, 8 Nov: a new question replaces the previous one, so the page never grows into a long scroll.
+    setMessages((prev) => [...prev.filter((m) => m.intro), { id: `u-${Date.now()}`, sender: "user", text: queryText.trim() }]);
     setQuestion("");
     setLoading(true);
 
@@ -147,9 +156,7 @@ function AskContent() {
       />
       <DemoBanner />
 
-      <div className="bg-emerald-50 border-b border-emerald-100 px-4 py-2 text-center text-xs text-emerald-800 font-medium">
-        Information about your own SIP and the rules only. Not investment advice.
-      </div>
+      <p className="px-4 pt-3 -mb-1 text-[12px] text-gray-500">Information about your own SIP and the rules only. Not investment advice.</p>
 
       <main className="flex-1 p-4 flex flex-col space-y-3.5">
         {/* Optional Entry Picker */}

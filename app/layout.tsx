@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
+import "@fontsource-variable/onest";
 import "./globals.css";
 import { Providers } from "@/components/providers";
+import { FrameScrollReset } from "@/components/ui/frame-scroll-reset";
 
 export const metadata: Metadata = {
   title: "SIP Passbook (concept)",
@@ -13,6 +15,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
+  themeColor: "#14213D",
 };
 
 export default function RootLayout({
@@ -22,10 +25,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-gray-100 text-gray-900 flex justify-center min-h-screen font-sans selection:bg-emerald-100 selection:text-emerald-900">
+      <body className="selection:bg-emerald-100 selection:text-emerald-900">
         <Providers>
-          <div className="w-full max-w-[430px] min-h-screen bg-white shadow-2xl flex flex-col relative border-x border-gray-100">
-            {children}
+          <div className="stage">
+            {/* Desktop only: what this is, beside the phone */}
+            <aside className="stage-note" aria-hidden="true">
+              <p className="stage-title">SIP Passbook</p>
+              <p className="stage-line">
+                Your bank&apos;s SMS shows the money leaving. Groww&apos;s message and the passbook show what it became:
+                every month, from your bank to the units in your name. A concept for first-year SIP investors, shown at
+                phone size.
+              </p>
+              <p className="stage-small">Not affiliated with Groww. All data is synthetic demo data.</p>
+            </aside>
+            <div className="device">
+              <div id="app-scroll" className="device-scroll">
+                <FrameScrollReset />
+                {children}
+              </div>
+            </div>
           </div>
         </Providers>
       </body>

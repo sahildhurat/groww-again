@@ -22,6 +22,13 @@ export interface MemoryRecord {
   updatedAt: string;
 }
 
+/** Piece by piece (final feature, 8 Nov): the photo of what the investor is starting the SIP for. On this device only. */
+export interface GoalRecord {
+  photo: string; // data URL of a compressed JPEG, location data removed
+  label?: string; // optional, e.g. "My first bike"
+  updatedAt: string;
+}
+
 export interface FriendRecord {
   name?: string; // first name or nickname only; no phone number is collected
 }
@@ -30,6 +37,7 @@ const DB_NAME = "sip_passbook_keepsake_v1";
 const STORE = "kv";
 const REASON_KEY = "reason";
 const FRIEND_KEY = "friend";
+const GOAL_KEY = "goal";
 const MEMORY_PREFIX = "memory:";
 export const KEEPSAKE_EVENT = "keepsake-changed";
 
@@ -176,6 +184,21 @@ export async function listMemories(): Promise<MemoryRecord[]> {
     if (m && hasContent(m)) out.push(m);
   }
   return out.sort((a, b) => a.month.localeCompare(b.month));
+}
+
+export async function getGoal(): Promise<GoalRecord | undefined> {
+  return idbGet<GoalRecord>(GOAL_KEY);
+}
+
+export async function saveGoal(g: { photo: string; label?: string }): Promise<void> {
+  if (!g.photo) return deleteGoal();
+  await idbSet(GOAL_KEY, { photo: g.photo, label: g.label?.trim().slice(0, 40) || undefined, updatedAt: new Date().toISOString() });
+  changed();
+}
+
+export async function deleteGoal(): Promise<void> {
+  await idbDelete(GOAL_KEY);
+  changed();
 }
 
 export async function getFriend(): Promise<FriendRecord> {

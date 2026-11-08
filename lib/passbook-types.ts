@@ -37,6 +37,8 @@ export interface PassbookSip {
   status_changed_at: string | null;
   latest_nav: number;
   latest_nav_date: string;
+  /** How the instalments are paid, e.g. "Groww AutoPay". Sets which allotment timing applies (Groww help 61). */
+  payment_route?: string;
   dedication?: string | null;
 }
 

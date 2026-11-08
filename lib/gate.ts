@@ -255,6 +255,26 @@ export function checkAsOf(
   return allowed.some((a) => same(asOf, a));
 }
 
+// R44 (Claude, 8 Nov live check): internal labels must never reach the investor. The live answers quoted rule ids
+// ("rule-pay-now-01 says"), reason codes ("ORDER_NOT_ACCEPTED"), app paths ("see /options"), the prompt's own words
+// ("rule passages", "the context") and UI that does not exist ("the button provided").
+const INTERNAL_REF_PATTERNS = [
+  /\brule-[a-z0-9]+(?:-[a-z0-9]+)*\b/i,
+  /\bev-\d{4}-\d{2}-\d{2}-[a-z]+\b/i,
+  /\binst-\d{4}-\d{2}-\d{2}\b/i,
+  /\bcomputed:\w+/i,
+  /\b[A-Z]{2,}(?:_[A-Z0-9]{2,})+\b/,
+  /(?:^|[\s("'])\/(?:ask|passbook|quality|your-data|demo-tools)\b/i, // "/options" is allowed: it is shown as a link
+  /\brule passages?\b/i,
+  /\b(?:context json|the context|provided material|passbook context)\b/i,
+  /\b(?:as_of|as_of_display|effective_display|latest_instalment|facts_used|value_at_latest_nav|confirmed_totals|reason_meaning|money_status|demo_now_display|payment_route|official_record|all_instalments)\b/i,
+  /\b(?:using the button|the button provided|button in the app)\b/i,
+];
+
+export function checkInternalRefs(text: string): boolean {
+  return INTERNAL_REF_PATTERNS.some((p) => p.test(text));
+}
+
 // Master gate verification function
 export function verifyGate<T>(
   schema: z.ZodSchema<T>,
@@ -339,6 +359,17 @@ export function verifyGate<T>(
       data: fallbackData,
       isFallback: true,
       reason: "Prohibited term, advice, prediction, or urgency phrase detected",
+    };
+  }
+
+  // 3b. R44: no internal ids, codes, paths or prompt words in the answer
+  if (checkInternalRefs(textContent)) {
+    return {
+      isValid: false,
+      code: "internal",
+      data: fallbackData,
+      isFallback: true,
+      reason: "Internal id, code, path or prompt wording in the answer",
     };
   }
 

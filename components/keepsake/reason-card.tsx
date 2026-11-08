@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { PenLine, Mic, Trash2 } from "lucide-react";
 import { VoicePlayer, VoiceRecorder } from "./voice-recorder";
 import { useKeepsakeTick } from "./use-keepsake";
@@ -9,7 +10,17 @@ import { deleteReason, formatSeconds, getReason, saveReason, type ReasonRecord }
 // Version B: "Why I started" in the investor's own words, written or recorded. No AI, stays on this device.
 // When the SIP is stopped or the latest instalment failed, it folds away so it never reads as guilt; the investor
 // can still choose to show it.
-export function ReasonCard({ folded }: { folded: boolean }) {
+// Owner, 8 Nov: the reason is captured on the (mock) Start SIP screen, when the motivation is fresh; the passbook only
+// shows it back (editable = false), with a link to change it there.
+export function ReasonCard({
+  folded,
+  editable = true,
+  prompt = "Why did you start this SIP? Keep it in your own words, for your future self.",
+}: {
+  folded: boolean;
+  editable?: boolean;
+  prompt?: string;
+}) {
   const tick = useKeepsakeTick();
   const [reason, setReason] = useState<ReasonRecord | undefined>();
   const [loaded, setLoaded] = useState(false);
@@ -62,6 +73,8 @@ export function ReasonCard({ folded }: { folded: boolean }) {
 
   // Next to a stop or a failed instalment, don't invite: nothing here should read as guilt.
   if (folded && !has && !editing) return null;
+  // Display only (passbook): nothing to show until a reason was given on the start screen.
+  if (!editable && !has) return null;
 
   if (folded && has && !showFolded && !editing) {
     return (
@@ -87,6 +100,12 @@ export function ReasonCard({ folded }: { folded: boolean }) {
           {reason?.voice && (
             <VoicePlayer blob={reason.voice} label={`Voice note · ${formatSeconds(reason.voiceSec)}`} />
           )}
+          {!editable && (
+            <Link href="/start" className="inline-block text-xs font-medium text-purple-800 underline pt-0.5">
+              Change it
+            </Link>
+          )}
+          {editable && (
           <div className="flex flex-wrap gap-x-4 gap-y-1 pt-0.5">
             <button type="button" onClick={() => openEditor("write")} className="text-xs font-medium text-purple-800 underline">
               {reason?.text ? "Edit the line" : "Add a line"}
@@ -103,14 +122,13 @@ export function ReasonCard({ folded }: { folded: boolean }) {
               <span>Delete</span>
             </button>
           </div>
+          )}
         </div>
       )}
 
       {!has && !editing && (
         <div className="space-y-1.5">
-          <p className="text-xs text-gray-700">
-            Why did you start this SIP? Keep it in your own words, for your future self.
-          </p>
+          <p className="text-xs text-gray-700">{prompt}</p>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -118,7 +136,7 @@ export function ReasonCard({ folded }: { folded: boolean }) {
               className="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-lg border border-purple-200 bg-white text-xs font-medium text-purple-800"
             >
               <PenLine className="w-3.5 h-3.5" />
-              <span>Write why you started</span>
+              <span>Write it</span>
             </button>
             <button
               type="button"
@@ -134,7 +152,7 @@ export function ReasonCard({ folded }: { folded: boolean }) {
 
       {editing && (
         <div className="space-y-2 p-3 bg-white rounded-xl border border-purple-200">
-          <p className="text-xs font-semibold text-gray-900">Why I started</p>
+          <p className="text-xs font-semibold text-gray-900">Why I&apos;m starting this SIP</p>
           {mode === "write" ? (
             <textarea
               value={text}
@@ -144,7 +162,7 @@ export function ReasonCard({ folded }: { folded: boolean }) {
               }}
               maxLength={280}
               rows={3}
-              aria-label="Why I started"
+              aria-label="Why I'm starting this SIP"
               placeholder="For my first bike, without a loan"
               className="w-full text-xs p-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-300"
             />

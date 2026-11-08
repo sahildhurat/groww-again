@@ -7,7 +7,7 @@ import { BottomNav } from "@/components/ui/bottom-nav";
 import { FooterNotice } from "@/components/ui/footer-notice";
 import { DemoBanner } from "@/components/ui/demo-banner";
 import { useKeepsakeTick } from "@/components/keepsake/use-keepsake";
-import { clearAll, deleteAllMemories, deleteReason, getFriend, getReason, listMemories, saveFriend } from "@/lib/keepsake";
+import { clearAll, deleteAllMemories, deleteGoal, deleteReason, getFriend, getGoal, getReason, listMemories, saveFriend } from "@/lib/keepsake";
 import { Lock, Trash2 } from "lucide-react";
 
 // Final MVP (8 Nov 2026): replaces Settings, Sign in and the consent form. There is no account: what the investor
@@ -15,12 +15,14 @@ import { Lock, Trash2 } from "lucide-react";
 export default function YourDataPage() {
   const tick = useKeepsakeTick();
   const [hasReason, setHasReason] = useState(false);
+  const [hasGoal, setHasGoal] = useState(false);
   const [memoryCount, setMemoryCount] = useState(0);
   const [hasFriend, setHasFriend] = useState(false);
   const [done, setDone] = useState<string | null>(null);
 
   useEffect(() => {
     getReason().then((r) => setHasReason(Boolean(r && (r.text || r.voice))));
+    getGoal().then((g) => setHasGoal(Boolean(g?.photo)));
     listMemories().then((l) => setMemoryCount(l.length));
     getFriend().then((f) => setHasFriend(Boolean(f.name)));
   }, [tick]);
@@ -48,8 +50,8 @@ export default function YourDataPage() {
             </li>
             <li>
               <strong>What you add stays on this device</strong>, in this browser: your reason for starting (text or
-              voice), your memories for each month (photos, voice notes, lines) and the first name of the friend you
-              ask. Nothing is uploaded.
+              voice), your goal photo, your memories for each month (photos, voice notes, lines) and the first name
+              of the friend you ask. Nothing is uploaded.
             </li>
             <li>
               <strong>Questions to Sensecheck</strong> are sent to the AI model to write the answer. Account numbers,
@@ -67,7 +69,7 @@ export default function YourDataPage() {
             </li>
           </ul>
           <p className="text-[11px] text-gray-500">
-            In a real product, Groww would store these with your consent and let you export or delete them at any time.
+            When this is live, these would be stored only with your consent, and you could export or delete them at any time.
           </p>
         </section>
 
@@ -75,6 +77,7 @@ export default function YourDataPage() {
           <h2 className="text-xs font-bold uppercase tracking-wider text-gray-500">Delete what you added</h2>
           <p className="text-xs text-gray-700">
             On this device: {hasReason ? "your reason for starting" : "no reason for starting"} ·{" "}
+            {hasGoal ? "your goal photo" : "no goal photo"} ·{" "}
             {memoryCount === 1 ? "1 memory" : `${memoryCount} memories`} ·{" "}
             {hasFriend ? "your friend's first name" : "no friend's name"}.
           </p>
@@ -94,6 +97,14 @@ export default function YourDataPage() {
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Delete all memories</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => run(deleteGoal, "Your goal photo was deleted.")}
+              className="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-800"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>Delete my goal photo</span>
             </button>
             <button
               type="button"

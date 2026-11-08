@@ -16,7 +16,7 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="sticky bottom-0 z-40 w-full bg-white border-t border-gray-100 flex items-center justify-around py-2 px-1 no-print shadow-[0_-2px_6px_rgba(0,0,0,0.03)]">
+    <nav className="sticky bottom-0 z-40 w-full bg-white/95 backdrop-blur border-t border-gray-200/70 flex items-center justify-around py-1.5 px-1 no-print">
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive =
@@ -30,11 +30,13 @@ export function BottomNav() {
             href={item.href}
             className={`flex flex-col items-center justify-center flex-1 py-1 px-1 transition-colors ${
               isActive
-                ? "text-emerald-600 font-semibold"
-                : "text-gray-400 hover:text-gray-600"
+                ? "text-emerald-700 font-semibold"
+                : "text-gray-500 hover:text-gray-800"
             }`}
           >
-            <Icon className={`w-5 h-5 mb-1 ${isActive ? "stroke-[2.2]" : "stroke-2"}`} />
+            <span className={`mb-0.5 px-4 py-1 rounded-full transition-colors ${isActive ? "bg-emerald-50" : ""}`}>
+              <Icon className={`w-5 h-5 ${isActive ? "stroke-[2.2]" : "stroke-2"}`} />
+            </span>
             <span className="text-[11px] leading-tight tracking-tight">
               {item.label}
             </span>

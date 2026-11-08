@@ -3,6 +3,7 @@ export const DECLINE_TEXT =
 
 export const DECLINE_SOURCES = [
   "https://investor.sebi.gov.in",
-  "https://www.amfiindia.com/investor-corner",
+  // R45 (Claude, 8 Nov 2026): AMFI's investor education site; the old amfiindia.com/investor-corner link was broken.
+  "https://www.mutualfundssahihai.com/en",
 ];
 

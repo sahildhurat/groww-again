@@ -160,6 +160,14 @@
     "source_type": "groww_help"
   },
   {
+    "id": "rule-allotment-03",
+    "topic": "allotment_timing",
+    "title": "How many days does it take for the units to be allocated?",
+    "text": "Summary of a public Groww help page: for SIPs paid through Groww AutoPay, the money is taken on the SIP date (T day) and units are expected on T+2, two working days after the SIP date. For BSE mandates (biller or one-time), units are expected on T+5 or T+6. T day is the SIP instalment's due date.",
+    "url": "https://groww.in/help/mutual-funds/order/how-many-days-does-it-take-for-the-units-to-be-allocated--61",
+    "source_type": "public_rule_summary"
+  },
+  {
     "id": "rule-change-amount-01",
     "topic": "change_amount_date",
     "title": "How can I change my SIP date or amount?",

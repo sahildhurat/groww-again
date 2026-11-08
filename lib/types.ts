@@ -180,6 +180,8 @@ export type GateResultCode =
   | "schema"
   | "numbers"
   | "banned"
+  | "internal"
+  | "wrong_entry"
   | "pii"
   | "ungrounded"
   | "time"

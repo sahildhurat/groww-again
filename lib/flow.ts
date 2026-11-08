@@ -45,8 +45,15 @@ export function resolveSources(ids: string[] | undefined | null): SourceLink[] {
       (r) => r.id === src
     );
     if (rule) {
+      // R45: a summary of a Groww help page is labelled as Groww help (summary), not as a public rule.
+      const growwPage = /^https:\/\/groww\.in\//i.test(rule.url);
       link = {
-        title: rule.source_type === "public_rule_summary" ? "Public rule summary" : rule.title,
+        title:
+          rule.source_type === "public_rule_summary"
+            ? growwPage
+              ? "Groww help (summary)"
+              : "Public rule summary"
+            : rule.title,
         url: rule.url,
       };
     } else if (/^https?:\/\//i.test(src)) {
@@ -59,6 +66,7 @@ export function resolveSources(ids: string[] | undefined | null): SourceLink[] {
       if (host === "groww.in" || host.endsWith(".groww.in")) link = { title: "Groww help", url: src };
       else if (host.endsWith("sebi.gov.in")) link = { title: "SEBI investor website", url: src };
       else if (host.endsWith("amfiindia.com")) link = { title: "AMFI", url: src };
+      else if (host.endsWith("mutualfundssahihai.com")) link = { title: "AMFI investor education", url: src };
     }
     if (!link) continue;
     const key = `${link.title}|${link.url}`;
@@ -87,9 +95,18 @@ export function entryStateLabel(entry: Instalment): string {
   }
 }
 
-/** Three questions that fit this instalment's state (most are questions from the approved golden set). */
-export function suggestedQuestionsFor(entry: Instalment): string[] {
+/**
+ * Three questions that fit this instalment: its state, whether it is the latest instalment, and whether the SIP is
+ * still running (owner, 8 Nov: "skip next month?" makes no sense on a six-month-old allotted instalment).
+ * Most are questions from the approved golden set.
+ */
+export function suggestedQuestionsFor(
+  entry: Instalment,
+  ctx: { isLatest?: boolean; sipActive?: boolean } = {}
+): string[] {
   const month = monthName(entry.due_date);
+  const { isLatest = false, sipActive = true } = ctx;
+  const aboutNext = sipActive && isLatest;
   switch (instalmentState(entry)) {
     case "in_progress":
       return ["Why are my units not visible yet?", "What happens next?", "Where is my official record?"];
@@ -97,20 +114,24 @@ export function suggestedQuestionsFor(entry: Instalment): string[] {
       return [
         `Why did my ${month} instalment fail?`,
         `Can I still pay the missed ${month} instalment?`,
-        "What happens if I skip next month?",
+        aboutNext ? "What happens if I skip next month?" : "Do missed instalments count towards cancellation?",
       ];
     case "refunded":
       return [`Where is my ${month} money?`, "How long does a refund take?", "What happened to my order?"];
     case "skipped":
       return [
-        "What happens if I skip next month?",
-        "Will my SIP be cancelled if I skip again?",
+        `Why is there no debit for ${month}?`,
+        sipActive ? "Will my SIP be cancelled if I skip again?" : "Can I restart after stopping?",
         "Where is my official record?",
       ];
     case "allotted":
       return [
         "How were my units for this instalment worked out?",
-        "What happens if I skip next month?",
+        aboutNext
+          ? "What happens if I skip next month?"
+          : sipActive
+          ? `When were my ${month} units allotted?`
+          : "I stopped my SIP. Did I lose my units?",
         "Where is my official record?",
       ];
     default:

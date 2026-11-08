@@ -12,6 +12,7 @@
         "status_changed_at": null,
         "latest_nav": 98.00,
         "latest_nav_date": "2026-11-04",
+        "payment_route": "Groww AutoPay",
         "dedication": null
       },
       "instalments": [
@@ -491,6 +492,7 @@
         "status_changed_at": "2026-10-20T00:00:00+05:30",
         "latest_nav": 98.00,
         "latest_nav_date": "2026-11-04",
+        "payment_route": "Groww AutoPay",
         "dedication": null
       },
       "instalments": [
@@ -927,6 +929,7 @@
         "status_changed_at": null,
         "latest_nav": 98.00,
         "latest_nav_date": "2026-11-04",
+        "payment_route": "Groww AutoPay",
         "dedication": null
       },
       "instalments": [
