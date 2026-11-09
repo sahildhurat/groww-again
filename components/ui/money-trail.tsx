@@ -21,7 +21,7 @@ const TONE: Record<Tone, { dot: string; text: string; icon: React.ReactNode }> =
   none: { dot: "bg-gray-100 text-gray-400 border-gray-200", text: "text-gray-400", icon: <Minus className="w-3 h-3" /> },
 };
 
-function Stop({ label, status, tone, when }: { label: string; status: string; tone: Tone; when?: string }) {
+function Stop({ label, status, tone, when, note }: { label: string; status: string; tone: Tone; when?: string; note?: string }) {
   const t = TONE[tone];
   return (
     <div className="relative flex flex-col items-center text-center min-w-0" data-testid="tracker-stop">
@@ -29,6 +29,11 @@ function Stop({ label, status, tone, when }: { label: string; status: string; to
       <span className="mt-1.5 text-[11px] text-gray-500 leading-tight">{label}</span>
       <span className={`mt-0.5 text-[12px] font-semibold leading-tight ${t.text}`}>{status}</span>
       {when && <span className="mt-0.5 text-[10.5px] text-gray-500 leading-tight">{when}</span>}
+      {note && (
+        <span className="text-[10.5px] text-gray-500 leading-tight" data-testid="stop-note">
+          {note}
+        </span>
+      )}
     </div>
   );
 }
@@ -40,6 +45,13 @@ function stopTime(ev?: PassbookEvent): string | undefined {
   const short = (iso: string) => formatDateTime(iso).replace(/ \d{4},/, ",").replace(/ IST$/, "");
   if (at) return short(at);
   return ev.as_of ? `checked ${short(ev.as_of)}` : undefined;
+}
+
+// User tests, 9 Nov (P04): "why does the 5 Nov instalment say 4 Nov?" Groww takes the money a bank working day before
+// the SIP date; the stop says so whenever the bank's own time falls before the SIP date.
+function earlyNote(ev: PassbookEvent | undefined, dueDate: string): string | undefined {
+  const at = ev && (ev.status === "confirmed" || ev.status === "failed") ? ev.effective_at : null;
+  return at && at.slice(0, 10) < dueDate.slice(0, 10) ? "before the SIP date" : undefined;
 }
 
 export function MoneyTrail({ inst, paymentRoute, tracker = true }: { inst: Instalment; paymentRoute?: string; tracker?: boolean }) {
@@ -73,7 +85,7 @@ export function MoneyTrail({ inst, paymentRoute, tracker = true }: { inst: Insta
       <div className="relative grid grid-cols-3 gap-1" data-testid="money-trail">
         <span aria-hidden className={`absolute top-3 left-[16.66%] w-[33.33%] h-0.5 ${seg1}`} />
         <span aria-hidden className={`absolute top-3 left-[50%] w-[33.33%] h-0.5 ${seg2}`} />
-        <Stop label="Bank debit" status={d[0]} tone={d[1]} when={stopTime(debit)} />
+        <Stop label="Bank debit" status={d[0]} tone={d[1]} when={stopTime(debit)} note={earlyNote(debit, inst.due_date)} />
         <Stop label="Order" status={o[0]} tone={o[1]} when={stopTime(order)} />
         <Stop label={refund ? "Refund" : "Units"} status={u[0]} tone={u[1]} when={stopTime(refund?.status === "confirmed" ? refund : allotment)} />
       </div>

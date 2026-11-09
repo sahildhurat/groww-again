@@ -86,6 +86,10 @@ export default function PassbookPage() {
               <div className="rounded-2xl bg-white/[0.08] px-3 py-1.5">
                 <dt className="text-[11px] text-white/65">Invested</dt>
                 <dd className="text-[17px] font-bold">₹{totals.amount_put_in.toLocaleString("en-IN")}</dd>
+                {/* User tests, 9 Nov (P04): say what "Invested" counts, so a month still on the way isn't read into it */}
+                <dd className="text-[11px] text-white/65" data-testid="invested-count">
+                  {totals.count} confirmed instalments
+                </dd>
               </div>
               <div className="rounded-2xl bg-white/[0.08] px-3 py-1.5">
                 <dt className="text-[11px] text-white/65">Units in your name</dt>

@@ -370,10 +370,28 @@ export default function EntryDetailPage() {
                 (page 98) says allotment generally takes up to 4 working days, and to contact support after 6. */}
             <div className="ml-6 mt-1.5 p-2.5 rounded-xl bg-white border border-blue-200 space-y-1.5" data-testid="units-late-step">
               <p className="text-xs font-semibold text-blue-950">Units still not here after T+2?</p>
-              <p className="text-xs text-blue-950 leading-relaxed">
-                That can still be normal: Groww&apos;s help says allotment generally takes up to 4 working days after the
-                order. If it has been more than 6 working days and the units still aren&apos;t in your name, contact Groww
-                support from that help page and quote this instalment&apos;s reference ID.
+              {/* User tests, 9 Nov (P03, P02): the tracker said T+2 while Sensecheck quoted "5–6 business days". All three
+                  of Groww's own timings now sit on one ladder, in the order to read them; no date is worked out. */}
+              <ol className="space-y-1" data-testid="wait-ladder">
+                <li className="flex gap-2 text-xs text-blue-950 leading-relaxed">
+                  <span className="font-semibold w-[86px] flex-shrink-0">Expected</span>
+                  <span>T+2: two working days after the SIP date, with Groww AutoPay</span>
+                </li>
+                <li className="flex gap-2 text-xs text-blue-950 leading-relaxed">
+                  <span className="font-semibold w-[86px] flex-shrink-0">Still normal</span>
+                  <span>up to 4 working days after the order, Groww&apos;s help says</span>
+                </li>
+                <li className="flex gap-2 text-xs text-blue-950 leading-relaxed">
+                  <span className="font-semibold w-[86px] flex-shrink-0">Contact support</span>
+                  <span>
+                    if it has been more than 6 working days and the units still aren&apos;t in your name; quote this
+                    instalment&apos;s reference ID
+                  </span>
+                </li>
+              </ol>
+              <p className="text-[11px] text-blue-900/80 leading-relaxed">
+                Groww&apos;s help also says full processing can take 5–6 business days, depending on the payment method and
+                fund type. Sensecheck may quote that too.
               </p>
               <a
                 href="https://groww.in/help/mutual-funds/order/it-s-beyond-the-expected-time--why-are-units-still-not-allotted--98"
@@ -478,6 +496,14 @@ export default function EntryDetailPage() {
                     }. Only the units step can't be confirmed right now.`
                   : failureDetails.money_status}
               </p>
+              {/* User tests, 9 Nov (P04): the reason a fund doesn't accept an order isn't in this demo's data; say so, and
+                  say where it will show, instead of leaving the question open. */}
+              {failureCodeStr === "ORDER_NOT_ACCEPTED" && (
+                <p data-testid="order-reason-note">
+                  <strong>Why the fund didn&apos;t accept it:</strong> the fund&apos;s own reason isn&apos;t in this demo&apos;s
+                  data. In a launch, the reason the order route returns would show here.
+                </p>
+              )}
               {failureCodeStr === "INSUFFICIENT_BALANCE" && debitEvent?.status === "failed" && (
                 <p data-testid="pay-now-note">
                   <strong>Pay Now:</strong> after a debit fails for insufficient balance, Pay Now stays open for 2
@@ -490,6 +516,19 @@ export default function EntryDetailPage() {
                 </p>
               )}
             </div>
+
+            {/* User tests, 9 Nov (P04): a failed debit offers the change that keeps the next instalment from failing, here,
+                not only under Next steps. One link to the rules page; nothing is recommended. */}
+            {debitEvent?.status === "failed" && (
+              <Link
+                href="/options#change-autopay-bank"
+                className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-amber-200 text-xs font-semibold text-gray-900"
+                data-testid="failed-next-step"
+              >
+                <span>Before the next instalment: change the AutoPay bank, date or amount</span>
+                <ChevronRight className="w-3.5 h-3.5 text-gray-400 flex-shrink-0 ml-1" aria-hidden />
+              </Link>
+            )}
 
             {failureDetails.routes.length > 0 && (
               <div className="pt-2 border-t border-amber-200 space-y-1.5">

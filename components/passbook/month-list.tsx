@@ -124,6 +124,18 @@ export function MonthList({
                       )}
                     </div>
                   </Link>
+                  {/* User tests, 9 Nov (P04): a failed month links straight to the change for the next instalment */}
+                  {state === "failed" && (
+                    <div className="px-4 pb-2.5 -mt-1">
+                      <Link
+                        href="/options#change-autopay-bank"
+                        className="inline-flex items-center gap-1 text-[12px] font-medium text-gray-800 underline"
+                        data-testid="failed-next-step"
+                      >
+                        Before the next instalment: change the AutoPay bank, date or amount
+                      </Link>
+                    </div>
+                  )}
                   {/* Owner, 8 Nov: a memory can be attached to any month (version B only, so the A/B test still works) */}
                   {version === "B" && (
                     <div className="px-4 pb-3">

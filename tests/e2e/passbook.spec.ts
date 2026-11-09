@@ -642,4 +642,31 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await page.goto("/start");
     await expect(page).toHaveURL(/\/$/);
   });
+
+  // Round-2 user tests, 9 Nov: what we saw → what we changed
+  test("Task 16: user-test fixes: wait ladder, early debit note, next step on a failed month, order reason, badge, invested count", async ({ page }) => {
+    await page.goto("/passbook");
+    await expect(page.getByTestId("invested-count")).toHaveText("8 confirmed instalments");
+    const nov = page.locator("main a[href='/passbook/inst-2026-11-05']");
+    await expect(nov.getByTestId("stop-note").first()).toHaveText("before the SIP date");
+    const mayNext = page.locator("[data-testid='failed-next-step']");
+    await expect(mayNext).toHaveCount(1);
+    await expect(mayNext).toHaveAttribute("href", "/options#change-autopay-bank");
+
+    await page.goto("/passbook/inst-2026-11-05");
+    const ladder = page.getByTestId("wait-ladder");
+    await expect(ladder).toContainText("T+2");
+    await expect(ladder).toContainText("up to 4 working days");
+    await expect(ladder).toContainText("more than 6 working days");
+    await expect(page.getByTestId("units-late-step")).toContainText("5–6 business days");
+
+    await page.goto("/passbook/inst-2026-05-05");
+    await expect(page.getByTestId("failed-next-step")).toHaveAttribute("href", "/options#change-autopay-bank");
+    await page.getByTestId("failed-next-step").click();
+    await expect(page).toHaveURL(/\/options#change-autopay-bank$/);
+
+    await page.goto("/passbook/inst-2026-09-05");
+    await expect(page.getByTestId("order-reason-note")).toContainText("isn't in this demo's data");
+    await expect(page.getByTestId("failed-next-step")).toHaveCount(0);
+  });
 });

@@ -16,8 +16,8 @@ interface CheckedBadgeProps {
 
 const TEXT = {
   checked: {
-    label: "Checked",
-    tip: "This answer passed every check: facts and times come from your passbook or Groww's help pages, with no advice, predictions or personal data.",
+    label: "Checked against your passbook",
+    tip: "Checked by the app, not by a person: this answer passed every check in code. Facts and times come from your passbook or Groww's help pages, with no advice, predictions or personal data.",
   },
   declined: {
     label: "Declined: not advice",
