@@ -7,10 +7,10 @@ import { BottomNav } from "@/components/ui/bottom-nav";
 import { FooterNotice } from "@/components/ui/footer-notice";
 import { DemoBanner } from "@/components/ui/demo-banner";
 import { usePassbook } from "@/components/passbook/use-passbook";
-import { confirmedTotals, lastFullyConfirmed, latestInstalment, instalmentState, valueAt } from "@/lib/passbook";
-import { formatDate, formatDateTime } from "@/lib/format";
-import { ChevronRight, ExternalLink, ShieldCheck } from "lucide-react";
-import { MoneyTrail } from "@/components/ui/money-trail";
+import { confirmedTotals, lastFullyConfirmed, valueAt } from "@/lib/passbook";
+import { formatDate } from "@/lib/format";
+import { ExternalLink, ShieldCheck } from "lucide-react";
+import { MonthList } from "@/components/passbook/month-list";
 
 function ordinal(n: number): string {
   const t = n % 100;
@@ -19,7 +19,7 @@ function ordinal(n: number): string {
 }
 
 export default function PassbookPage() {
-  const { version, sip, instalments } = usePassbook();
+  const { version, sip, instalments, memories } = usePassbook();
 
   // Derived totals and stats (§4)
   const totals = useMemo(() => confirmedTotals(instalments), [instalments]);
@@ -33,15 +33,6 @@ export default function PassbookPage() {
     () => lastFullyConfirmed(instalments),
     [instalments]
   );
-  const latest = useMemo(
-    () => latestInstalment(instalments),
-    [instalments]
-  );
-  const latestState = latest ? instalmentState(latest) : null;
-  const latestAsOf =
-    latest && latestState === "unknown"
-      ? latest.events.find((e) => e.status === "unknown")?.as_of ?? null
-      : null;
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -114,50 +105,6 @@ export default function PassbookPage() {
           </div>
         </section>
 
-        {/* Owner, 9 Nov: the latest month's status in the delivery format; every other month is on Every month.
-            The whole card opens that month (every step, and Sensecheck). */}
-        {latest && latestState && (
-          <Link
-            href={`/passbook/${latest.id}`}
-            data-testid="latest-line"
-            className="block bg-white rounded-[24px] px-4 pt-3 pb-3 border border-gray-200/70 hover:border-gray-300"
-          >
-            <section data-testid="latest-month" className="space-y-2">
-              <div className="flex items-center justify-between gap-3">
-                <h2 className="text-[14px] font-semibold text-gray-900">
-                  Tracking your {formatDate(latest.due_date)} instalment{" "}
-                  <span className="font-normal text-gray-500">· ₹{latest.amount.toLocaleString("en-IN")}</span>
-                </h2>
-                <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" aria-label="Open this month" />
-              </div>
-              {latest.skipped ? (
-                <p className="text-[13px] text-gray-600">Skipped. No debit was attempted.</p>
-              ) : (
-                <MoneyTrail inst={latest} paymentRoute={sip.payment_route} />
-              )}
-              {latestState === "unknown" && (
-                <p className="text-[12px] text-gray-600">
-                  We can&apos;t confirm the latest status right now{latestAsOf ? ` (as of ${formatDateTime(latestAsOf)})` : ""}.
-                  Check your CAS or contact support.
-                </p>
-              )}
-            </section>
-          </Link>
-        )}
-
-        {/* Owner, 9 Nov (03:47): Piece by piece removed; one door to every month's tracker */}
-        <nav aria-label="Passbook views">
-          <Link href="/passbook/months" className="block rounded-2xl bg-white border border-gray-200/70 px-3.5 py-2.5 hover:border-gray-300" data-testid="tile-months">
-            <span className="flex items-center justify-between text-[14px] font-semibold text-gray-900">
-              Every month
-              <ChevronRight className="w-4 h-4 text-gray-400" aria-hidden />
-            </span>
-            <span className="block text-[12px] text-gray-500 mt-0.5">
-              All {instalments.length} instalments, each tracked from your bank to your units
-            </span>
-          </Link>
-        </nav>
-
         {/* Stopped Stamp (C3) - derived from sip.status_changed_at */}
         {sip.status === "stopped" && (
           <div className="p-4 bg-white border border-gray-200 rounded-2xl space-y-1.5">
@@ -183,6 +130,9 @@ export default function PassbookPage() {
           </div>
         )}
 
+        {/* Owner, 9 Nov (08:50): every month on the passbook itself, newest first, in one scroll. Each card is the
+            delivery tracker for that month and opens its page; back returns to the same place in the list. */}
+        <MonthList sip={sip} instalments={instalments} version={version} memories={memories} />
 
         {/* CAS Notice (A3) */}
         <section className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm space-y-2">

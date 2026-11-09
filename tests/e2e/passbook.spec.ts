@@ -28,8 +28,8 @@ test.describe("SPEC-07 End-to-End Suite", () => {
   test("Task 1: November entry shows debited, order placed, units pending with as_of, explainer answers", async ({
     page,
   }) => {
-    // Owner, 9 Nov: every month lives on its own page; November's tracker shows the units on the way
-    await page.goto("/passbook/months");
+    // Owner, 9 Nov (08:50): every month is on the passbook, in one scroll; November's tracker shows the units on the way
+    await page.goto("/passbook");
     await expect(page.getByText("Waiting for units").first()).toBeVisible();
     await expect(page.getByText("On the way").first()).toBeVisible();
 
@@ -136,7 +136,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     ).toBeVisible();
     await expect(page.getByTestId("what-you-own")).toBeVisible();
     // Owner, 9 Nov: the payment route shows in the latest month's delivery line (and on each month's page)
-    await expect(page.getByTestId("latest-month").getByTestId("delivery-line")).toContainText("with Groww AutoPay");
+    await expect(page.getByTestId("delivery-line").first()).toContainText("with Groww AutoPay");
     await expect(page.getByText("158.513", { exact: true })).toBeVisible();
     await expect(page.getByText("₹16,000", { exact: true })).toBeVisible();
     // No passbook name on the cover (owner, 8 Nov)
@@ -205,7 +205,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
 
     await page.goto("/passbook");
     await expect(page.getByText(/as of 5 Nov 2026, 11:40 IST/i).first()).toBeVisible();
-    await page.goto("/passbook/months");
+    await page.goto("/passbook");
     await expect(page.getByText("Can't confirm right now").first()).toBeVisible();
 
     if (page.viewportSize()?.width === 390) {
@@ -232,7 +232,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await page.goto("/passbook");
     await expect(page.getByTestId("personal-layer")).toHaveCount(0);
     await expect(page.getByTestId("tile-goal")).toHaveCount(0);
-    await page.goto("/passbook/months");
+    await page.goto("/passbook");
     await expect(page.getByTestId("add-memory")).toHaveCount(0);
     await page.goto("/passbook/goal");
     await expect(page).toHaveURL(/\/passbook$/);
@@ -243,7 +243,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
 
     await page.goto("/demo-tools?ab=1");
     await page.getByLabel("Version B (personal layer)").check();
-    await page.goto("/passbook/months");
+    await page.goto("/passbook");
     // Owner, 8 Nov: a memory can be added to every month
     await expect(page.getByTestId("add-memory")).toHaveCount(12);
     await expect(page.getByRole("button", { name: "Write it" })).toHaveCount(0);
@@ -286,7 +286,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await expect(may.getByRole("button", { name: "Add a memory to May 2026" })).toBeVisible();
 
     // The month list shows the memory mark; survives a reload (stored on the device)
-    await page.goto("/passbook/months");
+    await page.goto("/passbook");
     await expect(page.getByTestId("memory-indicator")).toHaveCount(1);
     await page.reload();
     await expect(page.getByTestId("memory-indicator")).toHaveCount(1);
@@ -304,7 +304,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await expect(page.getByTestId("delete-section")).toContainText("2 memories");
     await page.getByRole("button", { name: "Delete all memories" }).click();
     await expect(page.getByTestId("delete-section")).toContainText("0 memories");
-    await page.goto("/passbook/months");
+    await page.goto("/passbook");
     await expect(page.getByTestId("memory-indicator")).toHaveCount(0);
   });
 
@@ -457,28 +457,28 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     const anchor = await page.getByTestId("answer-anchor").boundingBox();
     expect(anchor && anchor.y).toBeLessThan(page.viewportSize()!.height * 0.6);
 
-    // Owner, 9 Nov: the passbook cover leads with current value; its two views are tiles above the fold
+    // Owner, 9 Nov: the passbook cover leads with current value
     await page.goto("/passbook");
     await expect(page.getByTestId("current-value")).toHaveText("₹15,534");
-    // Owner, 9 Nov: on a phone, the latest month and both views sit above the bottom bar, no scroll
+    // Owner, 9 Nov (08:50): every month on the passbook itself, newest first, in one scroll; no tiles, no Piece by piece
+    await expect(page.getByTestId("tile-goal")).toHaveCount(0);
+    await expect(page.getByTestId("tile-months")).toHaveCount(0);
+    await expect(page.getByTestId("latest-month")).toHaveCount(0);
+    await expect(page.getByText("Every month (12)")).toBeVisible();
+    const nov = page.locator("main a[href='/passbook/inst-2026-11-05']");
+    await expect(nov.getByTestId("tracker-stop")).toHaveCount(3);
+    await expect(nov).toContainText("Picked up");
+    await expect(nov).toContainText("Handed to the fund");
+    await expect(nov).toContainText("On the way");
+    // On a phone, the newest month's card starts above the bottom bar, so the list is visible without a scroll
     if (page.viewportSize()!.width < 768) {
       const navTop = (await page.locator("nav").last().boundingBox())!.y;
-      for (const t of ["latest-month", "tile-months"]) {
-        const b = await page.getByTestId(t).boundingBox();
-        expect(b && b.y + b.height).toBeLessThanOrEqual(navTop);
-      }
+      const b = await nov.boundingBox();
+      expect(b && b.y).toBeLessThan(navTop);
     }
-    // Owner, 9 Nov (03:47): Piece by piece removed; the latest month is a delivery tracker in delivery words
-    await expect(page.getByTestId("tile-goal")).toHaveCount(0);
-    await expect(page.getByTestId("latest-month")).toContainText("Tracking your 5 Nov 2026 instalment");
-    await expect(page.getByTestId("latest-month").getByTestId("tracker-stop")).toHaveCount(3);
-    await expect(page.getByTestId("latest-month")).toContainText("Picked up");
-    await expect(page.getByTestId("latest-month")).toContainText("Handed to the fund");
-    await expect(page.getByTestId("latest-month")).toContainText("On the way");
-    await page.goto("/passbook");
-    await page.getByTestId("tile-months").click();
-    await expect(page).toHaveURL(/\/passbook\/months$/);
-    await expect(page.getByText("Every month (12)")).toBeVisible();
+    // The old Every month page lands on the passbook
+    await page.goto("/passbook/months");
+    await expect(page).toHaveURL(/\/passbook$/);
 
     // Owner, 9 Nov: Home is two doors only, the passbook and Sensecheck; no task list
     await page.goto("/");
@@ -488,21 +488,31 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await expect(page.locator("a[href='/start']")).toHaveCount(0);
     await page.locator("main").getByRole("link", { name: "Open my passbook" }).click();
     await expect(page).toHaveURL(/\/passbook$/);
-    // Owner, 9 Nov: the latest month in the delivery format; no Start SIP link on the running passbook
-    await expect(page.getByTestId("latest-month")).toContainText("Tracking your 5 Nov 2026 instalment");
-    await expect(page.getByTestId("latest-month").getByTestId("delivery-line")).toContainText("Not delivered to your name yet");
+    // The newest month in the delivery format; no Start SIP link on the running passbook
+    await expect(page.getByTestId("delivery-line").first()).toContainText("Not delivered to your name yet");
     await expect(page.locator("main a[href='/start']")).toHaveCount(0);
-    // Back returns to where you came from: Every month → a month → back lands on Every month
-    await page.getByTestId("tile-months").click();
-    await page.locator("a[href='/passbook/inst-2026-05-05']").click();
-    await expect(page).toHaveURL(/inst-2026-05-05$/);
-    await page.getByLabel("Go back").click();
-    await expect(page).toHaveURL(/\/passbook\/months$/);
-    await page.goto("/passbook");
+    // Back returns to the same place in the list: May → back (the arrow, then the browser's) → May still in view
+    const may = page.locator("main a[href='/passbook/inst-2026-05-05']");
+    for (const how of ["arrow", "browser"]) {
+      await may.scrollIntoViewIfNeeded();
+      await may.click();
+      await expect(page).toHaveURL(/inst-2026-05-05$/);
+      if (how === "arrow") await page.getByLabel("Go back").click();
+      else await page.goBack();
+      await expect(page).toHaveURL(/\/passbook$/);
+      await page.waitForTimeout(400);
+      const m = (await may.boundingBox())!;
+      expect(m.y + m.height).toBeGreaterThan(0);
+      expect(m.y).toBeLessThan(page.viewportSize()!.height);
+    }
+    // A new visit to the passbook starts at the top
+    await page.goto("/");
+    await page.locator("main").getByRole("link", { name: "Open my passbook" }).click();
+    await expect(page.getByTestId("current-value")).toBeInViewport();
 
-    // Cover's latest line opens that instalment; the UPI line explains the wait
+    // The newest month's card opens that instalment; the UPI line explains the wait
     await page.goto("/passbook");
-    await page.getByTestId("latest-line").click();
+    await nov.click();
     await expect(page).toHaveURL(/\/passbook\/inst-2026-11-05$/);
     await expect(page.getByTestId("upi-line")).toContainText("UPI moves money in seconds");
     await expect(page.getByTestId("upi-line")).toContainText("T+2");
@@ -536,7 +546,7 @@ test.describe("SPEC-07 End-to-End Suite", () => {
     await expect(page.getByTestId("why-ai")).toContainText("Without AI:");
     await expect(page.getByTestId("golden-source").getByRole("link", { name: "Evidence Log, section 5" })).toHaveAttribute("href", "https://site-bice-three-88.vercel.app/evidence");
     await expect(page.getByText(/Future Thread one-line tidy/)).toHaveCount(0);
-    await expect(page.getByText(/later cut from the product; only Sensecheck is live/)).toBeVisible();
+    await expect(page.getByText(/earlier feature that is no longer in the app; the eval still runs them, but only Sensecheck is live/)).toBeVisible();
 
     // Entry → What can I do next?
     await page.goto("/passbook/inst-2026-05-05");
