@@ -24,7 +24,7 @@ const SPEC = [
   ["rule-cancel-01", "cancel_rules", G, "https://groww.in/help/mutual-funds/mf-sip/how-to-cancel-my-sip",
     "Canceling the SIP will stop future installments, but your invested amount will remain as is until you redeem it. Once you place the request to cancel the SIP, it cannot be undone."],
   ["rule-cancel-02", "cancel_rules", G, "https://groww.in/help/mutual-funds/sip/will-i-be-charged-for-cancelling-my-sip--37",
-    "No, you will not be charged for cancelling an SIP Cancelling your SIP won't cost anything."],
+    "No, you will not be charged for cancelling an SIP"],
   ["rule-cancel-timing-01", "cancel_timing", G, "https://groww.in/help/mutual-funds/mf-sip/how-to-cancel-my-sip",
     "Note: You cannot cancel your SIP if the next installment is due within the next 7 days. The installment must be paid before you can cancel it."],
   ["rule-cancel-timing-02", "cancel_timing", P, "https://cafemutual.com/news/press-news/33765-new-sip-rule-sebi-mandates-mf-companies-to-process-cancellations-in-2-days",
@@ -63,7 +63,10 @@ const SPEC = [
   // R45 (Claude, 8 Nov 2026): allotment timing by payment route (Groww help 61). Stored as a summary because the page is
   // written as a list; the sixth element is the help page title shown on the source chip.
   ["rule-allotment-03", "allotment_timing", P, "https://groww.in/help/mutual-funds/order/how-many-days-does-it-take-for-the-units-to-be-allocated--61",
-    "Summary of a public Groww help page: for SIPs paid through Groww AutoPay, the money is taken on the SIP date (T day) and units are expected on T+2, two working days after the SIP date. For BSE mandates (biller or one-time), units are expected on T+5 or T+6. T day is the SIP instalment's due date.", "How many days does it take for the units to be allocated?"],
+    "Summary of a public Groww help page: for SIPs paid through Groww AutoPay, the money reaches the fund and that day's NAV applies on the SIP date (T day), and units are expected on T+2, two working days after the SIP date. For BSE mandates (biller or one-time), the money reaches the fund on T+2 or T+3 and units are expected on T+5 or T+6. T day is the SIP instalment's due date.", "How many days does it take for the units to be allocated?"],
+  // 9 Nov 2026 (Claude): checked on groww.in today; the page is not in the 5 Nov help corpus, so it is kept as a summary.
+  ["rule-debit-advance-01", "allotment_timing", P, "https://groww.in/help/mutual-funds/mf-sip/sip-installment-was-deducted-but-the-order-is-not-reflected-on-the-dashboard",
+    "Summary of a public Groww help page: Groww deducts a SIP instalment from the bank one bank working day before the SIP date, so the order is placed with the exchange on the SIP date and gets that day's NAV. The order shows under 'Orders in progress' in the dashboard on the SIP date. If it has been over 2 working days since the deduction and the issue persists, Groww asks investors to contact support.", "SIP installment was deducted but the order is not reflected on the dashboard."],
   ["rule-change-amount-01", "change_amount_date", G, "https://groww.in/help/mutual-funds/mf-sip/how-to-change-sip-date-or-amount",
     "Navigate to the 'Mutual Funds' section on your home screen. Select the SIPs tab at the top. Choose the SIP you wish to modify. Click 'Change Amount/Date'. Update the amount or date as needed, then click 'Save Changes'. Review your changes and click 'Confirm'. Alternatively, you can go to the 'SIPs' section under Mutual Funds and follow the same steps. Note: If your next instalment is within 2 working days, changes will apply only to future instalments."],
   ["rule-amc-confirmation-01", "order_confirmation", G, "https://groww.in/help/mutual-funds/order/will-i-also-get-an-order-confirmation-from-the-mutual-fund-company--53",

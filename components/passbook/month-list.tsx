@@ -73,7 +73,7 @@ export function MonthList({
               } else if (state === "in_progress" && debit) {
                 sourceText = `Confirmed by your bank · ${formatDateTime(debit.effective_at)}`;
               } else if (state === "failed" && debit) {
-                sourceText = `Returned by your bank · ${formatDateTime(debit.effective_at)}`;
+                sourceText = `Debit failed, per your bank · ${formatDateTime(debit.effective_at)}`;
               } else if (state === "refunded" && refund) {
                 sourceText = `Refund confirmed by your bank · ${formatDateTime(refund.effective_at)}`;
               } else if (state === "unknown" && allotment) {

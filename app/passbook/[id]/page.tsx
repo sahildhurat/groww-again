@@ -37,7 +37,7 @@ import {
 const STEP_NAME: Record<string, string> = {
   debit: "Bank debit",
   order: "Order placed",
-  allotment: "Units allotted",
+  allotment: "Units allotment",
   refund: "Refund",
 };
 
@@ -323,9 +323,21 @@ export default function EntryDetailPage() {
               <p className="text-xs text-blue-950 leading-relaxed">
                 {sip.payment_route === "Groww AutoPay" ? (
                   <>
+                    {/* 9 Nov (Claude): Groww's own help says the amount is deducted one bank working day before the SIP
+                        date and the order shows in Groww on the SIP date, so for a day the bank says the money left and
+                        Groww shows no order. The tracker shows that day as "Picked up". */}
                     This SIP is paid through Groww AutoPay. UPI moves money in seconds; mutual fund units take longer.
-                    With Groww AutoPay, units are expected two working days after the SIP date (T+2). With a BSE
-                    mandate it is T+5 or T+6. Your bank has confirmed the debit; the units step is shown below.
+                    Groww takes the amount one bank working day before the SIP date, so the order reaches the fund on the
+                    SIP date at that day&apos;s NAV, and units are expected two working days after the SIP date (T+2). With
+                    a BSE mandate it is T+5 or T+6.
+                    {debitEvent?.effective_at && orderEvent?.status === "confirmed" && orderEvent.effective_at ? (
+                      <>
+                        {" "}This instalment: picked up from your bank on {formatDate(debitEvent.effective_at)}, handed to
+                        the fund on {formatDate(orderEvent.effective_at)}; the units step is shown below.
+                      </>
+                    ) : (
+                      <> Your bank has confirmed the debit; the units step is shown below.</>
+                    )}
                   </>
                 ) : (
                   <>
@@ -343,6 +355,15 @@ export default function EntryDetailPage() {
               className="inline-flex items-center text-[11px] text-blue-800 underline ml-6"
             >
               <span>Source: How many days does it take for the units to be allocated?</span>
+              <ExternalLink className="w-2.5 h-2.5 ml-1" />
+            </a>
+            <a
+              href="https://groww.in/help/mutual-funds/mf-sip/sip-installment-was-deducted-but-the-order-is-not-reflected-on-the-dashboard"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center text-[11px] text-blue-800 underline ml-6"
+            >
+              <span>Source: SIP installment was deducted but the order is not reflected on the dashboard</span>
               <ExternalLink className="w-2.5 h-2.5 ml-1" />
             </a>
             {/* Interviews, 9 Nov: "what do I press if day three comes and the units haven't shown up?" Groww's own help
@@ -462,7 +483,7 @@ export default function EntryDetailPage() {
                   <strong>Pay Now:</strong> after a debit fails for insufficient balance, Pay Now stays open for 2
                   working days.{" "}
                   {payNowWindowClosed(debitEvent.effective_at ?? debitEvent.as_of) === true
-                    ? "For this instalment, that window has closed."
+                    ? "For this instalment, that window has closed. Groww's help also describes paying a missed month as a one-time investment in the same fund; in some funds a one-time investment may not be possible."
                     : payNowWindowClosed(debitEvent.effective_at ?? debitEvent.as_of) === false
                     ? "For this instalment, that window is still open."
                     : ""}

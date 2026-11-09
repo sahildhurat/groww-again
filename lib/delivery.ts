@@ -29,6 +29,10 @@ export function deliveryLine(inst: Instalment, paymentRoute?: string): string | 
     return `Picked up and handed to the fund. Delivery can't be confirmed right now (last checked ${formatDateTime(allot.as_of)}).`;
   if (allot?.status === "pending" && order?.status === "confirmed")
     return `Picked up from your bank and handed to the fund. Not delivered to your name yet: ${rule}.`;
-  if (debit?.status === "confirmed") return "Picked up from your bank. Not handed to the fund yet.";
+  // 9 Nov (Claude): Groww takes the money one bank working day before the SIP date; the order reaches the fund on it.
+  if (debit?.status === "confirmed")
+    return paymentRoute && paymentRoute !== "Groww AutoPay"
+      ? "Picked up from your bank. Not handed to the fund yet."
+      : `Picked up from your bank. Not handed to the fund yet: Groww places the order on the SIP date (${formatDate(inst.due_date)}), or the next business day if that is a holiday.`;
   return null;
 }

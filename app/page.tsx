@@ -8,8 +8,14 @@ import { BottomNav } from "@/components/ui/bottom-nav";
 import { FooterNotice } from "@/components/ui/footer-notice";
 import { DemoBanner } from "@/components/ui/demo-banner";
 import { ArrowRight, MessageCircle } from "lucide-react";
+import { MoneyTrail } from "@/components/ui/money-trail";
+import { usePassbook } from "@/components/passbook/use-passbook";
+import { latestInstalment } from "@/lib/passbook";
+import { formatDate } from "@/lib/format";
 
 export default function HomePage() {
+  const { sip, instalments } = usePassbook();
+  const latest = latestInstalment(instalments);
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <TopBar title="SIP Passbook" />
@@ -43,6 +49,21 @@ export default function HomePage() {
 
           </div>
         </section>
+
+        {/* 9 Nov (Claude): the method in one glance, below the two doors (display only; the doors stay the only links).
+            The same tracker the passbook shows for the latest instalment, from the bank SMS to units in your name. */}
+        {latest && !latest.skipped && latest.events.length > 0 && (
+          <section className="bg-white rounded-3xl p-5 border border-gray-200/70 space-y-3" data-testid="home-tracker">
+            <h2 className="text-[14px] font-semibold text-gray-900">
+              Your {formatDate(latest.due_date)} instalment, tracked{" "}
+              <span className="font-normal text-gray-500">· ₹{latest.amount.toLocaleString("en-IN")}</span>
+            </h2>
+            <MoneyTrail inst={latest} paymentRoute={sip.payment_route} />
+            <p className="text-[12px] text-gray-500 leading-relaxed">
+              Every month in the passbook has this tracker, each step with its source and time.
+            </p>
+          </section>
+        )}
       </main>
 
       <FooterNotice />

@@ -19,7 +19,7 @@
     "id": "rule-cancel-02",
     "topic": "cancel_rules",
     "title": "Will I be charged for cancelling my SIP?",
-    "text": "No, you will not be charged for cancelling an SIP Cancelling your SIP won't cost anything.",
+    "text": "No, you will not be charged for cancelling an SIP",
     "url": "https://groww.in/help/mutual-funds/sip/will-i-be-charged-for-cancelling-my-sip--37",
     "source_type": "groww_help"
   },
@@ -163,8 +163,16 @@
     "id": "rule-allotment-03",
     "topic": "allotment_timing",
     "title": "How many days does it take for the units to be allocated?",
-    "text": "Summary of a public Groww help page: for SIPs paid through Groww AutoPay, the money is taken on the SIP date (T day) and units are expected on T+2, two working days after the SIP date. For BSE mandates (biller or one-time), units are expected on T+5 or T+6. T day is the SIP instalment's due date.",
+    "text": "Summary of a public Groww help page: for SIPs paid through Groww AutoPay, the money reaches the fund and that day's NAV applies on the SIP date (T day), and units are expected on T+2, two working days after the SIP date. For BSE mandates (biller or one-time), the money reaches the fund on T+2 or T+3 and units are expected on T+5 or T+6. T day is the SIP instalment's due date.",
     "url": "https://groww.in/help/mutual-funds/order/how-many-days-does-it-take-for-the-units-to-be-allocated--61",
+    "source_type": "public_rule_summary"
+  },
+  {
+    "id": "rule-debit-advance-01",
+    "topic": "allotment_timing",
+    "title": "SIP installment was deducted but the order is not reflected on the dashboard.",
+    "text": "Summary of a public Groww help page: Groww deducts a SIP instalment from the bank one bank working day before the SIP date, so the order is placed with the exchange on the SIP date and gets that day's NAV. The order shows under 'Orders in progress' in the dashboard on the SIP date. If it has been over 2 working days since the deduction and the issue persists, Groww asks investors to contact support.",
+    "url": "https://groww.in/help/mutual-funds/mf-sip/sip-installment-was-deducted-but-the-order-is-not-reflected-on-the-dashboard",
     "source_type": "public_rule_summary"
   },
   {

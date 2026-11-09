@@ -34,7 +34,7 @@ describe("friendMessage", () => {
   });
 
   it("allotted month gives the units; stale month says the status can't be confirmed", () => {
-    expect(friendMessage(entry("running", "inst-2026-10-05"))).toMatch(/went through: \d+\.\d{3} units on 6 Oct 2026\. Does yours show up like this too\?/);
+    expect(friendMessage(entry("running", "inst-2026-10-05"))).toMatch(/went through: \d+\.\d{3} units on 7 Oct 2026\. Does yours show up like this too\?/);
     expect(friendMessage(entry("stale", "inst-2026-11-05"))).toContain("can't confirm the status");
   });
 
@@ -55,7 +55,7 @@ describe("friendMessage", () => {
       expect(m).not.toMatch(/ {2}/);
     }
     expect(friendMessage(entry("running", "inst-2026-05-05"), undefined, true, false)).toContain("My instalment for 5 May 2026 didn't go through");
-    expect(friendMessage(entry("running", "inst-2026-10-05"), undefined, true, false)).toContain("went through and the units are confirmed on 6 Oct 2026");
+    expect(friendMessage(entry("running", "inst-2026-10-05"), undefined, true, false)).toContain("went through and the units are confirmed on 7 Oct 2026");
     expect(friendMessage(entry("running", "inst-2026-05-05"))).toContain("₹2,000 instalment");
   });
 

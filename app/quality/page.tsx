@@ -60,12 +60,12 @@ const CATEGORY_LABELS: Record<string, string> = {
 const CHECKS: Array<[string, string]> = [
   ["Schema", "The answer must be valid JSON with the expected fields and intent."],
   ["Numbers", "Every number must come from the passbook facts, the help passages or the question."],
-  ["Times and durations", "A clock time must be one of the events' own times; a duration (\"7 working days\") must appear word for word in a help passage."],
+  ["Dates, times and durations", "A date or clock time must be one the passbook shows; a duration (\"7 working days\") must appear word for word in a help passage. Arrival is only ever given as Groww's rule, never as a worked-out date."],
   ["As-of time", "An answer about a step that is pending or can't be confirmed must give that step's as-of time."],
-  ["Banned phrases", "No advice, recommendations, predictions, urgency, guilt or guarantees."],
+  ["Banned phrases", "No advice, recommendations, predictions, urgency, guilt or guarantees. Groww's own instruction to \"switch to an approved AutoPay\" is allowed; \"switch to\" a fund or a plan is not."],
   ["Personal identifiers", "Account numbers, PAN, Aadhaar, IFSC and phone numbers are masked before the AI sees a question and blocked in answers."],
   ["Right month", "An answer must be about the month you asked about; an answer about a different month is replaced."],
-  ["Plain words", "No internal names, field names or file references; only words you would use."],
+  ["Plain words", "No internal names, field names or file references; only words you would use. Before this check, a few fixed phrases are reworded: \"rule passages\" becomes \"Groww's help\", and Groww's \"contact us using the button below\" becomes \"contact Groww support\", because Sensecheck has no button."],
 ];
 
 const ENGINE_EVIDENCE_URL = "https://site-bice-three-88.vercel.app/evidence";
@@ -139,8 +139,11 @@ export default function QualityPage() {
         <section className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm space-y-2">
           <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">When the AI can&apos;t answer</h3>
           <p className="text-xs text-gray-600 leading-relaxed">
-            {r?.fallback_behaviour ??
-              "When the AI is off, slow, or its answer fails a check, the app shows a fixed answer built in code from the entry's events, for example that units are not confirmed yet, with the as-of time."}
+            {/* 9 Nov: describes the app as deployed (the run's stored description predates the topic answers). */}
+            When the AI is off, slow, or its answer fails a check, the app shows a fixed answer built in code: for a month,
+            from that month&apos;s steps and Groww&apos;s rule (for example, units not confirmed yet, with the as-of time and
+            the T+2 rule); for a general question, the Groww help passage on its topic. Advice questions always get the same
+            fixed decline.
           </p>
         </section>
 
@@ -192,7 +195,7 @@ export default function QualityPage() {
                   )}
                   .
                   {r.golden_scope.includes("Future Thread")
-                    ? " Future Thread was tested in this run and later cut from the product; only Sensecheck is live."
+                    ? " The 12 Future Thread items belong to an earlier feature that is no longer in the app; the eval still runs them, but only Sensecheck is live."
                     : ""}
                 </p>
               )}

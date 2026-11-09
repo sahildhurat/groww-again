@@ -59,11 +59,12 @@ Hope this answers your question!`;
     const dec = running.instalments.find((i) => i.due_date === "2025-12-05")!;
     const res = buildSensecheckFallback(dec, running.sip);
     expect(res.intent).toBe("allotment");
-    expect(res.answer).toContain("bank debited your account on 5 Dec 2025");
+    expect(res.answer).toContain("bank debited your account on 4 Dec 2025");
     expect(res.answer).toContain("order was placed on 5 Dec 2025");
     expect(res.answer).toContain("20.000 units were allotted at a NAV of ₹100.00");
     expect(res.answer).toContain("Registrar (illustrative)");
-    expect(res.as_of).toBe("2025-12-06T16:00:00+05:30");
+    expect(res.as_of).toBe("2025-12-09T16:00:00+05:30");
+    expect(res.answer).toContain("on 9 Dec 2025");
   });
 
   it("builds fallback for skipped entry", () => {
@@ -77,7 +78,7 @@ Hope this answers your question!`;
       events: [],
     };
     const res = buildSensecheckFallback(skippedInst, running.sip);
-    expect(res.answer).toBe("This instalment was skipped. No debit was attempted.");
+    expect(res.answer).toContain("No debit was attempted");
     expect(res.declined).toBe(false);
   });
 
@@ -85,9 +86,11 @@ Hope this answers your question!`;
     const nov = running.instalments.find((i) => i.due_date === "2026-11-05")!;
     const res = buildSensecheckFallback(nov, running.sip);
     expect(res.intent).toBe("allotment");
-    expect(res.answer).toContain("bank debit was confirmed");
-    expect(res.answer).toContain("units are not confirmed yet");
-    expect(res.answer).toContain("Status as of 6 Nov 2026, 10:00 IST.");
+    expect(res.answer).toContain("Your bank confirmed the debit on 4 Nov 2026, 09:12 IST");
+    expect(res.answer).toContain("the order was placed on 5 Nov 2026, 11:40 IST");
+    expect(res.answer).toContain("units are not confirmed yet (status as of 6 Nov 2026, 10:00 IST)");
+    expect(res.answer).toContain("two working days after the SIP date (T+2)");
+    expect(res.answer).not.toMatch(/around \d|by \d+ Nov/);
     expect(res.as_of).toBe("2026-11-06T10:00:00+05:30");
   });
 
@@ -99,7 +102,7 @@ Hope this answers your question!`;
     expect(res.answer).toContain("Nothing was taken from your bank account");
     expect(res.sources).toContain("rule-pay-now-01");
     expect(res.sources).toContain("rule-three-miss-01");
-    expect(res.as_of).toBe("2026-05-05T10:00:00+05:30");
+    expect(res.as_of).toBe("2026-05-04T10:00:00+05:30");
   });
 
   it("builds fallback for refunded entry (September - ORDER_NOT_ACCEPTED)", () => {
@@ -107,7 +110,7 @@ Hope this answers your question!`;
     const res = buildSensecheckFallback(sep, running.sip);
     expect(res.intent).toBe("payment_status");
     expect(res.answer).toContain("order was not accepted");
-    expect(res.answer).toContain("amount is refunded to your bank account");
+    expect(res.answer).toContain("The full ₹2,000 came back to your bank on 12 Sep 2026, 14:00 IST");
     expect(res.sources).toContain("rule-refund-01");
     expect(res.as_of).toBe("2026-09-12T16:00:00+05:30");
   });
@@ -116,8 +119,8 @@ Hope this answers your question!`;
     const nov = stale.instalments.find((i) => i.due_date === "2026-11-05")!;
     const res = buildSensecheckFallback(nov, stale.sip);
     expect(res.intent).toBe("payment_status");
-    expect(res.answer).toContain("can't confirm the latest status right now");
-    expect(res.answer).toContain("Status as of 5 Nov 2026, 11:40 IST.");
+    expect(res.answer).toContain("can't confirm the units step right now");
+    expect(res.answer).toContain("last checked 5 Nov 2026, 11:40 IST");
     expect(res.answer).toContain("MF Central, CAMS or KFintech");
     expect(res.as_of).toBe("2026-11-05T11:40:00+05:30");
   });

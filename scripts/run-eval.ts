@@ -181,7 +181,7 @@ async function main() {
       if (critical.length) pass = false;
       return {
         set: "sensecheck", id: it.id, category: it.category, pass, critical, gate: r.gate_status,
-        got: { intent: r.intent, declined: r.declined, sources: r.sources, as_of: r.as_of, gate_code: r.gate_code, answer: r.answer },
+        got: { intent: r.intent, declined: r.declined, sources: r.sources, as_of: r.as_of, gate_code: r.gate_code, answer: r.answer, ...(r.eval_raw_reply ? { raw_reply: r.eval_raw_reply } : {}) },
         why: [...reasons, ...critical].join("; "),
       };
     })));
@@ -200,7 +200,7 @@ async function main() {
       return {
         set: "promise", id: it.id, gate: r.gate_status,
         pass: checked && goalOk && whoOk && horizonOk,
-        got: { goal: r.goal, for_whom: r.for_whom, horizon: r.horizon, one_line: r.one_line, added_numbers: added, gate_code: r.gate_code },
+        got: { goal: r.goal, for_whom: r.for_whom, horizon: r.horizon, one_line: r.one_line, added_numbers: added, gate_code: r.gate_code, ...(r.eval_raw_reply ? { raw_reply: r.eval_raw_reply } : {}) },
         why: `${checked ? "" : `fallback (${r.gate_code}); `}${goalOk ? "" : "goal; "}${whoOk ? "" : "for_whom; "}${horizonOk ? "" : "horizon"}`,
       };
     })));

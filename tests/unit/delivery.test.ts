@@ -48,7 +48,7 @@ describe("delivery tracker stops (9 Nov)", () => {
     expect(nov).toContain("Picked up");
     expect(nov).toContain("Handed to the fund");
     expect(nov).toContain("On the way");
-    expect(nov).toContain("5 Nov, 09:12");
+    expect(nov).toContain("4 Nov, 09:12");
     expect(nov).not.toContain("Delivered:");
     expect(html("inst-2026-10-05")).toContain("Delivered: 18.709 units");
     expect(html("inst-2026-05-05")).toContain("Not picked up");

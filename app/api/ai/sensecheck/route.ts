@@ -25,6 +25,7 @@ import { formatDateTime } from "@/lib/format";
 import { getFailureCode } from "@/lib/failure-codes";
 import { DEMO_NOW_DISPLAY } from "@/lib/demo-now";
 import { answersAnotherEntry } from "@/lib/entry-focus";
+import { evalRawReply } from "@/lib/eval-debug";
 
 // R39 (Claude): every event the model sees carries its times as display text ("6 Nov 2026, 10:00 IST"), so the answer
 // can state the as-of time without converting time zones, and the gate can check that every clock time is a real one.
@@ -153,7 +154,7 @@ export async function POST(req: NextRequest) {
       })),
     };
 
-    const fallbackOutput = buildSensecheckFallback(entry, sip);
+    const fallbackOutput = buildSensecheckFallback(entry, sip, { question: input.question, instalments });
     const sanitizedQuestion = sanitizeInputText(input.question);
 
     // Keyword pre-filter (R37 §1.c): keep only unmistakable advice phrases.
@@ -212,6 +213,7 @@ Provide the Sensecheck JSON response.`;
         ...fallbackOutput,
         gate_status: "standard",
         gate_code: "schema",
+        ...evalRawReply(aiResult.content),
       });
     }
 
@@ -281,6 +283,7 @@ Provide the Sensecheck JSON response.`;
         ...fallbackOutput,
         gate_status: "standard",
         gate_code: "wrong_entry",
+        ...evalRawReply(aiResult.content),
       });
     }
 
@@ -288,6 +291,7 @@ Provide the Sensecheck JSON response.`;
       ...gateResult.data,
       gate_status: gateResult.isValid ? "checked" : "standard",
       gate_code: gateResult.code,
+      ...(gateResult.isValid ? {} : evalRawReply(aiResult.content)),
     });
   } catch (error: any) {
     return NextResponse.json(

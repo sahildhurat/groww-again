@@ -7,7 +7,10 @@ const BANNED_PATTERNS = [
   /\b(recommend|recommendation|recommending)\b/i,
   /\b(suggest|suggestion|suggesting)\b/i,
   /\bbest fund\b/i,
-  /\bswitch to\b/i,
+  // R48 (Claude, 9 Nov): "switch to" stays banned for funds and plans, but not for Groww's own instruction to
+  // "switch to an approved AutoPay" (Groww help, AutoPay page), which is not advice. The 9 Nov eval (sc06) and two
+  // earlier runs sent every answer that quoted that sentence to the fallback.
+  /\bswitch to\b(?!\s+(?:an?\s+|the\s+|another\s+|your\s+)?(?:approved\s+|new\s+|different\s+|active\s+)?(?:autopay|auto-pay|upi autopay|bank(?:\s+account)?|mandate)\b)/i,
   /\bportfolio review\b/i,
   /\bbuy this\b/i,
   /\bsell this\b/i,
@@ -197,6 +200,41 @@ const DURATION =
   /\b(?:\d+(?:\.\d+)?(?:\s*(?:-|–|—|to)\s*\d+)?|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|fifteen|twenty|thirty)[\s-]+(?:(?:bank|business|working|calendar|consecutive)\s+)?(?:minutes?|mins?|hours?|hrs?|days?|weeks?|months?|years?)\b/gi;
 const T_PLUS = /\bT\s*[+]\s*\d+\b/gi;
 
+// 9 Nov (Claude, live check): a date must come from the facts, the help passages or the question. The live answer to
+// "I paid on 5 November. Where are my units?" said units were expected "around 7 Nov 2026": a date the model worked out
+// itself (and a Saturday). Arrival is only ever stated as Groww's rule (T+2), never as a predicted date.
+const MONTHS = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"];
+const MONTH_WORD = "(Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sept?(?:ember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)";
+const DAY_MONTH = new RegExp(`\\b(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:of\\s+)?${MONTH_WORD}\\b(?:,?\\s+(\\d{4}))?`, "gi");
+const MONTH_DAY = new RegExp(`\\b${MONTH_WORD}\\s+(\\d{1,2})(?:st|nd|rd|th)?\\b(?:,?\\s+(\\d{4}))?`, "gi");
+const ISO_DATE = /\b(\d{4})-(\d{2})-(\d{2})(?!\d)/g;
+
+const monthIndex = (w: string) => MONTHS.indexOf(w.slice(0, 3).toLowerCase());
+
+/** Dates in a text as "d-m" and "d-m-yyyy" keys (month 0-11). */
+export function extractDates(text: string): { day: string; full: string | null }[] {
+  const out: { day: string; full: string | null }[] = [];
+  const push = (d: number, m: number, y?: string) => {
+    if (m < 0 || d < 1 || d > 31) return;
+    out.push({ day: `${d}-${m}`, full: y ? `${d}-${m}-${y}` : null });
+  };
+  for (const x of text.matchAll(DAY_MONTH)) push(Number(x[1]), monthIndex(x[2]), x[3]);
+  for (const x of text.matchAll(MONTH_DAY)) push(Number(x[2]), monthIndex(x[1]), x[3]);
+  for (const x of text.matchAll(ISO_DATE)) push(Number(x[3]), Number(x[2]) - 1, x[1]);
+  return out;
+}
+
+/** True when every date in `text` also appears in `allowedSourceText` (with its year, when the answer gives one). */
+export function checkDates(text: string, allowedSourceText: string): boolean {
+  const allowed = extractDates(allowedSourceText);
+  const days = new Set(allowed.map((a) => a.day));
+  const fulls = new Set(allowed.filter((a) => a.full).map((a) => a.full as string));
+  for (const d of extractDates(text)) {
+    if (d.full ? !fulls.has(d.full) : !days.has(d.day)) return false;
+  }
+  return true;
+}
+
 const normDuration = (s: string) =>
   s.toLowerCase().replace(/[–—]/g, "-").replace(/\s*-\s*/g, "-").replace(/\s+to\s+/g, "-").replace(/\s+/g, " ").trim();
 
@@ -221,6 +259,7 @@ export function checkTimesAndDurations(text: string, allowedSourceText: string, 
   for (const t of extractClockTimes(text)) {
     if (!times.has(t)) return false;
   }
+  if (!checkDates(text, allowedSourceText)) return false;
   const source = normDuration(allowedSourceText);
   for (const re of [DURATION, T_PLUS]) {
     for (const m of text.matchAll(re)) {
@@ -280,6 +319,10 @@ const INTERNAL_REF_PATTERNS = [
 export function softenPromptWords(text: string): string {
   if (!text) return text;
   return text
+    // R48 (Claude, 9 Nov): two Groww help pages end "contact us using the button below"; Sensecheck has no button, so the
+    // quoted sentence reads "contact Groww support". The internal-reference check still blocks any other button wording.
+    .replace(/\bcontact us using the button below\b/gi, "contact Groww support")
+    .replace(/\busing the button below\b/gi, "through Groww support")
     .replace(/\b(?:the |a |these |those )?rule passages? (say|says|state|states|show|shows|describe|describes|note|notes)\b/gi, (_m, v: string) => `Groww's help ${v.endsWith("s") ? v : v + "s"}`)
     .replace(/\b(?:the |a |these |those )?rule passages?\b/gi, "Groww's help")
     .replace(/\b(?:the provided material|the passbook context|the context json|the context)\b/gi, "your passbook")

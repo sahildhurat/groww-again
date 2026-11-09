@@ -5,6 +5,7 @@ import { PromiseInputSchema, PromiseOutputSchema } from "@/lib/types";
 import { verifyGate, sanitizeInputText, extractNumbers } from "@/lib/gate";
 import { callClaudeHaiku } from "@/lib/anthropic";
 import { extractFirstJsonBlock } from "@/lib/sensecheck-fallback";
+import { evalRawReply } from "@/lib/eval-debug";
 
 const promptPath = path.join(process.cwd(), "prompts", "promise.md");
 const systemPrompt = fs.readFileSync(promptPath, "utf-8");
@@ -62,6 +63,7 @@ Provide the structured promise JSON.`;
         ...fallbackOutput,
         gate_status: "standard",
         gate_code: "schema",
+        ...evalRawReply(aiResult.content),
       });
     }
 
@@ -80,6 +82,7 @@ Provide the structured promise JSON.`;
       ...gateResult.data,
       gate_status: gateResult.isValid ? "checked" : "standard",
       gate_code: gateResult.code,
+      ...(gateResult.isValid ? {} : evalRawReply(aiResult.content)),
     });
   } catch (error: any) {
     return NextResponse.json(
