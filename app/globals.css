@@ -59,13 +59,35 @@ body {
 }
 
 @media (min-width: 1100px) {
+  /* One width on every page, so the phone does not move when Home's longer note gives way to the short one. */
   .stage-note {
     display: block;
-    width: 260px;
+    width: 340px;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #b9c2ce transparent;
     color: var(--ink);
   }
   .stage-title { font-size: 28px; line-height: 1.15; font-weight: 650; letter-spacing: -0.02em; }
   .stage-line { margin-top: 12px; font-size: 15px; line-height: 1.55; color: #36404f; }
+  /* Home only: the two ideas, each an icon tile with a label and two lines. */
+  .stage-idea { display: flex; gap: 12px; margin-top: 18px; }
+  .stage-icon {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    margin-top: 2px;
+    border-radius: 10px;
+    background: #f5f7fa;
+    border: 1px solid #cdd5df;
+    color: #1f7a63;
+  }
+  .stage-icon svg { width: 18px; height: 18px; }
+  .stage-label { font-size: 14px; line-height: 1.35; font-weight: 650; }
+  .stage-text { margin-top: 2px; font-size: 14px; line-height: 1.5; color: #36404f; }
   .stage-small { margin-top: 16px; font-size: 12px; line-height: 1.5; color: #637083; }
 }
 

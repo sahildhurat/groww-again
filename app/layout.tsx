@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "@/components/providers";
 import { FrameScrollReset } from "@/components/ui/frame-scroll-reset";
 import { NavHistory } from "@/components/ui/nav-history";
+import { StageNote } from "@/components/ui/stage-note";
 
 export const metadata: Metadata = {
   title: "SIP Passbook (concept)",
@@ -30,15 +31,8 @@ export default function RootLayout({
         <Providers>
           <NavHistory />
           <div className="stage">
-            {/* Desktop only: what this is, beside the phone */}
-            <aside className="stage-note" aria-hidden="true">
-              <p className="stage-title">SIP Passbook</p>
-              <p className="stage-line">
-                Your bank&apos;s SMS shows the money leaving. The passbook shows what it became: every month, from your
-                bank to the units in your name. A concept for first-year SIP investors, shown at phone size.
-              </p>
-              <p className="stage-small">Not affiliated with Groww. All data is synthetic demo data.</p>
-            </aside>
+            {/* Desktop only: what this is, beside the phone. On Home it also explains the two ideas (13 Nov 2026). */}
+            <StageNote />
             <div className="device">
               <div id="app-scroll" className="device-scroll">
                 <FrameScrollReset />
