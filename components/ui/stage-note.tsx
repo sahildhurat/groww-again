@@ -40,7 +40,8 @@ export function StageNote() {
               <p className="stage-label">The delivery tracker</p>
               <p className="stage-text">
                 Each instalment is tracked like an online order: picked up from your bank, handed to the fund, delivered
-                to your name as units. Every step shows its source and time.
+                to your name as units. Every step shows its source and time. These investors shop online often, so the
+                language of tracking an order is already familiar.
               </p>
             </div>
           </div>
